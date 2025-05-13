@@ -15,8 +15,8 @@ srun:
 	./seq $(N)
 
 fig:
-	python3 display_mxm.py
+	python3 display_mxm.py $(f)
 
 clean:
-	rm -f *.out *.o starting_mat.txt seq par
+	rm -f *.out *.o seq par
 	rm -rf .vscode

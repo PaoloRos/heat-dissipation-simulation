@@ -25,3 +25,9 @@ Test prestazioni:
 
 - almeno con tre matrici di dimensioni diverse
 
+
+# Cosa aggiungere
+
+## display matrix
+
+[] scala di colori sulla mappa stampata
