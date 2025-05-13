@@ -2,8 +2,9 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 
-def load_numbers(file_name='input_heat.txt'):
+def load_numbers(file_name='starting_mat.txt'):
 	with open(file_name, 'r') as f:
 		string_data = f.read()
 	data = []
