@@ -12,7 +12,7 @@ matrix.o: matrix.cc matrix.hh
 	$(GCC) -c matrix.cc
 
 srun:
-	./seq $(N)
+	./seq $(n) $(s)
 
 fig:
 	python3 display_mxm.py $(f)
@@ -20,3 +20,6 @@ fig:
 clean:
 	rm -f *.out *.o seq par
 	rm -rf .vscode
+
+clear:
+	> output.txt > starting_mat.txt

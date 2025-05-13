@@ -4,14 +4,29 @@
 class Matrix
 {
     public:
-        //Initialize the matrix (at least 20x20) to a null matrix excpet for elements in position (5,5) and (20,20).
-        Matrix(const int n);
+        //Initialize the matrix to a null matrix excpet for elements in position (5,5) and (20,20).
+        Matrix(int);
+
+        // forse non serve
+        Matrix(const Matrix&);
 
         ~Matrix();
 
-        friend ostream &operator<<(ostream &os, const Matrix &other);
+        inline int get_size() const;
+
+        Matrix& operator=(const Matrix&);
+
+        inline double& operator()(const int, const int) const;
+
+        friend ostream& operator<<(ostream&, const Matrix&);
 
     private:
-        double **mat;
+        double **el;
         int N;
 };
+
+ostream& operator<<(ostream&, const Matrix&);
+
+int Matrix::get_size() const { return this->N; }
+
+double& Matrix::operator()(const int r, const int c) const { return this->el[r][c]; }

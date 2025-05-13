@@ -28,6 +28,10 @@ Test prestazioni:
 
 # Cosa aggiungere
 
+## matrix
+
+[] sovraccarica l'accesso [][]
+
 ## display matrix
 
 [] scala di colori sulla mappa stampata

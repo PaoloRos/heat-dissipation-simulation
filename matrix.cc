@@ -1,33 +1,61 @@
 #include "matrix.hh"
 
-Matrix::Matrix(const int n)
+Matrix::Matrix(int n)
 {
     this->N = n;
 
-    this->mat = new double *[N];
+    this->el = new double *[N];
     for(int i = 0; i < N; ++i)
-        mat[i] = new double[N];
+        el[i] = new double[N];
 
-    this->mat[4][4] = 5;
-    this->mat[19][19] = 3;
+    this->el[4][4] = 5;
+    this->el[19][19] = 3;
 
     //cerr << "Matrix constructed.\n";
+}
+
+Matrix::Matrix(const Matrix& other)
+{
+    this->N = other.N;
+
+    this->el = new double *[N];
+    int i, j;
+    for(i = 0; i < N; ++i) 
+    {
+        el[i] = new double[N];
+        for(j = 0; j < N; ++j)
+            el[i][j] = other.el[i][j];
+    }
 }
 
 Matrix::~Matrix()
 {
     for(int i = 0; i < N; ++i)
-        delete []mat[i];
-    delete []mat;
+        delete []el[i];
+    delete []el;
 
     //cerr << "Matrix destroyed.\n";
 }
 
-ostream &operator<<(ostream &os, const Matrix &other)
+Matrix& Matrix::operator=(const Matrix& other)
+{
+    if(this->N != other.N) {
+        cerr << "Error: size doesn't match.\n";
+        exit(-1);
+    }
+    int i, j;
+    for(i = 0; i < this->N; ++i)
+        for(j = 0; j < this->N; ++j)
+            this->el[i][j] = other.el[i][j];
+    
+    return *this;
+}
+
+ostream& operator<<(ostream& os, const Matrix& other)
 {
     for(int i = 0; i < other.N; ++i)
         for(int j = 0; j < other.N; ++j)
-            os << other.mat[i][j] << ( (j < other.N -1)? ' ' : '\n' );
+            os << other.el[i][j] << ( (j < other.N -1)? ' ' : '\n' );
 
     return os;
 }
