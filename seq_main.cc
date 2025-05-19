@@ -1,4 +1,4 @@
-#define epsilon 0.0001  //aggiungi il check
+#define EPSILON 0.0001  //aggiungi il check
 
 #include "matrix.hh"
 
@@ -35,7 +35,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = (stoi(argv[3]) < 50)? 50 : stoi(argv[3]);
+    const int RUN = (argv[3] == nullptr || stoi(argv[3]) < 50)? 50 : stoi(argv[3]);
     double* exe_result = new double[RUN];
     
     const int STEPS = stoi(argv[2]);
