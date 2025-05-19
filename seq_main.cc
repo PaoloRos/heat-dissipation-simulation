@@ -1,5 +1,8 @@
+#define epsilon 0.0001  //aggiungi il check
+
 #include "matrix.hh"
 
+// argv[1]: matrix size; argv[2]: calculation steps; argv[3] execution repetition
 int main(const int argc, const char **argv)
 {
     // ==== I/O strem opening ====
@@ -23,7 +26,7 @@ int main(const int argc, const char **argv)
 
     const int N = (argv[1] == nullptr || stoi(argv[1]) < 20)? 20 : stoi(argv[1]);
 
-    if(argv[1] == nullptr || stoi(argv[1]) < 20)
+    if(argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)
         cerr << "\nWarning: incorrect matrix size -> by default matrix set to 20x20.\n";
 
     Matrix mat(N);
@@ -32,34 +35,51 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
+    const int RUN = (stoi(argv[3]) < 50)? 50 : stoi(argv[3]);
+    double* exe_result = new double[RUN];
+    
     const int STEPS = stoi(argv[2]);
 
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
 
+    double start_t, end_t;
+
     // ==== Actualization algorithm ====
 
     Matrix temp(N);
 
-    for(m = 0; m < STEPS; ++m)
+    for(int exe_i; exe_i < RUN; ++exe_i)
     {
-        temp = mat;
-        for(i = 1; i < N - 1; ++i)
+        start_t = omp_get_wtime();
+        for(m = 0; m < STEPS; ++m)
         {
-            for(j = 1; j < N - 1; ++j) 
+            temp = mat;
+            for(i = 1; i < N - 1; ++i)
             {
-                // sarà il metodo più efficiente?
-                if( (i == 4 && j == 4) || (i == 19 && j == 19) )
-                    continue;
-                
-                mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                for(j = 1; j < N - 1; ++j) 
+                {
+                    if( (i == HS_POS_1 && j == HS_POS_1) || (i == HS_POS_2 && j == HS_POS_2) )
+                        continue;
+
+                    mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                }
             }
         }
+        end_t = omp_get_wtime();
+        exe_result[i] = start_t - end_t;
+        cout << exe_result[i] << endl;
     }
 
     my_out << mat;
 
+    //print mean
+    //print sd
+    cout << mean(exe_result, RUN) << endl;
+
     my_start.close(); my_out.close();
+
+    delete[] exe_result;
 
     cerr << '\n';
 

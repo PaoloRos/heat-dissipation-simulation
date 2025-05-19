@@ -8,8 +8,8 @@ Matrix::Matrix(int n)
     for(int i = 0; i < N; ++i)
         el[i] = new double[N];
 
-    this->el[4][4] = 5;
-    this->el[19][19] = 3;
+    this->el[HS_POS_1][HS_POS_1] = HEAT_SOURCE_1;
+    this->el[HS_POS_2][HS_POS_2] = HEAT_SOURCE_2;
 
     //cerr << "Matrix constructed.\n";
 }
@@ -59,3 +59,4 @@ ostream& operator<<(ostream& os, const Matrix& other)
 
     return os;
 }
+

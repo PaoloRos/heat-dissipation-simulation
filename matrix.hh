@@ -1,3 +1,8 @@
+#define HEAT_SOURCE_1 5
+#define HEAT_SOURCE_2 3
+#define HS_POS_1 5
+#define HS_POS_2 20
+
 #include "std_libraries.hh"
 
 // Matrix of dimension N, but counting: 0...N-1.
@@ -12,11 +17,11 @@ class Matrix
 
         ~Matrix();
 
-        inline int get_size() const;
+        int get_size() const;
 
         Matrix& operator=(const Matrix&);
 
-        inline double& operator()(const int, const int) const;
+        double& operator()(const int, const int) const;
 
         friend ostream& operator<<(ostream&, const Matrix&);
 
@@ -27,6 +32,6 @@ class Matrix
 
 ostream& operator<<(ostream&, const Matrix&);
 
-int Matrix::get_size() const { return this->N; }
+inline int Matrix::get_size() const { return this->N; }
 
-double& Matrix::operator()(const int r, const int c) const { return this->el[r][c]; }
+inline double& Matrix::operator()(const int r, const int c) const { return this->el[r][c]; }
