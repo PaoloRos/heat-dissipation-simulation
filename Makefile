@@ -2,14 +2,17 @@ GCC = g++
 
 all: seq par
 
-seq: seq_main.o matrix.o
-	$(GCC) -o seq seq_main.o matrix.o
+seq: seq_main.o matrix.o std_libraries.o
+	$(GCC) -o seq seq_main.o matrix.o std_libraries.o
 
 seq_main.o: seq_main.cc
 	$(GCC) -c seq_main.cc
 
 matrix.o: matrix.cc matrix.hh
 	$(GCC) -c matrix.cc
+
+std_libraries.o: std_libraries.cc std_libraries.hh
+	$(GCC) -c std_libraries.cc
 
 # n: matrix size; s: calculation steps; r: execution repetition 
 srun:
