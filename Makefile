@@ -1,4 +1,4 @@
-GCC = g++
+GCC = g++ -fopenmp
 
 all: seq par
 

@@ -67,7 +67,7 @@ int main(const int argc, const char **argv)
             }
         }
         end_t = omp_get_wtime();
-        exe_result[i] = start_t - end_t;
+        exe_result[i] = end_t - start_t;
         cout << exe_result[i] << endl;
     }
 
@@ -75,7 +75,7 @@ int main(const int argc, const char **argv)
 
     //print mean
     //print sd
-    cout << mean(exe_result, RUN) << endl;
+    cout << endl << mean(exe_result, RUN) << endl;
 
     my_start.close(); my_out.close();
 
