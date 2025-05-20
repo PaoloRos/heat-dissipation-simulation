@@ -1,12 +1,15 @@
-#include <omp.h>
+//#include <omp.h>
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <iomanip>
+#include <cmath>
 
 using namespace std;
 
 double mean(const double*, const int&);
+
+double sd(const double*, const double&, const int&);
 
 void print_stats(const double*, const int&);

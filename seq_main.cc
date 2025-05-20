@@ -43,7 +43,7 @@ int main(const int argc, const char **argv)
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
 
-    double start_t = 0, end_t = 0;
+    double start_t, end_t;
 
     // ==== Actualization algorithm ====
 
@@ -51,7 +51,7 @@ int main(const int argc, const char **argv)
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
-        start_t = omp_get_wtime();
+        //start_t = omp_get_wtime();
         for(m = 0; m < STEPS; ++m)
         {
             temp = mat;
@@ -66,9 +66,8 @@ int main(const int argc, const char **argv)
                 }
             }
         }
-        end_t = omp_get_wtime();
+        //end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
-	    //cout << exe_result[i] << endl;
     }
 
     my_out << mat;
