@@ -36,6 +36,7 @@ int main(const int argc, const char **argv)
     // ==== Parameters ==== 
 
     const int RUN = (argv[3] == nullptr || stoi(argv[3]) < 50)? 50 : stoi(argv[3]);
+    cerr << RUN << endl;
     double* exe_result = new double[RUN];
     
     const int STEPS = stoi(argv[2]);
@@ -51,7 +52,7 @@ int main(const int argc, const char **argv)
 
     for(int exe_i; exe_i < RUN; ++exe_i)
     {
-        start_t = omp_get_wtime();
+        //start_t = omp_get_wtime();
         for(m = 0; m < STEPS; ++m)
         {
             temp = mat;
@@ -66,16 +67,13 @@ int main(const int argc, const char **argv)
                 }
             }
         }
-        end_t = omp_get_wtime();
-        exe_result[i] = end_t - start_t;
-        cout << exe_result[i] << endl;
+        //end_t = omp_get_wtime();
+        //exe_result[i] = end_t - start_t;
     }
 
     my_out << mat;
 
-    //print mean
-    //print sd
-    cout << endl << mean(exe_result, RUN) << endl;
+    print_stats(exe_result, RUN);
 
     my_start.close(); my_out.close();
 

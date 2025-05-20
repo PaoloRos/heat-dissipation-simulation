@@ -1,18 +1,19 @@
-GCC = g++ -fopenmp
+GCC = g++
+OMP = #-fopenmp
 
 all: seq par
 
 seq: seq_main.o matrix.o std_libraries.o
-	$(GCC) -o seq seq_main.o matrix.o std_libraries.o
+	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
 
 seq_main.o: seq_main.cc
-	$(GCC) -c seq_main.cc
+	$(GCC) $(OMP) -c seq_main.cc
 
 matrix.o: matrix.cc matrix.hh
-	$(GCC) -c matrix.cc
+	$(GCC) $(OMP) -c matrix.cc
 
 std_libraries.o: std_libraries.cc std_libraries.hh
-	$(GCC) -c std_libraries.cc
+	$(GCC) $(OMP) -c std_libraries.cc
 
 # n: matrix size; s: calculation steps; r: execution repetition 
 srun:
@@ -23,7 +24,7 @@ fig:
 # $(f) -> se ci aggiungo il file
 
 clean:
-	> output.txt > starting_mat.txt
+	> output.txt > starting_mat.txt > statistic.txt
 	rm -f *.out *.o seq par
 	rm -rf .vscode
 
