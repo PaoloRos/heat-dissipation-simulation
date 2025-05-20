@@ -7,6 +7,6 @@
 
 using namespace std;
 
-double mean(double*, const int&);
+double mean(const double*, const int&);
 
-void print_stats(double*, const int&);
+void print_stats(const double*, const int&);
