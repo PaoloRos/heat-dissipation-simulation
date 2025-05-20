@@ -1,6 +1,6 @@
 #include "std_libraries.hh"
 
-double mean(const double* arr, const int& size)
+double mean(double* arr, const int& size)
 {
     double mean = 0;
     for(int i = 0; i < size; ++i)
@@ -11,7 +11,7 @@ double mean(const double* arr, const int& size)
     return mean/size;
 }
 
-void print_stats(const double* arr, const int& size)
+void print_stats(double* arr, const int& size)
 {
     fstream my_out;
     my_out.open("statistics.txt", ios::out);

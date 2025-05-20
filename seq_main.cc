@@ -2,7 +2,7 @@
 
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: calculation steps; argv[3] execution repetition
+// argv[1]: matrix size; argv[2]: calculation steps; argv[3]: execution repetition
 int main(const int argc, const char **argv)
 {
     // ==== I/O strem opening ====
@@ -36,7 +36,6 @@ int main(const int argc, const char **argv)
     // ==== Parameters ==== 
 
     const int RUN = (argv[3] == nullptr || stoi(argv[3]) < 50)? 50 : stoi(argv[3]);
-    cerr << RUN << endl;
     double* exe_result = new double[RUN];
     
     const int STEPS = stoi(argv[2]);
@@ -52,7 +51,7 @@ int main(const int argc, const char **argv)
 
     for(int exe_i; exe_i < RUN; ++exe_i)
     {
-        //start_t = omp_get_wtime();
+        start_t = omp_get_wtime();
         for(m = 0; m < STEPS; ++m)
         {
             temp = mat;
@@ -67,8 +66,9 @@ int main(const int argc, const char **argv)
                 }
             }
         }
-        //end_t = omp_get_wtime();
-        //exe_result[i] = end_t - start_t;
+        end_t = omp_get_wtime();
+        exe_result[i] = end_t - start_t;
+	cout << exe_result[i] << endl;
     }
 
     my_out << mat;

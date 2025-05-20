@@ -1,4 +1,4 @@
-//#include <omp.h>
+#include <omp.h>
 
 #include <iostream>
 #include <fstream>
@@ -7,6 +7,6 @@
 
 using namespace std;
 
-double mean(const double*, const int&);
+double mean(double*, const int&);
 
-void print_stats(const double*, const int&);
+void print_stats(double*, const int&);

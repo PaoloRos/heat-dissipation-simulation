@@ -1,5 +1,5 @@
 GCC = g++
-OMP = #-fopenmp
+OMP = -fopenmp
 
 all: seq par
 
@@ -24,7 +24,7 @@ fig:
 # $(f) -> se ci aggiungo il file
 
 clean:
-	> output.txt > starting_mat.txt > statistic.txt
+	> output.txt > starting_mat.txt > statistics.txt
 	rm -f *.out *.o seq par
 	rm -rf .vscode
 
