@@ -51,22 +51,25 @@ int main(const int argc, const char **argv)
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
-        //start_t = omp_get_wtime();
-        for(m = 0; m < STEPS; ++m)
+        start_t = omp_get_wtime();
+	#pragma omp for
+	for(m = 0; m < STEPS; ++m)
         {
             temp = mat;
             for(i = 1; i < N - 1; ++i)
             {
                 for(j = 1; j < N - 1; ++j) 
                 {
-                    if( (i == HS_POS_1 && j == HS_POS_1) || (i == HS_POS_2 && j == HS_POS_2) )
-                        continue;
+                    //if( (i == HS_POS_1 && j == HS_POS_1) || (i == HS_POS_2 && j == HS_POS_2) )
+                        //continue;
 
                     mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
                 }
             }
+	    mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	    mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
         }
-        //end_t = omp_get_wtime();
+        end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
     }
 
