@@ -69,13 +69,13 @@ int main(const int argc, const char **argv)
 	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
-            if(abs(mat - temp) < epsilon) {
+            if(abs(mat - temp) < epsilon)
                 stop = true;
-                my_out << mat;
-            }
         }
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
+
+        if(stop) { my_out << mat; }
 
         mat = backup;
     }
