@@ -7,7 +7,7 @@ seq: seq_main.o matrix.o std_libraries.o
 	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
 
 par: par_block.o matrix.o std_libraries.o
-	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
+	$(GCC) $(OMP) -o par par_block.o matrix.o std_libraries.o
 
 par_block.o: par_block.cc
 	$(GCC) $(OMP) -c par_block.cc
