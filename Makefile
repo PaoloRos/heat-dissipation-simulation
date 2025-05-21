@@ -15,7 +15,7 @@ matrix.o: matrix.cc matrix.hh
 std_libraries.o: std_libraries.cc std_libraries.hh
 	$(GCC) $(OMP) -c std_libraries.cc
 
-# n: matrix size; s: calculation steps; r: execution repetition 
+# n: matrix size; s: calculation steps; r: execution repetition; s: calculation steps
 srun:
 	./seq $(n) $(r) $(s)
 

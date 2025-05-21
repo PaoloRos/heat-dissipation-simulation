@@ -1,6 +1,6 @@
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: execution repetition; argv[3]: calculation steps
+// argv[1]: matrix size; argv[2]: execution repetitions; argv[3]: calculation steps
 int main(const int argc, const char **argv)
 {
     // ==== I/O strem opening ====
@@ -34,13 +34,25 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[2]) + WARMUP;
+    const int RUN = (argv[2] == nullptr || stoi(argv[2]) < 100)? 100 + WARMUP : stoi(argv[2]) + WARMUP;
     double* exe_result = new double[RUN];
+
+    const int STEP = (argv[3] == nullptr || stoi(argv[3]) < 1000)? 1000 : stoi(argv[3]);
+    if(argv[3] == nullptr || stoi(argv[3]) < 1000)
+    { cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
 
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
     const double epsilon = 0.0001;  // minimum discard
     bool stop = false;
+    /* Per quando farò la ε
+    while(!stop)
+    double diff;
+    diff = mat - temp;
+            cerr << '\t' << diff <<'\n';
+            if(abs(diff) < epsilon)
+                stop = true;
+    */
 
     double start_t, end_t;
 
@@ -49,13 +61,11 @@ int main(const int argc, const char **argv)
     Matrix temp(N);
     Matrix backup = mat;
 
-    double diff;
-
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
 	    //#pragma omp for
-        while(!stop)
+        for(m = 0; m < STEP; ++m)
         {
             temp = mat;
             for(i = 1; i < N - 1; ++i)
@@ -67,11 +77,6 @@ int main(const int argc, const char **argv)
             }
 	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
-
-            diff = mat - temp;
-            cerr << '\t' << diff <<'\n';
-            if(abs(diff) < epsilon)
-                stop = true;
         }
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
