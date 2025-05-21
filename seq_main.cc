@@ -34,7 +34,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 100)? 100 : stoi(argv[2]);
+    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[2]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const double alpha = 0.5;   // thermal coefficient
@@ -77,6 +77,7 @@ int main(const int argc, const char **argv)
         // restore variables
         stop = false;
         mat = backup;
+        cerr << "exe_iteration: " << exe_i << " of " << RUN <<'\n';
     }
 
     print_stats(exe_result, RUN);

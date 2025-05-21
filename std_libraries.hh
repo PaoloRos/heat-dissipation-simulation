@@ -1,3 +1,5 @@
+#define WARMUP 3   //to discard the first executions due to warm up
+
 #include <omp.h>
 
 #include <iostream>
