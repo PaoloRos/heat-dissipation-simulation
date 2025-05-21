@@ -1,5 +1,5 @@
 GCC = g++
-OMP = -fopenmp
+OMP = #-fopenmp
 
 all: seq par
 
@@ -17,7 +17,7 @@ std_libraries.o: std_libraries.cc std_libraries.hh
 
 # n: matrix size; s: calculation steps; r: execution repetition 
 srun:
-	./seq $(n) $(s) $(r)
+	./seq $(n) $(r)
 
 fig:
 	python3 display_mxm.py

@@ -60,3 +60,12 @@ ostream& operator<<(ostream& os, const Matrix& other)
     return os;
 }
 
+double Matrix::operator-(const Matrix& other) const
+{
+    double res = 0;
+    for(int i = 0; i < this->N; ++i)
+        for(int j = 0; j < this->N; ++j)
+            res += this->el[i][j] - other.el[i][j];
+    return res;
+}
+

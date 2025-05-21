@@ -25,6 +25,8 @@ class Matrix
 
         friend ostream& operator<<(ostream&, const Matrix&);
 
+        double operator-(const Matrix&) const;
+
     private:
         double **el;
         int N;
