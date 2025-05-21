@@ -47,6 +47,7 @@ int main(const int argc, const char **argv)
     // ==== Actualization algorithm ====
 
     Matrix temp(N);
+    Matrix backup = mat;
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
@@ -73,6 +74,8 @@ int main(const int argc, const char **argv)
         }
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
+
+        mat = backup;
     }
 
     my_out << mat;

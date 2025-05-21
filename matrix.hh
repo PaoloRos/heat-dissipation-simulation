@@ -13,7 +13,7 @@ class Matrix
         Matrix(int);
 
         // forse non serve
-        Matrix(const Matrix&);
+        //Matrix(const Matrix&);
 
         ~Matrix();
 
