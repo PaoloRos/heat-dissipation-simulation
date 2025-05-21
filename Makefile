@@ -17,16 +17,16 @@ std_libraries.o: std_libraries.cc std_libraries.hh
 
 # n: matrix size; s: calculation steps; r: execution repetition; s: calculation steps
 srun:
-	./seq $(n) $(r) $(s)
+	./seq $(n) $(s) $(r)
 
 fig:
 	python3 display_mxm.py
 # $(f) -> se ci aggiungo il file
 
 clean:
-	> output.txt > starting_mat.txt > statistics.txt
+	> starting_mat.txt
 	rm -f *.out *.o seq par
 	rm -rf .vscode
 
 clear:
-	> output.txt > starting_mat.txt
+	> output.txt > starting_mat.txt > statistics.txt

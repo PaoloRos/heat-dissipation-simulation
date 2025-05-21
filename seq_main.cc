@@ -34,11 +34,11 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = (argv[2] == nullptr || stoi(argv[2]) < 100)? 100 + WARMUP : stoi(argv[2]) + WARMUP;
+    const int RUN = 100 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
-    const int STEP = (argv[3] == nullptr || stoi(argv[3]) < 1000)? 1000 : stoi(argv[3]);
-    if(argv[3] == nullptr || stoi(argv[3]) < 1000)
+    const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
+    if(argv[2] == nullptr || stoi(argv[2]) < 1000)
     { cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
 
     const double alpha = 0.5;   // thermal coefficient
@@ -87,7 +87,7 @@ int main(const int argc, const char **argv)
 
         // restore variables
         mat = backup;
-        cerr << "exe_iteration: " << exe_i << " of " << RUN <<'\n';
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
     }
 
     print_stats(exe_result, RUN);
