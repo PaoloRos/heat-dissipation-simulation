@@ -17,7 +17,7 @@ std_libraries.o: std_libraries.cc std_libraries.hh
 
 # n: matrix size; s: calculation steps; r: execution repetition 
 srun:
-	./seq $(n) $(r)
+	./seq $(n) $(r) $(s)
 
 fig:
 	python3 display_mxm.py

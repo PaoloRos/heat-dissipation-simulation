@@ -1,6 +1,6 @@
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: execution repetition
+// argv[1]: matrix size; argv[2]: execution repetition; argv[3]: calculation steps
 int main(const int argc, const char **argv)
 {
     // ==== I/O strem opening ====
@@ -34,7 +34,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 100)? 100 : stoi(argv[3]);
+    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 100)? 100 : stoi(argv[2]);
     double* exe_result = new double[RUN];
 
     const double alpha = 0.5;   // thermal coefficient
@@ -60,12 +60,9 @@ int main(const int argc, const char **argv)
             {
                 for(j = 1; j < N - 1; ++j) 
                 {
-                    //if( (i == HS_POS_1 && j == HS_POS_1) || (i == HS_POS_2 && j == HS_POS_2) )
-                        //continue;
                     mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
                 }
             }
-            // it feels the faster way
 	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
@@ -75,11 +72,12 @@ int main(const int argc, const char **argv)
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
-        if(stop) { my_out << mat; }
+        if(exe_i == RUN - 1) { my_out << mat; }
 
+        // restore variables
+        stop = false;
         mat = backup;
     }
-
 
     print_stats(exe_result, RUN);
 
