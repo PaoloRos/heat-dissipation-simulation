@@ -62,7 +62,7 @@ int main(const int argc, const char **argv)
     Matrix temp(N);
     Matrix backup = mat;
 
-    for(int exe_i = 0; exe_i < RUN; ++exe_i)
+    for(int exe_i = 0; exe_i < 1 /* RUN*/; ++exe_i)
     {
         //start_t = omp_get_wtime();
 
@@ -71,11 +71,11 @@ int main(const int argc, const char **argv)
             const short t_ID = omp_get_thread_num();
 
             //division in multiple matrix
-            const short block_row = ID / blocks_per_row;
-            const short block_col = ID % blocks_per_row;
+            const short block_row = t_ID / blocks_per_row;
+            const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
 
-            cout << "THD " << ID <<" : " << mat(y_0, x_0) << '\n';
+            printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
         }
 
         /* Da paralellizzare:
