@@ -34,7 +34,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 50)? 50 : stoi(argv[3]);
+    const int RUN = (argv[2] == nullptr || stoi(argv[3]) < 100)? 100 : stoi(argv[3]);
     double* exe_result = new double[RUN];
 
     const double alpha = 0.5;   // thermal coefficient
@@ -50,7 +50,7 @@ int main(const int argc, const char **argv)
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
-        //start_t = omp_get_wtime();
+        start_t = omp_get_wtime();
 	    //#pragma omp for
         while(!stop)
         {
@@ -71,8 +71,8 @@ int main(const int argc, const char **argv)
             if(abs(mat - temp) < epsilon)
                 stop = true;
         }
-        //end_t = omp_get_wtime();
-        //exe_result[exe_i] = end_t - start_t;
+        end_t = omp_get_wtime();
+        exe_result[exe_i] = end_t - start_t;
     }
 
     my_out << mat;

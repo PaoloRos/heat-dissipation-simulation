@@ -24,6 +24,7 @@ void print_stats(const double* arr, const int& size)
     double mn = mean(arr, size);
 
     my_out << "---------------- Statistics ----------------\n";
+    my_out << "Calculated on " << size << " iteration\n";
     my_out << "Mean: " << mn << " (s)\n";
     my_out << "Standard deviation: " << sd(arr, mn, size) << " (s)\n";
     my_out << "--------------------------------------------\n\n";
