@@ -49,6 +49,8 @@ int main(const int argc, const char **argv)
     Matrix temp(N);
     Matrix backup = mat;
 
+    double diff;
+
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
@@ -66,7 +68,9 @@ int main(const int argc, const char **argv)
 	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
-            if(abs(mat - temp) < epsilon)
+            diff = mat - temp;
+            cerr << '\t' << diff <<'\n';
+            if(abs(diff) < epsilon)
                 stop = true;
         }
         end_t = omp_get_wtime();
