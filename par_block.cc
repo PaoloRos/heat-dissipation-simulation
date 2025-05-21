@@ -1,8 +1,13 @@
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: execution repetitions; argv[3]: calculation steps
+// argv[1]: matrix size; argv[2]: calculation steps; argv[3]: execution repetitions
 int main(const int argc, const char **argv)
 {
+    if( (stoi(argv[1]) % THD) != 0 ) {
+        cerr << "Error: size of matrix MUST be a multiple of " << THD << "threads!\n";
+        exit(-1);
+    }
+
     // ==== I/O strem opening ====
 
     fstream my_start, my_out;
@@ -48,6 +53,10 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
+    // Variables to divide the matrix in multiple smaller matrix
+    const short blocks_per_row = sqrt(THD);
+    const short B = N / blocks_per_row; // block dimension
+
     // ==== Actualization algorithm ====
 
     Matrix temp(N);
@@ -55,7 +64,21 @@ int main(const int argc, const char **argv)
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
-        start_t = omp_get_wtime();
+        //start_t = omp_get_wtime();
+
+        #pragma omp parallel
+        {
+            const short t_ID = omp_get_thread_num();
+
+            //division in multiple matrix
+            const short block_row = ID / blocks_per_row;
+            const short block_col = ID % blocks_per_row;
+            const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
+
+            cout << "THD " << ID <<" : " << mat(y_0, x_0) << '\n';
+        }
+
+        /* Da paralellizzare:
         for(m = 0; m < STEP; ++m)
         {
             temp = mat;
@@ -69,8 +92,11 @@ int main(const int argc, const char **argv)
 	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
         }
-        end_t = omp_get_wtime();
-        exe_result[exe_i] = end_t - start_t;
+
+        */
+
+        //end_t = omp_get_wtime();
+        //exe_result[exe_i] = end_t - start_t;
 
         if(exe_i == RUN - 1) { my_out << mat; }
 

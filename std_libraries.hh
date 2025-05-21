@@ -1,4 +1,5 @@
 #define WARMUP 3   //to discard the first executions due to warm up
+#define THD 4   //number of used thread
 
 #include <omp.h>
 
