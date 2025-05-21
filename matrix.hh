@@ -12,8 +12,7 @@ class Matrix
         //Initialize the matrix to a null matrix excpet for elements in position (5,5) and (20,20).
         Matrix(int);
 
-        // forse non serve
-        //Matrix(const Matrix&);
+        Matrix(const Matrix&);
 
         ~Matrix();
 
