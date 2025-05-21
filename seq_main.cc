@@ -52,6 +52,8 @@ int main(const int argc, const char **argv)
             cerr << '\t' << diff <<'\n';
             if(abs(diff) < epsilon)
                 stop = true;
+    
+        stop = false;
     */
 
     double start_t, end_t;
@@ -84,7 +86,6 @@ int main(const int argc, const char **argv)
         if(exe_i == RUN - 1) { my_out << mat; }
 
         // restore variables
-        stop = false;
         mat = backup;
         cerr << "exe_iteration: " << exe_i << " of " << RUN <<'\n';
     }
