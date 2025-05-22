@@ -97,19 +97,19 @@ int main(const int argc, const char **argv)
 	 	        //printf("\t%d: itera\n", t_ID);
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
-                out_temp[t_ID] << temp;
-
-                //for(i = 0; i < B; ++i)
-                //{
-                //    for(j = 0; j < B; ++j) 
-                //    {
-			    //        out_temp[t_ID] << static_mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
-                //        //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
-                //    }
-                //}
                 //out_temp[t_ID] << temp;
-                //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+
+                for(i = 1; i < B + 1; ++i)    //attenzione i=1 -> b-1
+                {
+                    for(j = 1; j < B + 1; ++j) 
+                    {
+			            //out_temp[t_ID] << static_mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
+                        mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                    }
+                }
+                out_temp[t_ID] << temp;
+                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             }
 
         }
@@ -137,13 +137,51 @@ int main(const int argc, const char **argv)
     return 0;
 }
 
+// problema: nel calcolo l'accesso a temp deve essere coerente: verificare che non vado fuori range
+
 /*
-IDEA
 
-divido la matrice per un numero di sotto matrici pari al numero dei miei thread
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
 
-lavoro su ogni thread
+(0,0):
+ _ _ _ _ _
+|* * * * *
+|* I * * *
+|* * * * *
+|* * * F *
+|* * * * *
 
-impongo una barriera ad ogni istante t (eventualmente flush dei bordi)
+(0,1):
+_ _ _ _ _
+* * * * *|
+* I * * *|
+* * * * *|
+* * * F *|
+* * * * *|
+
+(1,0)
+|* * * * *
+|* I * * *
+|* * * * *
+|* * * F *
+|* * * * *
+ _ _ _ _ _
+
+(1,1)
+* * * * *|
+* I * * *|
+* * * * *|
+* * * F *|
+* * * * *|
+_ _ _ _ _
+
+ad occhio: cominciare da (1,1) -> (B, B)
 
 */
