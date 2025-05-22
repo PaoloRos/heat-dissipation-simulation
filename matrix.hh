@@ -9,6 +9,8 @@
 class Matrix
 {
     public:
+        Matrix();
+    
         //Initialize the matrix to a null matrix excpet for elements in position (5,5) and (20,20).
         Matrix(int);
 

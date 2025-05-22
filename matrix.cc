@@ -1,5 +1,7 @@
 #include "matrix.hh"
 
+Matrix::Matrix() : el(nullptr) {}
+
 Matrix::Matrix(int n)
 {
     this->N = n;
@@ -28,11 +30,14 @@ Matrix::Matrix(const Matrix& other)
     }
 }
 
+
 Matrix::~Matrix()
 {
-    for(int i = 0; i < N; ++i)
-        delete []el[i];
-    delete []el;
+    if(el != nullptr){
+        for(int i = 0; i < N; ++i)
+            delete []el[i];
+        delete []el;
+    }
 
     //cerr << "Matrix destroyed.\n";
 }
