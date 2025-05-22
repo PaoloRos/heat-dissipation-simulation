@@ -69,7 +69,6 @@ int main(const int argc, const char **argv)
         for(m = 0; m < STEP; ++m)
         {
             temp = mat;
-            #pragma omp for collapse(2)
             for(i = 1; i < N - 1; ++i)
             {
                 for(j = 1; j < N - 1; ++j) 

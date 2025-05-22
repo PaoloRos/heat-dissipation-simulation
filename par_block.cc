@@ -78,8 +78,7 @@ int main(const int argc, const char **argv)
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
 
-        }
-
+        
         /* Da paralellizzare:
         for(m = 0; m < STEP; ++m)
         {

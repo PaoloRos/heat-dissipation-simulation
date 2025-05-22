@@ -1,7 +1,7 @@
 #define WARMUP 3   //to discard the first executions due to warm up
-#define THD 8   //number of used thread
+#define THD 2   //number of used thread
 
-//#include <omp.h>
+#include <omp.h>
 
 #include <iostream>
 #include <fstream>
@@ -16,3 +16,4 @@ double mean(const double*, const int&);
 double sd(const double*, const double&, const int&);
 
 void print_stats(const double*, const int&);
+

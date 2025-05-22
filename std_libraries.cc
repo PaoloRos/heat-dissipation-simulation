@@ -37,3 +37,4 @@ void print_stats(const double* arr, const int& size)
 
     my_out.close();
 }
+
