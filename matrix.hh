@@ -9,7 +9,7 @@
 class Matrix
 {
     public:
-        Matrix();
+        //Matrix();
     
         //Initialize the matrix to a null matrix excpet for elements in position (5,5) and (20,20).
         Matrix(int);
@@ -19,6 +19,8 @@ class Matrix
         ~Matrix();
 
         int get_size() const;
+
+        void copy_subMatrix(const Matrix& other, const short& y0, const short& blc_y, const short& x0, const short& blc_x);
 
         Matrix& operator=(const Matrix&);
 

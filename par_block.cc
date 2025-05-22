@@ -3,10 +3,7 @@
 // argv[1]: matrix size; argv[2]: calculation steps; argv[3]: execution repetitions
 int main(const int argc, const char **argv)
 {
-    //metti try
-
-    
-    if( (stoi(argv[1]) % THD) != 0 ) {
+    if( (stoi(argv[1]) % THD) != 0 ) {  // gestire se nullptr
         cerr << "Error: size of matrix MUST be a multiple of " << THD << "threads!\n";
         exit(-1);
     }
@@ -62,61 +59,60 @@ int main(const int argc, const char **argv)
 
     // ==== Actualization algorithm ====
 
-    Matrix temp;
-    temp = mat;
     Matrix backup = mat;
 
-    //
-//
-    //for(int exe_i = 0; exe_i < 1 /* RUN*/; ++exe_i)
-    //{
-    //    //start_t = omp_get_wtime();
-//
-    //    #pragma omp parallel
-    //    {
-    //        const short t_ID = omp_get_thread_num();
-//
-    //        //division in multiple matrices
-    //        const short block_row = t_ID / blocks_per_row;
-    //        const short block_col = t_ID % blocks_per_row;
-    //        const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
-//
-    //        printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
-    //    }
-//
-    //    /* Da paralellizzare:
-    //    for(m = 0; m < STEP; ++m)
-    //    {
-    //        temp = mat;
-    //        for(i = 1; i < N - 1; ++i)
-    //        {
-    //            for(j = 1; j < N - 1; ++j) 
-    //            {
-    //                mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
-    //            }
-    //        }
-	//        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	//        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
-    //    }
-//
-    //    */
-//
-    //    //end_t = omp_get_wtime();
-    //    //exe_result[exe_i] = end_t - start_t;
-//
-    //    if(exe_i == RUN - 1) { my_out << mat; }
-//
-    //    // restore variables
-    //    mat = backup;
-    //    cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
-    //}
-//
-    //print_stats(exe_result, RUN);
-//
-    //my_start.close(); my_out.close();
-//
-    //delete[] exe_result;
-//
+    for(int exe_i = 0; exe_i < 1 /* RUN*/; ++exe_i)
+    {
+        //start_t = omp_get_wtime();
+
+        #pragma omp parallel
+        {
+            const short t_ID = omp_get_thread_num();
+
+            // Division in multiple matrices
+            const short block_row = t_ID / blocks_per_row;
+            const short block_col = t_ID % blocks_per_row;
+            const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
+
+            //printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
+            
+            // Temporary matrix: B+1 to include elements on the border (of the submatrix)
+
+        }
+
+        /* Da paralellizzare:
+        for(m = 0; m < STEP; ++m)
+        {
+            temp = mat;
+            for(i = 1; i < N - 1; ++i)
+            {
+                for(j = 1; j < N - 1; ++j) 
+                {
+                    mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                }
+            }
+	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+        }
+
+        */
+
+        //end_t = omp_get_wtime();
+        //exe_result[exe_i] = end_t - start_t;
+
+        if(exe_i == RUN - 1) { my_out << mat; }
+
+        // restore variables
+        mat = backup;
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
+    }
+
+    print_stats(exe_result, RUN);
+
+    my_start.close(); my_out.close();
+
+    delete[] exe_result;
+
     cerr << '\n';
 
     

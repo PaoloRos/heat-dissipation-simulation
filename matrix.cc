@@ -1,6 +1,6 @@
 #include "matrix.hh"
 
-Matrix::Matrix() : el(nullptr) {}
+//Matrix::Matrix() : el(nullptr), N(0) {}
 
 Matrix::Matrix(int n)
 {
@@ -40,6 +40,16 @@ Matrix::~Matrix()
     }
 
     //cerr << "Matrix destroyed.\n";
+}
+
+void Matrix::copy_subMatrix(const Matrix& other, const short& y0, const short& blc_y, const short& x0, const short& blc_x)
+{
+    //starting (row, col) position in 'other': (y0 - 1*blc_y, x0 - 1*blc_x)
+    //end position (y0 - 1*blc_y + this->N, x0 - 1*blc_x + this->N)
+
+    //nell'incremento aggiungi i,j
+
+    //for(int i = 0; i < )
 }
 
 Matrix& Matrix::operator=(const Matrix& other)
