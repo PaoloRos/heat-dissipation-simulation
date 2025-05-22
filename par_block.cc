@@ -53,6 +53,8 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
+    omp_set_num_threads(THD);
+
     // Variables to divide the matrix in multiple smaller matrices
     const short blocks_per_row = sqrt(THD);
     const short B = N / blocks_per_row; // block dimension
@@ -78,7 +80,7 @@ int main(const int argc, const char **argv)
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
 
-        
+        }
         /* Da paralellizzare:
         for(m = 0; m < STEP; ++m)
         {
