@@ -87,24 +87,27 @@ int main(const int argc, const char **argv)
             //printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
+            
+            Matrix static_mat = mat;
+
             Matrix temp(B+1, true);
             
             for(m = 0; m < 1 /* STEP*/; ++m)
             {
-	 	//printf("\t%d: itera\n", t_ID);
+	 	        //printf("\t%d: itera\n", t_ID);
                 //temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
                 for(i = 0; i < B; ++i)
                 {
                     for(j = 0; j < B; ++j) 
                     {
-			out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
+			            out_temp[t_ID] << static_mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
                         //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
                     }
                 }
-//		out_temp[t_ID] << temp;
+                //out_temp[t_ID] << temp;
                 //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	        //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             }
 
         }
