@@ -1,5 +1,5 @@
 GCC = g++
-OMP = #-fopenmp
+OMP = -fopenmp
 
 all: seq par
 

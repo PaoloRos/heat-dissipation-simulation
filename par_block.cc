@@ -74,7 +74,7 @@ int main(const int argc, const char **argv)
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
 
-            //printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
+            printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
 

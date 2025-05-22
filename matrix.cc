@@ -84,3 +84,8 @@ double Matrix::operator-(const Matrix& other) const
     return res;
 }
 
+// *    *    *    *    *
+//
+//
+//
+//
