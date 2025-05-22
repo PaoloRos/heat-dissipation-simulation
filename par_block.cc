@@ -62,13 +62,19 @@ int main(const int argc, const char **argv)
 
     // ==== Actualization algorithm ====
 
+    fstream out_temp[4];
+    out_temp[0].open("temp0.txt", ios::out);
+    out_temp[1].open("temp1.txt", ios::out);
+    out_temp[2].open("temp2.txt", ios::out);
+    out_temp[3].open("temp3.txt", ios::out);
+
     Matrix backup = mat;
 
     for(int exe_i = 0; exe_i < 1 /* RUN*/; ++exe_i)
     {
         //start_t = omp_get_wtime();
 
-        #pragma omp parallel omp_set_thread_num(THD)
+        #pragma omp parallel
         {
             const short t_ID = omp_get_thread_num();
 
@@ -81,6 +87,10 @@ int main(const int argc, const char **argv)
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
+
+            temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
+
+            out_temp[t_ID] << temp;
 
         }
         /* Da paralellizzare:

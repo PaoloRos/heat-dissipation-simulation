@@ -13,9 +13,7 @@ Matrix::Matrix(int size, bool null)
     if(!null) {
         this->el[HS_POS_1][HS_POS_1] = HEAT_SOURCE_1;
         this->el[HS_POS_2][HS_POS_2] = HEAT_SOURCE_2;
-        printf("\n!null\n");
     }
-    else { printf("\nnull\n"); }
 
     //cerr << "Matrix constructed.\n";
 }
@@ -50,9 +48,9 @@ void Matrix::copy_subMatrix(const Matrix& other, const short& y0, const short& b
     //starting (row, col) position in 'other': (y0 - 1*blc_y, x0 - 1*blc_x)
     //end position (y0 - 1*blc_y + this->N, x0 - 1*blc_x + this->N)
 
-    //nell'incremento aggiungi i,j
-
-    //for(int i = 0; i < )
+    for(int r = 0; r < this->N; ++r)
+        for(int c = 0; c < this->N; ++c)
+            this->el[r][c] = other.el[y0 - 1*blc_y + r][x0 - 1*blc_x + c];
 }
 
 Matrix& Matrix::operator=(const Matrix& other)
