@@ -63,7 +63,7 @@ int main(const int argc, const char **argv)
     Matrix temp(N);
     Matrix backup = mat;
 
-    for(int exe_i = 0; exe_i < RUN; ++exe_i)
+    for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
         start_t = omp_get_wtime();
         for(m = 0; m < STEP; ++m)
@@ -82,8 +82,8 @@ int main(const int argc, const char **argv)
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
-        if(exe_i == RUN - 1) { my_out << mat; }
-
+        //if(exe_i == RUN - 1) { my_out << mat; }
+	my_out << mat;
         // restore variables
         mat = backup;
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';

@@ -88,20 +88,23 @@ int main(const int argc, const char **argv)
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
-
-            for(m = 0; m < STEP; ++m)
+            
+            for(m = 0; m < 1 /* STEP*/; ++m)
             {
-                temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
+	 	//printf("\t%d: itera\n", t_ID);
+                //temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
                 for(i = 1; i < B - 1; ++i)
                 {
                     for(j = 1; j < B - 1; ++j) 
                     {
-                        mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+			out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
+                        //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
                     }
                 }
-                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+		out_temp[t_ID] << temp;
+                //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	        //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             }
 
         }
@@ -109,8 +112,8 @@ int main(const int argc, const char **argv)
         //end_t = omp_get_wtime();
         //exe_result[exe_i] = end_t - start_t;
 
-        if(exe_i == RUN - 1) { my_out << mat; }
-
+        //if(exe_i == RUN - 1) { my_out << mat; }
+        my_out << mat;
         // restore variables
         mat = backup;
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
