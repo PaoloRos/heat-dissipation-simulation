@@ -30,7 +30,6 @@ fig:
 # $(f) -> se ci aggiungo il file
 
 clean:
-	> starting_mat.txt
 	rm -f *.out *.o seq par
 	rm -rf .vscode
 
