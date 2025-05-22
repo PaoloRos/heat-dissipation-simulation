@@ -12,7 +12,7 @@ int main(const int argc, const char **argv)
 
     fstream my_start, my_out;
     my_start.open("starting_mat.txt", ios::out);
-    my_out.open("output.txt", ios::out);
+    my_out.open("par_output.txt", ios::out);
 
     if(my_start.fail() || my_out.fail()) {
         cerr << "Error in opening file.\n";
@@ -62,6 +62,7 @@ int main(const int argc, const char **argv)
 
     // ==== Actualization algorithm ====
 
+    // per il debug
     fstream out_temp[4];
     out_temp[0].open("temp0.txt", ios::out);
     out_temp[1].open("temp1.txt", ios::out);
@@ -83,32 +84,27 @@ int main(const int argc, const char **argv)
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
 
-            printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
+            //printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
 
-            temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
-
-            out_temp[t_ID] << temp;
-
-        }
-        /* Da paralellizzare:
-        for(m = 0; m < STEP; ++m)
-        {
-            temp = mat;
-            for(i = 1; i < N - 1; ++i)
+            for(m = 0; m < STEP; ++m)
             {
-                for(j = 1; j < N - 1; ++j) 
-                {
-                    mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
-                }
-            }
-	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
-        }
+                temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
-        */
+                for(i = 1; i < B - 1; ++i)
+                {
+                    for(j = 1; j < B - 1; ++j) 
+                    {
+                        mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                    }
+                }
+                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+            }
+
+        }
 
         //end_t = omp_get_wtime();
         //exe_result[exe_i] = end_t - start_t;
