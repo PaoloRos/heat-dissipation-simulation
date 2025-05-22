@@ -27,8 +27,9 @@ int main(const int argc, const char **argv)
 
     // ==== Matrix generation ====
 
+    /* $$$$ aggiungi un check per dimensione short $$$$ */
     // by default 24 -> considering I've 4 core
-    const int N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : stoi(argv[1]);
+    const short N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : stoi(argv[1]);
 
     if(argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)
     { cerr << "\nWarning: incorrect matrix size -> by default matrix set to 24x24.\n"; }
@@ -67,7 +68,7 @@ int main(const int argc, const char **argv)
     {
         //start_t = omp_get_wtime();
 
-        #pragma omp parallel
+        #pragma omp parallel omp_set_thread_num(THD)
         {
             const short t_ID = omp_get_thread_num();
 
@@ -79,6 +80,7 @@ int main(const int argc, const char **argv)
             printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
+            Matrix temp(B+1, true);
 
         }
         /* Da paralellizzare:

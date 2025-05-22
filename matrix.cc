@@ -2,16 +2,20 @@
 
 //Matrix::Matrix() : el(nullptr), N(0) {}
 
-Matrix::Matrix(int n)
+Matrix::Matrix(int size, bool null)
 {
-    this->N = n;
+    this->N = size;
 
     this->el = new double *[N];
     for(int i = 0; i < N; ++i)
         el[i] = new double[N];
 
-    this->el[HS_POS_1][HS_POS_1] = HEAT_SOURCE_1;
-    this->el[HS_POS_2][HS_POS_2] = HEAT_SOURCE_2;
+    if(!null) {
+        this->el[HS_POS_1][HS_POS_1] = HEAT_SOURCE_1;
+        this->el[HS_POS_2][HS_POS_2] = HEAT_SOURCE_2;
+        printf("\n!null\n");
+    }
+    else { printf("\nnull\n"); }
 
     //cerr << "Matrix constructed.\n";
 }
@@ -29,7 +33,6 @@ Matrix::Matrix(const Matrix& other)
             el[i][j] = other.el[i][j];
     }
 }
-
 
 Matrix::~Matrix()
 {

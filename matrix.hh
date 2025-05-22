@@ -11,8 +11,8 @@ class Matrix
     public:
         //Matrix();
     
-        //Initialize the matrix to a null matrix excpet for elements in position (5,5) and (20,20).
-        Matrix(int);
+        //Initialize the matrix to a null matrix. In case 'null' == false -> elements in position (5,5) and (20,20) have default values.
+        Matrix(int size, bool null = false);
 
         Matrix(const Matrix&);
 
@@ -32,7 +32,7 @@ class Matrix
 
     private:
         double **el;
-        int N;
+        short N;
 };
 
 ostream& operator<<(ostream&, const Matrix&);
