@@ -75,7 +75,7 @@ int main(const int argc, const char **argv)
     {
         //start_t = omp_get_wtime();
 
-        #pragma omp parallel
+        #pragma omp parallel shared(mat)
         {
             const short t_ID = omp_get_thread_num();
 
