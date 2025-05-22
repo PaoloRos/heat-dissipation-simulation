@@ -95,16 +95,18 @@ int main(const int argc, const char **argv)
             for(m = 0; m < 1 /* STEP*/; ++m)
             {
 	 	        //printf("\t%d: itera\n", t_ID);
-                //temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
+                temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
-                for(i = 0; i < B; ++i)
-                {
-                    for(j = 0; j < B; ++j) 
-                    {
-			            out_temp[t_ID] << static_mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
-                        //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
-                    }
-                }
+                out_temp[t_ID] << temp;
+
+                //for(i = 0; i < B; ++i)
+                //{
+                //    for(j = 0; j < B; ++j) 
+                //    {
+			    //        out_temp[t_ID] << static_mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
+                //        //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                //    }
+                //}
                 //out_temp[t_ID] << temp;
                 //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
