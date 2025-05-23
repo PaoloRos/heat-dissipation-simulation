@@ -66,7 +66,7 @@ int main(const int argc, const char **argv)
     for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
         start_t = omp_get_wtime();
-        for(m = 0; m < STEP; ++m)
+        for(m = 0; m < 1/*STEP*/; ++m)
         {
             temp = mat;
             for(i = 1; i < N - 1; ++i)

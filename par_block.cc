@@ -59,7 +59,8 @@ int main(const int argc, const char **argv)
     // Variables to divide the matrix in multiple smaller matrices
     const short blocks_per_row = sqrt(THD);
     const short B = N / blocks_per_row; // block dimension
-
+    
+    //cerr << blocks_per_row << " -- " << B <<'\n';
     // ==== Actualization algorithm ====
 
     // per il debug
@@ -92,23 +93,28 @@ int main(const int argc, const char **argv)
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
             
+
+            //out_temp[t_ID] << block_row << " -- " << block_col << " -- " << y_0 << " -- " << x_0 << '\n';
+
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
             
-            for(k = 0; k < STEP; ++k)
+            for(k = 0; k < 1/*STEP*/; ++k)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
-                out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp;
+                //out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp;
                 for(r = 1; r < B - 1; ++r)
                 {
                     for(c = 1; c < B - 1; ++c) 
                     {
+                        if( (y_0 + r == HS_POS_1 && x_0 + c == HS_POS_1) || (y_0 + r == HS_POS_2 && x_0 + c == HS_POS_2) ) continue;
+
                         mat(y_0 + r, x_0 + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
                     }
                 }
-                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+                //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
                 #pragma omp barrier
             }
