@@ -40,7 +40,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 100 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -78,7 +78,7 @@ int main(const int argc, const char **argv)
 
     Matrix backup = mat;
 
-    for(int exe_i = 0; exe_i < 1 /* RUN*/; ++exe_i)
+    for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         //start_t = omp_get_wtime();
 
@@ -93,7 +93,6 @@ int main(const int argc, const char **argv)
             const short block_row = t_ID / blocks_per_row;
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
-            
 
             //out_temp[t_ID] << block_row << " -- " << block_col << " -- " << y_0 << " -- " << x_0 << '\n';
 
@@ -104,7 +103,7 @@ int main(const int argc, const char **argv)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
-                out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
+                //out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
 
                 short r_on_mat = y_0 - 1 * block_row;
                 short c_on_mat = x_0 - 1 * block_col;
@@ -129,11 +128,11 @@ int main(const int argc, const char **argv)
 
         }
 
-        //end_t = omp_get_wtime();
-        //exe_result[exe_i] = end_t - start_t;
+        end_t = omp_get_wtime();
+        exe_result[exe_i] = end_t - start_t;
 
-        //if(exe_i == RUN - 1) { my_out << mat; }
-        my_out << mat;
+        if(exe_i == RUN - 1) { my_out << mat; }
+        //my_out << mat;
         // restore variables
         mat = backup;
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
