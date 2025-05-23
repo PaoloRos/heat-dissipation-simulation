@@ -76,9 +76,9 @@ int main(const int argc, const char **argv)
     out_temp[3] << setw(3) << fixed << setprecision(2);
 
 
-    Matrix backup = mat;
-
-    for(int exe_i = 0; exe_i < RUN; ++exe_i)
+    Matrix
+    
+    for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
         start_t = omp_get_wtime();
 
@@ -94,16 +94,12 @@ int main(const int argc, const char **argv)
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
 
-            //out_temp[t_ID] << block_row << " -- " << block_col << " -- " << y_0 << " -- " << x_0 << '\n';
-
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
             
             for(k = 0; k < STEP; ++k)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
-                
-                //out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
 
                 short r_on_mat = y_0 - 1 * block_row;
                 short c_on_mat = x_0 - 1 * block_col;
@@ -111,18 +107,14 @@ int main(const int argc, const char **argv)
                 {
                     for(c = 1; c < B; ++c) 
                     {
-                        //if( (r_on_mat + r == HS_POS_1 && c_on_mat + c == HS_POS_1) || (r_on_mat + r == HS_POS_2 && c_on_mat + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
-
-                        //out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat + r <<", " << c_on_mat + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
-
                         mat(r_on_mat + r, c_on_mat + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
-                        //out_temp[t_ID] << " = " << mat(r_on_mat + r, c_on_mat + c) << '\n';
                     }
                 }
-                //out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
+                // Ottimizzazione: l'aggiornamento lo effettuerò solo nel thread a cui compete la sotto matrice
                 mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
+                //Impone la sincronizzazione per scandire il tempo tra i thread
                 #pragma omp barrier
             }
 
@@ -131,8 +123,10 @@ int main(const int argc, const char **argv)
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
-        if(exe_i == RUN - 1) { my_out << mat; }
-        //my_out << mat;
+        // SCOMMENTARE per effettuare statistiche
+        //if(exe_i == RUN - 1) { my_out << mat; }
+        my_out << mat;  //COMMENTARE per le statistiche
+
         // restore variables
         mat = backup;
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
@@ -146,56 +140,20 @@ int main(const int argc, const char **argv)
 
     cerr << '\n';
 
-    
-
     return 0;
 }
 
-// problema: nel calcolo l'accesso a temp deve essere coerente: verificare che non vado fuori range
 
-/*
+// Commenti del debug
 
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
 
-(0,0):
- _ _ _ _ _
-|* * * * *
-|* I * * *
-|* * * * *
-|* * * F *
-|* * * * *
+                //out_temp[t_ID] << block_row << " -- " << block_col << " -- " << y_0 << " -- " << x_0 << '\n';
+                //out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
 
-(0,1):
-_ _ _ _ _
-* * * * *|
-* I * * *|
-* * * * *|
-* * * F *|
-* * * * *|
+//if( (r_on_mat + r == HS_POS_1 && c_on_mat + c == HS_POS_1) || (r_on_mat + r == HS_POS_2 && c_on_mat + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
 
-(1,0)
-|* * * * *
-|* I * * *
-|* * * * *
-|* * * F *
-|* * * * *
- _ _ _ _ _
+                        //out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat + r <<", " << c_on_mat + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
 
-(1,1)
-* * * * *|
-* I * * *|
-* * * * *|
-* * * F *|
-* * * * *|
-_ _ _ _ _
+                        //out_temp[t_ID] << " = " << mat(r_on_mat + r, c_on_mat + c) << '\n';
 
-ad occhio: cominciare da (1,1) -> (B, B)
-
-*/
+                        //out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
