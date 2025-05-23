@@ -103,13 +103,13 @@ int main(const int argc, const char **argv)
                 {
                     for(j = 1; j < B; ++j) 
                     {
-			            out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
-                        //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+			            //out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
+                        mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
                     }
                 }
-                //out_temp[t_ID] << temp;
-                //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+                out_temp[t_ID] << temp;
+                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             }
 
         }
