@@ -92,7 +92,7 @@ int main(const int argc, const char **argv)
 
             Matrix temp(B+1, true);
             
-            for(m = 0; m < 1 /* STEP*/; ++m)
+            for(m = 0; m < STEP; ++m)
             {
 	 	        //printf("\t%d: itera\n", t_ID);
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
