@@ -103,16 +103,17 @@ int main(const int argc, const char **argv)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
-                out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp;
-                for(r = 1; r < B - 1; ++r)
+                out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
+                for(r = 1; r < B; ++r)
                 {
-                    for(c = 1; c < B - 1; ++c) 
+                    for(c = 1; c < B; ++c) 
                     {
                         if( (y_0 + r == HS_POS_1 && x_0 + c == HS_POS_1) || (y_0 + r == HS_POS_2 && x_0 + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
 
-                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<y_0 + r <<", " << x_0 + c << ") = " << temp(r,c) << "+" << alpha << "*" dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" temp(r-1,c) <<"+" temp(r,c-1) <<"-" 4 <<"*" <<temp(r,c) << ")\n";
+                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<y_0 + r <<", " << x_0 + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
 
                         mat(y_0 + r, x_0 + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
+                        out_temp[t_ID] << " = " << mat(y_0 + r, x_0 + c) << '\n';
                     }
                 }
                 out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
