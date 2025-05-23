@@ -34,7 +34,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 100 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -63,10 +63,10 @@ int main(const int argc, const char **argv)
     Matrix temp(N);
     Matrix backup = mat;
 
-    for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
+    for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
-        for(m = 0; m < 1/*STEP*/; ++m)
+        for(m = 0; m < STEP; ++m)
         {
             temp = mat;
             for(i = 1; i < N - 1; ++i)
@@ -82,8 +82,8 @@ int main(const int argc, const char **argv)
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
-        //if(exe_i == RUN - 1) { my_out << mat; }
-	my_out << mat;
+        if(exe_i == RUN - 1) { my_out << mat; }
+	//my_out << mat;
         // restore variables
         mat = backup;
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';

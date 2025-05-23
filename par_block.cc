@@ -80,7 +80,7 @@ int main(const int argc, const char **argv)
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
-        //start_t = omp_get_wtime();
+        start_t = omp_get_wtime();
 
         #pragma omp parallel
         {
