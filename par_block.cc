@@ -108,11 +108,14 @@ int main(const int argc, const char **argv)
                 {
                     for(c = 1; c < B - 1; ++c) 
                     {
-                        if( (y_0 + r == HS_POS_1 && x_0 + c == HS_POS_1) || (y_0 + r == HS_POS_2 && x_0 + c == HS_POS_2) ) continue;
+                        if( (y_0 + r == HS_POS_1 && x_0 + c == HS_POS_1) || (y_0 + r == HS_POS_2 && x_0 + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
+
+                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<y_0 + r <<", " << x_0 + c << ") = " << temp(r,c) << "+" << alpha << "*" dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" temp(r-1,c) <<"+" temp(r,c-1) <<"-" 4 <<"*" <<temp(r,c) << ")\n";
 
                         mat(y_0 + r, x_0 + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
                     }
                 }
+                out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
                 //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
