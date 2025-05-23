@@ -78,7 +78,6 @@ int main(const int argc, const char **argv)
         #pragma omp parallel
         {
             const short t_ID = omp_get_thread_num();
-            printf("%d: used\n", t_ID);
 
             short r, c, k;
 
@@ -86,30 +85,25 @@ int main(const int argc, const char **argv)
             const short block_row = t_ID / blocks_per_row;
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
-
-            //printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
             
             for(k = 0; k < STEP; ++k)
             {
-	 	        //printf("\t%d: itera\n", t_ID);
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
-                //out_temp[t_ID] << temp;
-
-                for(r = 1; r < B; ++r)    //attenzione i=1 -> b-1
+                for(r = 1; r < B; ++r)
                 {
                     for(c = 1; c < B; ++c) 
                     {
-			            //out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
                         mat(y_0 + r, x_0 + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
                     }
                 }
-                out_temp[t_ID] << temp;
                 mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+
+                #pragma omp barrier
             }
 
         }
