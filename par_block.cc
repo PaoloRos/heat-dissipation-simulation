@@ -92,7 +92,8 @@ int main(const int argc, const char **argv)
             for(k = 0; k < STEP; ++k)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
-
+                
+                out_temp[t_ID] << "\n Prima:\n" << temp;
                 for(r = 1; r < B; ++r)
                 {
                     for(c = 1; c < B; ++c) 
