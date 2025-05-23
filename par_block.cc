@@ -69,6 +69,12 @@ int main(const int argc, const char **argv)
     out_temp[2].open("temp2.txt", ios::out);
     out_temp[3].open("temp3.txt", ios::out);
 
+    out_temp[0] << setw(3) << fixed << setprecision(2);
+    out_temp[1] << setw(3) << fixed << setprecision(2);
+    out_temp[2] << setw(3) << fixed << setprecision(2);
+    out_temp[3] << setw(3) << fixed << setprecision(2);
+
+
     Matrix backup = mat;
 
     for(int exe_i = 0; exe_i < 1 /* RUN*/; ++exe_i)
@@ -93,7 +99,7 @@ int main(const int argc, const char **argv)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
-                out_temp[t_ID] << "\n Prima:\n" << temp;
+                out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp;
                 for(r = 1; r < B; ++r)
                 {
                     for(c = 1; c < B; ++c) 
