@@ -89,6 +89,7 @@ int main(const int argc, const char **argv)
             short r, c, k;
 
             // Division in multiple matrices (chatGPT)
+            // block_row e block_col dovrebbero valere sempre 1: per comprensione del codice gli ho messo un 1* davanti
             const short block_row = t_ID / blocks_per_row;
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
@@ -104,16 +105,19 @@ int main(const int argc, const char **argv)
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
                 out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
+
+                short r_on_mat = y_0 + r - 1 * block_row;
+                short c_on_mat = x_0 + c - 1 * block_col;
                 for(r = 1; r < B; ++r)
                 {
                     for(c = 1; c < B; ++c) 
                     {
-                        if( (y_0 + r == HS_POS_1 && x_0 + c == HS_POS_1) || (y_0 + r == HS_POS_2 && x_0 + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
+                        if( (r_on_mat == HS_POS_1 && c_on_mat == HS_POS_1) || (r_on_mat == HS_POS_2 && c_on_mat == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
 
-                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<y_0 + r <<", " << x_0 + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
+                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat <<", " << c_on_mat << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
 
-                        mat(y_0 + r, x_0 + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
-                        out_temp[t_ID] << " = " << mat(y_0 + r, x_0 + c) << '\n';
+                        mat(r_on_mat, c_on_mat) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
+                        out_temp[t_ID] << " = " << mat(r_on_mat, c_on_mat) << '\n';
                     }
                 }
                 out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
