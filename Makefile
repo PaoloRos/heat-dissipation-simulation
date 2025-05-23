@@ -26,7 +26,7 @@ srun:
 	./seq $(n) $(s) $(r)
 
 fig:
-	python3 display_mxm.py
+	python3 display_mxm.py $(f)
 # $(f) -> se ci aggiungo il file
 
 clean:
