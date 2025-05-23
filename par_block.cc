@@ -23,7 +23,7 @@ int main(const int argc, const char **argv)
     my_start << setw(3) << fixed << setprecision(2);
     my_out << setw(3) << fixed << setprecision(2);
 
-    //int i, j, m;   // counters
+    int i, j, m;   // counters
 
     // ==== Matrix generation ====
 
@@ -75,9 +75,10 @@ int main(const int argc, const char **argv)
     {
         //start_t = omp_get_wtime();
 
-        #pragma omp parallel private(i, j, m)
+        #pragma omp parallel
         {
             const short t_ID = omp_get_thread_num();
+            printf("%d: used\n", t_ID);
 
             short r, c, k;
 
