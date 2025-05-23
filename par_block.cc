@@ -103,7 +103,7 @@ int main(const int argc, const char **argv)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
-                //out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp;
+                out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp;
                 for(r = 1; r < B - 1; ++r)
                 {
                     for(c = 1; c < B - 1; ++c) 
