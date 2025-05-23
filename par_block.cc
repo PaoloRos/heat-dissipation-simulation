@@ -75,7 +75,7 @@ int main(const int argc, const char **argv)
     {
         //start_t = omp_get_wtime();
 
-        #pragma omp parallel shared(mat)
+        #pragma omp parallel private(i, j, m)
         {
             const short t_ID = omp_get_thread_num();
 
@@ -88,7 +88,7 @@ int main(const int argc, const char **argv)
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             
-            Matrix static_mat = mat;
+            //Matrix static_mat = mat;
 
             Matrix temp(B+1, true);
             
@@ -99,17 +99,17 @@ int main(const int argc, const char **argv)
 
                 //out_temp[t_ID] << temp;
 
-                for(i = 1; i < B + 1; ++i)    //attenzione i=1 -> b-1
+                for(i = 1; i < B; ++i)    //attenzione i=1 -> b-1
                 {
-                    for(j = 1; j < B + 1; ++j) 
+                    for(j = 1; j < B; ++j) 
                     {
-			            //out_temp[t_ID] << static_mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
-                        mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+			            out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
+                        //mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
                     }
                 }
-                out_temp[t_ID] << temp;
-                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+                //out_temp[t_ID] << temp;
+                //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             }
 
         }
