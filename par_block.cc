@@ -100,7 +100,7 @@ int main(const int argc, const char **argv)
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
             Matrix temp(B+1, true);
             
-            for(k = 0; k < 1/*STEP*/; ++k)
+            for(k = 0; k < STEP; ++k)
             {
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
                 
@@ -112,17 +112,17 @@ int main(const int argc, const char **argv)
                 {
                     for(c = 1; c < B; ++c) 
                     {
-                        if( (r_on_mat + r == HS_POS_1 && c_on_mat + c == HS_POS_1) || (r_on_mat + r == HS_POS_2 && c_on_mat + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
+                        //if( (r_on_mat + r == HS_POS_1 && c_on_mat + c == HS_POS_1) || (r_on_mat + r == HS_POS_2 && c_on_mat + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
 
-                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat + r <<", " << c_on_mat + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
+                        //out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat + r <<", " << c_on_mat + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
 
                         mat(r_on_mat + r, c_on_mat + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
-                        out_temp[t_ID] << " = " << mat(r_on_mat + r, c_on_mat + c) << '\n';
+                        //out_temp[t_ID] << " = " << mat(r_on_mat + r, c_on_mat + c) << '\n';
                     }
                 }
-                out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
-                //mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
-	            //mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+                //out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
+                mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
                 #pragma omp barrier
             }
