@@ -106,18 +106,18 @@ int main(const int argc, const char **argv)
                 
                 out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
 
-                short r_on_mat = y_0 + r - 1 * block_row;
-                short c_on_mat = x_0 + c - 1 * block_col;
+                short r_on_mat = y_0 - 1 * block_row;
+                short c_on_mat = x_0 - 1 * block_col;
                 for(r = 1; r < B; ++r)
                 {
                     for(c = 1; c < B; ++c) 
                     {
-                        if( (r_on_mat == HS_POS_1 && c_on_mat == HS_POS_1) || (r_on_mat == HS_POS_2 && c_on_mat == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
+                        if( (r_on_mat + r == HS_POS_1 && c_on_mat + c == HS_POS_1) || (r_on_mat + r == HS_POS_2 && c_on_mat + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
 
-                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat <<", " << c_on_mat << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
+                        out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat + r <<", " << c_on_mat + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
 
-                        mat(r_on_mat, c_on_mat) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
-                        out_temp[t_ID] << " = " << mat(r_on_mat, c_on_mat) << '\n';
+                        mat(r_on_mat + r, c_on_mat + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
+                        out_temp[t_ID] << " = " << mat(r_on_mat + r, c_on_mat + c) << '\n';
                     }
                 }
                 out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;
