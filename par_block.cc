@@ -23,7 +23,7 @@ int main(const int argc, const char **argv)
     my_start << setw(3) << fixed << setprecision(2);
     my_out << setw(3) << fixed << setprecision(2);
 
-    int i, j, m;   // counters
+    //int i, j, m;   // counters
 
     // ==== Matrix generation ====
 
@@ -79,7 +79,9 @@ int main(const int argc, const char **argv)
         {
             const short t_ID = omp_get_thread_num();
 
-            // Division in multiple matrices
+            short r, c, k;
+
+            // Division in multiple matrices (chatGPT)
             const short block_row = t_ID / blocks_per_row;
             const short block_col = t_ID % blocks_per_row;
             const short y_0 = block_row * B, x_0 = block_col * B;   // position first el. of the block in the original matrix
@@ -87,24 +89,21 @@ int main(const int argc, const char **argv)
             //printf("THD %d: position (%d, %d) =  %f\n", t_ID, y_0, x_0, mat(y_0, x_0));
             
             // Temporary matrix: B+1 to include elements on the border (of the submatrix)
-            
-            //Matrix static_mat = mat;
-
             Matrix temp(B+1, true);
             
-            for(m = 0; m < STEP; ++m)
+            for(k = 0; k < STEP; ++k)
             {
 	 	        //printf("\t%d: itera\n", t_ID);
                 temp.copy_subMatrix(mat, y_0, block_row, x_0, block_col);
 
                 //out_temp[t_ID] << temp;
 
-                for(i = 1; i < B; ++i)    //attenzione i=1 -> b-1
+                for(r = 1; r < B; ++r)    //attenzione i=1 -> b-1
                 {
-                    for(j = 1; j < B; ++j) 
+                    for(c = 1; c < B; ++c) 
                     {
 			            //out_temp[t_ID] << mat(y_0 + i, x_0 + j) << ( (j < B - 1)? ' ' : '\n' );
-                        mat(y_0 + i, x_0 + j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
+                        mat(y_0 + r, x_0 + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
                     }
                 }
                 out_temp[t_ID] << temp;
