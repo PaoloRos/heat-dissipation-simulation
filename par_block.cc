@@ -59,8 +59,7 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
-    omp_set_num_threads(THD);
-
+    
     // Variables to divide the matrix in multiple smaller matrices
     const short blocks_per_row = sqrt(THD);
     const short B = N / blocks_per_row; // block dimension
@@ -69,29 +68,30 @@ int main(const int argc, const char **argv)
     Matrix temp(B+1);
     
     // ==== Actualization algorithm ====
-
+    
     // per il debug
     fstream out_temp[4];
     out_temp[0].open("temp0.txt", ios::out);
     out_temp[1].open("temp1.txt", ios::out);
     out_temp[2].open("temp2.txt", ios::out);
     out_temp[3].open("temp3.txt", ios::out);
-
+    
     for(i = 0; i < 4; ++i)
-        out_temp[i] << setw(3) << fixed << setprecision(2);
-
-
+    out_temp[i] << setw(3) << fixed << setprecision(2);
+    
+    
     for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
         start_t = omp_get_wtime();
-
+        
         for(t = 0; t < STEP; ++t)   //cycle that flows through time
         {
-            #pragma omp parallel firstprivate(temp)
+            omp_set_num_threads(THD);
+            #pragma omp parallel //firstprivate(temp)
             {
                 const short t_ID = omp_get_thread_num();
 
-                printf("%d: %d", t_ID, temp(HS_POS_1, HS_POS_1));
+                printf("%d: %f", t_ID, /*temp(HS_POS_1, HS_POS_1)*/ 3 );
             }
         }
 
