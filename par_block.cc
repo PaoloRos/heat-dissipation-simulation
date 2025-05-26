@@ -84,6 +84,7 @@ int main(const int argc, const char **argv)
 
         for(t = 0; t < STEP; ++t)   //cycle that flows through time
         {
+            //matrix body actualization
             omp_set_num_threads(THD);
             #pragma omp parallel firstprivate(temp)
             {
@@ -99,16 +100,43 @@ int main(const int argc, const char **argv)
                 temp.copy_subMatrix(mat, r_on_mat, c_on_mat);
 
                 for(r = 1; r < B; ++r)
-                {
-                    for(c = 1; c < B; ++c) 
-                    {
+                    for(c = 1; c < B; ++c)
                         mat(r_on_mat + r, c_on_mat + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
-                    }
-                }
             }
 
+            //heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+
+            //border actualization
+            omp_set_num_threads(4);
+            #pragma omp sections
+            {
+                #pragma omp section //first row
+                {
+                    #pragma omp simd
+                    for(i = 1; i < N - 1; ++i)
+                        mat(0, i) = mat(1, i);
+                }
+                #pragma omp section //last row
+                {
+                    #pragma omp simd
+                    for(i = 1; i < N - 1; ++i)
+                        mat(N - 1, i) = mat(N - 2, i);
+                }
+                #pragma omp section //first column
+                {
+                    #pragma omp simd
+                    for(i = 1; i < N - 1; ++i)
+                        mat(i, 0) = mat(i, 1);
+                }
+                #pragma omp section //last column
+                {
+                    #pragma omp simd
+                    for(i = 1; i < N - 1; ++i)
+                        mat(i, N - 1) = mat(i, N - 2);
+                }
+            }
         }
 
         end_t = omp_get_wtime();
