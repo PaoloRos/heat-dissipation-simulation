@@ -78,12 +78,34 @@ int main(const int argc, const char **argv)
             }
 	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+
+            // updates first and last rows
+            for(i = 1; i < N - 1; ++i)
+            {
+                mat(0, i) = mat(1, i);
+                mat(N-1, i) = mat(N-2, i);
+            }
+
+            //updates first and last columns
+            for(i = 1; i < N - 1; ++i)
+            {
+                mat(i, 0) = mat(i, 1);
+                mat(i, N-1) = mat(i, N-2);
+            }
+
+            //cout << mat(1,0) << " " << mat(0,1) << endl;
+//
+            //mat(0,0) = mat(1,0) - 0.25 * mat(0,1);
+            //mat(0,N-1) = mat(0,N-2) - 0.25 * mat(1,N-1);
+            //mat(N-1,0) = mat(N-1,1) - 0.25 * mat(N-2,0);
+            //mat(N-1,N-1) = mat(N-2,N-1) - 0.25 * mat(N-1,N-2);
+
         }
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
         //if(exe_i == RUN - 1) { my_out << mat; }
-	my_out << mat;
+	    my_out << mat;
         // restore variables
         mat = backup;
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';

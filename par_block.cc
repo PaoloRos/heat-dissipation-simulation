@@ -3,6 +3,11 @@
 // argv[1]: matrix size; argv[2]: calculation steps; argv[3]: execution repetitions
 int main(const int argc, const char **argv)
 {
+    if(argv[1] == nullptr) {
+        cerr << "Error: matrix size not entered!\n";
+        exit(-1);
+    }
+
     if( (stoi(argv[1]) % THD) != 0 ) {  // gestire se nullptr
         cerr << "Error: size of matrix MUST be a multiple of " << THD << "threads!\n";
         exit(-1);
@@ -23,7 +28,7 @@ int main(const int argc, const char **argv)
     my_start << setw(3) << fixed << setprecision(2);
     my_out << setw(3) << fixed << setprecision(2);
 
-    int i, j, m;   // counters
+    int i, t;   // counters
 
     // ==== Matrix generation ====
 
@@ -60,7 +65,6 @@ int main(const int argc, const char **argv)
     const short blocks_per_row = sqrt(THD);
     const short B = N / blocks_per_row; // block dimension
     
-    //cerr << blocks_per_row << " -- " << B <<'\n';
     // ==== Actualization algorithm ====
 
     // per il debug
@@ -70,10 +74,8 @@ int main(const int argc, const char **argv)
     out_temp[2].open("temp2.txt", ios::out);
     out_temp[3].open("temp3.txt", ios::out);
 
-    out_temp[0] << setw(3) << fixed << setprecision(2);
-    out_temp[1] << setw(3) << fixed << setprecision(2);
-    out_temp[2] << setw(3) << fixed << setprecision(2);
-    out_temp[3] << setw(3) << fixed << setprecision(2);
+    for(i = 0; i < 4; ++i)
+        out_temp[i] << setw(3) << fixed << setprecision(2);
 
     Matrix backup = mat;
 
@@ -81,7 +83,37 @@ int main(const int argc, const char **argv)
     {
         start_t = omp_get_wtime();
 
-        #pragma omp parallel
+        for(t = 0; t < STEP; ++t)   //cycle that flows through time
+        {
+
+        }
+
+        end_t = omp_get_wtime();
+        exe_result[exe_i] = end_t - start_t;
+
+        // SCOMMENTARE per effettuare statistiche
+        //if(exe_i == RUN - 1) { my_out << mat; }
+        my_out << mat;  //COMMENTARE per le statistiche
+
+        // restore variables
+        mat = backup;
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
+    }
+
+    print_stats(exe_result, RUN);
+
+    my_start.close(); my_out.close();
+
+    delete[] exe_result;
+
+    cerr << '\n';
+
+    return 0;
+}
+
+
+/*
+#pragma omp parallel
         {
             const short t_ID = omp_get_thread_num();
 
@@ -118,30 +150,7 @@ int main(const int argc, const char **argv)
             }
 
         }
-
-        end_t = omp_get_wtime();
-        exe_result[exe_i] = end_t - start_t;
-
-        // SCOMMENTARE per effettuare statistiche
-        //if(exe_i == RUN - 1) { my_out << mat; }
-        my_out << mat;  //COMMENTARE per le statistiche
-
-        // restore variables
-        mat = backup;
-        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
-    }
-
-    print_stats(exe_result, RUN);
-
-    my_start.close(); my_out.close();
-
-    delete[] exe_result;
-
-    cerr << '\n';
-
-    return 0;
-}
-
+*/
 
 // Commenti del debug
 
