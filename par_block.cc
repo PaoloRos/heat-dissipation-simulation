@@ -96,7 +96,7 @@ int main(const int argc, const char **argv)
                 const short block_col = t_ID % blocks_per_row;
                 const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
 
-                temp.copy_subMatrix(mat, y_0, x_0);
+                temp.copy_subMatrix(mat, r_on_mat, c_on_mat);
 
                 for(r = 1; r < B; ++r)
                 {
