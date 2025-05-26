@@ -68,7 +68,7 @@ int main(const int argc, const char **argv)
     Matrix temp(B+1, true);
 
 
-///*
+
 
     // ==== Actualization algorithm ====
     
@@ -89,8 +89,8 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //matrix body actualization
-            //omp_set_num_threads(THD);
-            #pragma omp parallel firstprivate(temp) num_threads(THD)
+            omp_set_num_threads(THD);
+            #pragma omp parallel firstprivate(temp) //num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -142,8 +142,11 @@ int main(const int argc, const char **argv)
                 }
             }
 
+            cerr << "ok\n";
+
             //discard calculation
-            #pragma omp parallel for simd reduction(+:diff) num_threads(THD)
+            omp_set_num_threads(THD);
+            #pragma omp parallel for reduction(+:diff) //num_threads(THD)
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
                 
@@ -161,9 +164,14 @@ int main(const int argc, const char **argv)
         if(exe_i == RUN - 1) { my_out << mat; }
         //my_out << mat;  //COMMENTARE per le statistiche
 
-        // restore variables
+
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<", diff: " <<diff <<'\n' ;
+        
+        //restore variables
         mat = backup;
-        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
+        stop = false;
+        diff = 0;
+
     }
 
     print_stats(exe_result, RUN);
@@ -172,7 +180,7 @@ int main(const int argc, const char **argv)
 
     delete[] exe_result;
 
-    //*/
+
 
     cerr << '\n';
 

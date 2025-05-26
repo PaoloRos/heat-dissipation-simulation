@@ -1,59 +1,59 @@
 ---------------- Statistics ----------------
 Calculated on 50 iteration
-Mean: 0 (s)
-Standard deviation: 0 (s)
+Mean: 1.40946 (s)
+Standard deviation: 0.000541718 (s)
 --------------------------------------------
 
-Warm up value -> not considered in the statistic: 0
-Warm up value -> not considered in the statistic: 0
-Warm up value -> not considered in the statistic: 0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
-0
+Warm up value -> not considered in the statistic: 1.41002
+Warm up value -> not considered in the statistic: 1.40933
+Warm up value -> not considered in the statistic: 1.41013
+1.40937
+1.40946
+1.40924
+1.40891
+1.40944
+1.4094
+1.40905
+1.40917
+1.40931
+1.40997
+1.40905
+1.40953
+1.40954
+1.40991
+1.40941
+1.40921
+1.40938
+1.40919
+1.4096
+1.40941
+1.41219
+1.40919
+1.40973
+1.40946
+1.40915
+1.40941
+1.4092
+1.40909
+1.40954
+1.40907
+1.40877
+1.40984
+1.40935
+1.4093
+1.40944
+1.40939
+1.40956
+1.4088
+1.40924
+1.40938
+1.40932
+1.40925
+1.40958
+1.41096
+1.40877
+1.40973
+1.41004
+1.40894
+1.40975
+1.40888

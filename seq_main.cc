@@ -101,9 +101,12 @@ int main(const int argc, const char **argv)
         if(exe_i == RUN - 1) { my_out << mat; }
 	    //my_out << mat;
 
-        // restore variables
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<", diff: " <<diff <<'\n' ;
+        
+        //restore variables
         mat = backup;
-        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<'\n';
+        stop = false;
+        diff = 0;
     }
 
     print_stats(exe_result, RUN);
