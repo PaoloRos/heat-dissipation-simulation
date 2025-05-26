@@ -75,9 +75,8 @@ int main(const int argc, const char **argv)
     out_temp[2] << setw(3) << fixed << setprecision(2);
     out_temp[3] << setw(3) << fixed << setprecision(2);
 
+    Matrix backup = mat;
 
-    Matrix
-    
     for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
         start_t = omp_get_wtime();
