@@ -65,6 +65,9 @@ int main(const int argc, const char **argv)
     const short blocks_per_row = sqrt(THD);
     const short B = N / blocks_per_row; // block dimension
     
+    Matrix backup = mat;
+    Matrix temp(B+1);
+    
     // ==== Actualization algorithm ====
 
     // per il debug
@@ -77,7 +80,6 @@ int main(const int argc, const char **argv)
     for(i = 0; i < 4; ++i)
         out_temp[i] << setw(3) << fixed << setprecision(2);
 
-    Matrix backup = mat;
 
     for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
@@ -85,7 +87,12 @@ int main(const int argc, const char **argv)
 
         for(t = 0; t < STEP; ++t)   //cycle that flows through time
         {
+            #pragma omp parallel firstprivate(temp)
+            {
+                const short t_ID = omp_get_thread_num();
 
+                printf("%d: %d", t_ID, temp(HS_POS_1, HS_POS_1));
+            }
         }
 
         end_t = omp_get_wtime();

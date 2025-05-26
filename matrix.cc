@@ -84,9 +84,3 @@ double Matrix::operator-(const Matrix& other) const
             res += this->el[i][j] - other.el[i][j];
     return res;
 }
-
-// *    *    *    *    *
-//
-//
-//
-//
