@@ -88,8 +88,27 @@ int main(const int argc, const char **argv)
             #pragma omp parallel firstprivate(temp)
             {
                 const short t_ID = omp_get_thread_num();
-                printf("%d: ", t_ID);
+
+                short r, c;  //counters
+
+                // Division in multiple matrices (chatGPT)
+                const short block_row = t_ID / blocks_per_row;
+                const short block_col = t_ID % blocks_per_row;
+                const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
+
+                temp.copy_subMatrix(mat, y_0, x_0);
+
+                for(r = 1; r < B; ++r)
+                {
+                    for(c = 1; c < B; ++c) 
+                    {
+                        mat(r_on_mat + r, c_on_mat + c) = temp(r,c) + alpha * dt * ( temp(r+1,c) + temp(r,c+1) + temp(r-1,c) + temp(r,c-1) - 4*temp(r,c) );
+                    }
+                }
             }
+
+            mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
         }
 
         end_t = omp_get_wtime();

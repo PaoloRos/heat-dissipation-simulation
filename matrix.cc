@@ -43,14 +43,11 @@ Matrix::~Matrix()
     //cerr << "Matrix destroyed.\n";
 }
 
-void Matrix::copy_subMatrix(const Matrix& other, const short& y0, const short& blc_y, const short& x0, const short& blc_x)
+void Matrix::copy_subMatrix(const Matrix& other, const short& y0, const short& x0)
 {
-    //starting (row, col) position in 'other': (y0 - 1*blc_y, x0 - 1*blc_x)
-    //end position (y0 - 1*blc_y + this->N, x0 - 1*blc_x + this->N)
-
     for(int r = 0; r < this->N; ++r)
         for(int c = 0; c < this->N; ++c)
-            this->el[r][c] = other.el[y0 - 1*blc_y + r][x0 - 1*blc_x + c];
+            this->el[r][c] = other.el[y0 + r][x0 + c];
 }
 
 Matrix& Matrix::operator=(const Matrix& other)
