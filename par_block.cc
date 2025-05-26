@@ -64,7 +64,7 @@ int main(const int argc, const char **argv)
     const short B = N / blocks_per_row; // block dimension
     
     Matrix backup = mat;
-    Matrix temp(B+1);
+    Matrix temp(B+1, true);
     
     // ==== Actualization algorithm ====
     
@@ -76,29 +76,16 @@ int main(const int argc, const char **argv)
     out_temp[3].open("temp3.txt", ios::out);
     
     for(i = 0; i < 4; ++i)
-    out_temp[i] << setw(3) << fixed << setprecision(2);
-    
-    
-    cerr << "ok\n";
-
-    omp_set_num_threads(THD);
+        out_temp[i] << setw(3) << fixed << setprecision(2);
 
     for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
-        cout << "tempo\n";
         start_t = omp_get_wtime();
-        cout << "primo\n";
-         #pragma omp parallel
-            {
-                const short t_ID = omp_get_thread_num();
-                printf("%d: ", t_ID);
-            }
 
         for(t = 0; t < STEP; ++t)   //cycle that flows through time
         {
-            cout << "ciclo\n";
             omp_set_num_threads(THD);
-            #pragma omp parallel
+            #pragma omp parallel firstprivate(temp)
             {
                 const short t_ID = omp_get_thread_num();
                 printf("%d: ", t_ID);
