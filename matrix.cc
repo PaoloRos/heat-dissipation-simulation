@@ -50,6 +50,11 @@ void Matrix::copy_subMatrix(const Matrix& other, const short& y0, const short& x
             this->el[r][c] = other.el[y0 + r][x0 + c];
 }
 
+void Matrix::get_ID(const short& r, const short& c)
+{
+    cout /*<< this->el <<' ' <<this->el[r] <<' '*/ << &(this->el[r][c]) <<'\n';
+}
+
 Matrix& Matrix::operator=(const Matrix& other)
 {
     if(this->N != other.N) {

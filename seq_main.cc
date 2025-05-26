@@ -45,16 +45,7 @@ int main(const int argc, const char **argv)
     const double dt = 0.1;  // time step
     const double epsilon = 0.0001;  // minimum discard
     bool stop = false;
-    /* Per quando farò la ε
-    while(!stop)
-    double diff;
-    diff = mat - temp;
-            cerr << '\t' << diff <<'\n';
-            if(abs(diff) < epsilon)
-                stop = true;
-    
-        stop = false;
-    */
+    double diff = 0;
 
     double start_t, end_t;
 
@@ -66,7 +57,8 @@ int main(const int argc, const char **argv)
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
-        for(m = 0; m < STEP; ++m)
+
+        for(m = 0; m < STEP && !stop; ++m)
         {
             temp = mat;
             for(i = 1; i < N - 1; ++i)
@@ -93,19 +85,21 @@ int main(const int argc, const char **argv)
                 mat(i, N-1) = mat(i, N-2);
             }
 
-            //cout << mat(1,0) << " " << mat(0,1) << endl;
-//
-            //mat(0,0) = mat(1,0) - 0.25 * mat(0,1);
-            //mat(0,N-1) = mat(0,N-2) - 0.25 * mat(1,N-1);
-            //mat(N-1,0) = mat(N-1,1) - 0.25 * mat(N-2,0);
-            //mat(N-1,N-1) = mat(N-2,N-1) - 0.25 * mat(N-1,N-2);
+            for(i = 0; i < N*N; ++i)
+                diff += mat[i] - temp[i];
+
+            if(abs(diff) < epsilon)
+                stop = true;
+            else
+                diff = 0;
+
 
         }
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
         if(exe_i == RUN - 1) { my_out << mat; }
-	   // my_out << mat;
+	    //my_out << mat;
 
         // restore variables
         mat = backup;

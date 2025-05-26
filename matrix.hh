@@ -21,14 +21,19 @@ class Matrix
         int get_size() const;
 
         void copy_subMatrix(const Matrix& other, const short& y0, const short& x0);
+        
+        void get_ID(const short& r, const short& c);
 
         Matrix& operator=(const Matrix&);
 
         double& operator()(const int, const int) const;
 
+        double& operator[](const int) const;
+
         friend ostream& operator<<(ostream&, const Matrix&);
 
         double operator-(const Matrix&) const;
+
 
     private:
         double **el;
@@ -40,3 +45,5 @@ ostream& operator<<(ostream&, const Matrix&);
 inline int Matrix::get_size() const { return this->N; }
 
 inline double& Matrix::operator()(const int r, const int c) const { return this->el[r][c]; }
+
+inline double& Matrix::operator[](const int idx) const { return this->el[idx/N][idx%N]; }

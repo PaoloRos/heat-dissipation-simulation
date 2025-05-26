@@ -56,6 +56,7 @@ int main(const int argc, const char **argv)
     const double dt = 0.1;  // time step
     const double epsilon = 0.0001;  // minimum discard
     bool stop = false;
+    double diff = 0;
 
     double start_t, end_t;
 
@@ -65,7 +66,10 @@ int main(const int argc, const char **argv)
     
     Matrix backup = mat;
     Matrix temp(B+1, true);
-    
+
+
+///*
+
     // ==== Actualization algorithm ====
     
     // per il debug
@@ -78,15 +82,15 @@ int main(const int argc, const char **argv)
     for(i = 0; i < 4; ++i)
         out_temp[i] << setw(3) << fixed << setprecision(2);
 
-    for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
+    for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
 
-        for(t = 0; t < STEP; ++t)   //cycle that flows through time
+        for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //matrix body actualization
-            omp_set_num_threads(THD);
-            #pragma omp parallel firstprivate(temp)
+            //omp_set_num_threads(THD);
+            #pragma omp parallel firstprivate(temp) num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -109,42 +113,53 @@ int main(const int argc, const char **argv)
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
             //border actualization
-            omp_set_num_threads(4);
-            #pragma omp sections
+            //omp_set_num_threads(4);
+            #pragma omp parallel sections    //potenziare operazione per simd
             {
                 #pragma omp section //first row
                 {
-                    #pragma omp simd
+                    //#pragma omp simd
                     for(i = 1; i < N - 1; ++i)
                         mat(0, i) = mat(1, i);
                 }
                 #pragma omp section //last row
                 {
-                    #pragma omp simd
+                    //#pragma omp simd
                     for(i = 1; i < N - 1; ++i)
                         mat(N - 1, i) = mat(N - 2, i);
                 }
                 #pragma omp section //first column
                 {
-                    #pragma omp simd
+                    //#pragma omp simd
                     for(i = 1; i < N - 1; ++i)
                         mat(i, 0) = mat(i, 1);
                 }
                 #pragma omp section //last column
                 {
-                    #pragma omp simd
+                    //#pragma omp simd
                     for(i = 1; i < N - 1; ++i)
                         mat(i, N - 1) = mat(i, N - 2);
                 }
             }
+
+            //discard calculation
+            #pragma omp parallel for simd reduction(+:diff) num_threads(THD)
+            for(i = 0; i < N*N; ++i)
+                diff += mat[i] - temp[i];
+                
+            if(abs(diff) < epsilon)
+                stop = true;
+            else
+                diff = 0;
+            
         }
 
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
 
         // SCOMMENTARE per effettuare statistiche
-        //if(exe_i == RUN - 1) { my_out << mat; }
-        my_out << mat;  //COMMENTARE per le statistiche
+        if(exe_i == RUN - 1) { my_out << mat; }
+        //my_out << mat;  //COMMENTARE per le statistiche
 
         // restore variables
         mat = backup;
@@ -156,6 +171,8 @@ int main(const int argc, const char **argv)
     my_start.close(); my_out.close();
 
     delete[] exe_result;
+
+    //*/
 
     cerr << '\n';
 
