@@ -86,15 +86,10 @@ int main(const int argc, const char **argv)
 
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
-            cerr <<t << ": prima copia\n";
-
             //copy of the temporary matrix
             #pragma omp parallel for num_threads(THD)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
-
-            cerr << t <<": dopo copia\n";
-            cerr << t << ": prima body\n";
 
             //matrix body actualization
             #pragma omp parallel num_threads(THD)
@@ -111,58 +106,45 @@ int main(const int argc, const char **argv)
                         mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
             }
 
-            cerr << t <<": dopo body\n";
-
             //heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             
-            //my_out << mat <<"\n\n";
-            cerr << t <<": prima borrrdi\n";
-            
             //border actualization
-            #pragma omp parallel sections    //potenziare operazione per simd
+            #pragma omp parallel sections   //ragionaci su se conviene simd
             {
                 #pragma omp section //first row
                 {
-                    //#pragma omp simd
                     for(int k = 1; k < N - 1; ++k)
                         mat(0, k) = mat(1, k);
                 }
                 #pragma omp section //last row
                 {
-                    //#pragma omp simd
                     for(int k = 1; k < N - 1; ++k)
                         mat(N - 1, k) = mat(N - 2, k);
                 }
                 #pragma omp section //first column
                 {
-                    //#pragma omp simd
                     for(int k = 1; k < N - 1; ++k)
                         mat(k, 0) = mat(k, 1);
                 }
                 #pragma omp section //last column
                 {
-                    //#pragma omp simd
                     for(int k = 1; k < N - 1; ++k)
                         mat(k, N - 1) = mat(k, N - 2);
                 }
             }
 
-            cerr << t <<": dopo borrrdi\n";
-/*            
             //discard calculation
             //#pragma omp parallel for reduction(+:diff) //num_threads(THD)
-            for(i = 0; i < N*N; ++i)
-                diff += mat[i] - temp[i];
+            for(int k = 0; k < N*N; ++k)
+                diff += mat[k] - temp[k];
                 
             if(diff < epsilon)
                 stop = true;
             else
                 diff = 0;
             
-            cerr << t <<": dopo epsilon\n";
-*/
         }
 
         end_t = omp_get_wtime();
@@ -170,8 +152,7 @@ int main(const int argc, const char **argv)
 
         // SCOMMENTARE per effettuare statistiche
         if(exe_i == RUN - 1) { my_out << mat; }
-        my_out << mat;  //COMMENTARE per le statistiche
-
+        //my_out << mat;  //COMMENTARE per le statistiche
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<", diff: " <<diff <<'\n' ;
         
