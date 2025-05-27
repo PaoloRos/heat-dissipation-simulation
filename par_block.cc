@@ -80,14 +80,14 @@ int main(const int argc, const char **argv)
     for(i = 0; i < 4; ++i)
         out_temp[i] << setw(3) << fixed << setprecision(2);
 
-    for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
+    for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
 
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //copy of the temporary matrix
-            #pragma omp parallel for num_threads(THD)
+            #pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
 
@@ -136,7 +136,7 @@ int main(const int argc, const char **argv)
             }
 
             //discard calculation
-            //#pragma omp parallel for reduction(+:diff) //num_threads(THD)
+            #pragma omp parallel for reduction(+:diff) //schedule(simd:static, 8)
             for(int k = 0; k < N*N; ++k)
                 diff += mat[k] - temp[k];
                 
