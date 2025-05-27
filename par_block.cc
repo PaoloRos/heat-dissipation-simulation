@@ -68,8 +68,6 @@ int main(const int argc, const char **argv)
     Matrix temp(N, true);
     Matrix submat(B+1, true);
 
-    //devo copiare mat in una temporale prima: questo perché così posso fare la verifica di epsilon -> posso creare temp a grandezza N e operare nell'attualizzazione solo su un quadrante
-
     // ==== Actualization algorithm ====
     
     // per il debug
@@ -92,14 +90,14 @@ int main(const int argc, const char **argv)
 
             //copy of the temporary matrix
             #pragma omp parallel for num_threads(THD)
-            for(i = 0; i < N*N; ++i)
-                temp[i] = mat[i];
+            for(int k = 0; k < N*N; ++k)
+                temp[k] = mat[k];
 
             cerr << t <<": dopo copia\n";
             cerr << t << ": prima body\n";
 
             //matrix body actualization
-            #pragma omp parallel firstprivate(submat) num_threads(THD)
+            #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -108,13 +106,11 @@ int main(const int argc, const char **argv)
                 const short block_col = t_ID % blocks_per_row;
                 const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
 
-                submat.copy_subMatrix(mat, r_on_mat, c_on_mat);
-
                 for(short r = 1; r < B; ++r)
                     for(short c = 1; c < B; ++c)
-                        //mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
                         mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
             }
+
             cerr << t <<": dopo body\n";
 
             //heat sources restoring
@@ -125,31 +121,31 @@ int main(const int argc, const char **argv)
             cerr << t <<": prima borrrdi\n";
             
             //border actualization
-            #pragma omp parallel sections private(i)    //potenziare operazione per simd
+            #pragma omp parallel sections    //potenziare operazione per simd
             {
                 #pragma omp section //first row
                 {
                     //#pragma omp simd
-                    for(i = 1; i < N - 1; ++i)
-                        mat(0, i) = mat(1, i);
+                    for(int k = 1; k < N - 1; ++k)
+                        mat(0, k) = mat(1, k);
                 }
                 #pragma omp section //last row
                 {
                     //#pragma omp simd
-                    for(i = 1; i < N - 1; ++i)
-                        mat(N - 1, i) = mat(N - 2, i);
+                    for(int k = 1; k < N - 1; ++k)
+                        mat(N - 1, k) = mat(N - 2, k);
                 }
                 #pragma omp section //first column
                 {
                     //#pragma omp simd
-                    for(i = 1; i < N - 1; ++i)
-                        mat(i, 0) = mat(i, 1);
+                    for(int k = 1; k < N - 1; ++k)
+                        mat(k, 0) = mat(k, 1);
                 }
                 #pragma omp section //last column
                 {
                     //#pragma omp simd
-                    for(i = 1; i < N - 1; ++i)
-                        mat(i, N - 1) = mat(i, N - 2);
+                    for(int k = 1; k < N - 1; ++k)
+                        mat(k, N - 1) = mat(k, N - 2);
                 }
             }
 
@@ -200,22 +196,20 @@ int main(const int argc, const char **argv)
 }
 
 /*
-#pragma omp parallel num_threads(THD)
+#pragma omp parallel firstprivate(submat) num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
-
-                short r, c;  //counters
 
                 // Division in multiple matrices (chatGPT)
                 const short block_row = t_ID / blocks_per_row;
                 const short block_col = t_ID % blocks_per_row;
                 const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
 
-                //temp.copy_subMatrix(mat, r_on_mat, c_on_mat);
+                submat.copy_subMatrix(mat, r_on_mat, c_on_mat);
 
                 for(short r = 1; r < B; ++r)
                     for(short c = 1; c < B; ++c)
-                        mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
+                        //mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
             }
 */
 
