@@ -94,6 +94,8 @@ int main(const int argc, const char **argv)
             for(i = 0; i < N*N; ++i)
                 temp[i] = mat[i];
 
+            my_out << temp;
+
             ////matrix body actualization
             //#pragma omp parallel firstprivate(temp) lastprivate(temp) num_threads(THD)
             //{
@@ -166,7 +168,7 @@ int main(const int argc, const char **argv)
         exe_result[exe_i] = end_t - start_t;
 
         // SCOMMENTARE per effettuare statistiche
-        if(exe_i == RUN - 1) { my_out << mat; }
+        //if(exe_i == RUN - 1) { my_out << mat; }
         //my_out << mat;  //COMMENTARE per le statistiche
 
 
