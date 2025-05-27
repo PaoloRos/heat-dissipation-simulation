@@ -90,7 +90,7 @@ int main(const int argc, const char **argv)
         {
             //matrix body actualization
             //omp_set_num_threads(THD);
-            #pragma omp parallel firstprivate(temp) lastprivate(temp) num_threads(THD)
+            #pragma omp parallel firstprivate(temp) num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -149,8 +149,8 @@ int main(const int argc, const char **argv)
             //#pragma omp parallel for reduction(+:diff) //num_threads(THD)
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
-                
-            if(diff < epsilon)
+                cerr << "
+            if(abs(diff) < epsilon)
                 stop = true;
             else
                 diff = 0;
