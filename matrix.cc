@@ -43,11 +43,11 @@ Matrix::~Matrix()
     //cerr << "Matrix destroyed.\n";
 }
 
-void Matrix::copy_subMatrix(const Matrix& other, const short& y0, const short& x0)
+void Matrix::copy_subMatrix(const Matrix& other, const short& r0, const short& c0)
 {
     for(int r = 0; r < this->N; ++r)
         for(int c = 0; c < this->N; ++c)
-            this->el[r][c] = other.el[y0 + r][x0 + c];
+            this->el[r][c] = other.el[r0 + r][c0 + c];
 }
 
 void Matrix::get_ID(const short& r, const short& c)

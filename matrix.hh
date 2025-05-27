@@ -20,8 +20,8 @@ class Matrix
 
         int get_size() const;
 
-        void copy_subMatrix(const Matrix& other, const short& y0, const short& x0);
-        
+        void copy_subMatrix(const Matrix& other, const short& r0, const short& c0);
+
         void get_ID(const short& r, const short& c);
 
         Matrix& operator=(const Matrix&);

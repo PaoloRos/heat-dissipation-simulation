@@ -65,8 +65,8 @@ int main(const int argc, const char **argv)
     const short B = N / blocks_per_row; // block dimension
     
     Matrix backup = mat;
-    //Matrix temp(B+1, true);
     Matrix temp(N, true);
+    Matrix submat(B+1, true);
 
     //devo copiare mat in una temporale prima: questo perché così posso fare la verifica di epsilon -> posso creare temp a grandezza N e operare nell'attualizzazione solo su un quadrante
 
@@ -82,19 +82,22 @@ int main(const int argc, const char **argv)
     for(i = 0; i < 4; ++i)
         out_temp[i] << setw(3) << fixed << setprecision(2);
 
-    for(int exe_i = 0; exe_i < RUN; ++exe_i)
+    for(int exe_i = 0; exe_i < 1/*RUN*/; ++exe_i)
     {
         start_t = omp_get_wtime();
 
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             cerr <<t << ": prima copia\n";
+
             //copy of the temporary matrix
-            //#pragma omp parallel for num_threads(THD)
+            #pragma omp parallel for num_threads(THD)
             for(i = 0; i < N*N; ++i)
                 temp[i] = mat[i];
+
             cerr << t <<": dopo copia\n";
             cerr << t << ": prima body\n";
+
             //matrix body actualization
             #pragma omp parallel num_threads(THD)
             {
@@ -105,19 +108,22 @@ int main(const int argc, const char **argv)
                 const short block_col = t_ID % blocks_per_row;
                 const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
 
+                submat.copy_subMatrix(mat, r_on_mat, c_on_mat);
+
                 for(short r = 1; r < B; ++r)
                     for(short c = 1; c < B; ++c)
-                        mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
+                        mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
             }
             cerr << t <<": dopo body\n";
 
             //heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+            
             my_out << mat;
             cerr << t <<": prima borrrdi\n";
+            
             //border actualization
-            //omp_set_num_threads(4);
             #pragma omp parallel sections    //potenziare operazione per simd
             {
                 #pragma omp section //first row
@@ -147,6 +153,7 @@ int main(const int argc, const char **argv)
             }
 
             cerr << t <<": dopo borrrdi\n";
+            
             //discard calculation
             //#pragma omp parallel for reduction(+:diff) //num_threads(THD)
             for(i = 0; i < N*N; ++i)
@@ -156,6 +163,7 @@ int main(const int argc, const char **argv)
                 stop = true;
             else
                 diff = 0;
+            
             cerr << t <<": dopo epsilon\n";
 
         }
