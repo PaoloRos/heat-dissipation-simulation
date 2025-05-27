@@ -12,7 +12,7 @@ class Matrix
         //Matrix();
     
         //Initialize the matrix to a null matrix. In case 'null' == false -> elements in position (5,5) and (20,20) have default values.
-        Matrix(short size, bool null = false);
+        Matrix(short size, bool zero = false);
 
         Matrix(const Matrix&);
 

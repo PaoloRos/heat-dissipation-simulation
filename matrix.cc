@@ -2,7 +2,7 @@
 
 //Matrix::Matrix() : el(nullptr), N(0) {}
 
-Matrix::Matrix(short size, bool null)
+Matrix::Matrix(short size, bool zero)
 {
     this->N = size;
 
