@@ -88,12 +88,13 @@ int main(const int argc, const char **argv)
 
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
-
+            cerr <<t << ": prima copia\n";
             //copy of the temporary matrix
-            #pragma omp parallel for num_threads(THD)
+            //#pragma omp parallel for num_threads(THD)
             for(i = 0; i < N*N; ++i)
                 temp[i] = mat[i];
-
+            cerr << t <<": dopo copia\n";
+            cerr << t << ": prima body\n";
             //matrix body actualization
             #pragma omp parallel num_threads(THD)
             {
@@ -108,11 +109,13 @@ int main(const int argc, const char **argv)
                     for(short c = 1; c < B; ++c)
                         mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
             }
+            cerr << t <<": dopo body\n";
 
             //heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
-
+            my_out << mat;
+            cerr << t <<": prima borrrdi\n";
             //border actualization
             //omp_set_num_threads(4);
             #pragma omp parallel sections    //potenziare operazione per simd
@@ -143,8 +146,8 @@ int main(const int argc, const char **argv)
                 }
             }
 
+            cerr << t <<": dopo borrrdi\n";
             //discard calculation
-            //omp_set_num_threads(THD);
             //#pragma omp parallel for reduction(+:diff) //num_threads(THD)
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
@@ -153,6 +156,8 @@ int main(const int argc, const char **argv)
                 stop = true;
             else
                 diff = 0;
+            cerr << t <<": dopo epsilon\n";
+
         }
 
         end_t = omp_get_wtime();
