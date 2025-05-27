@@ -99,7 +99,7 @@ int main(const int argc, const char **argv)
             cerr << t << ": prima body\n";
 
             //matrix body actualization
-            #pragma omp parallel num_threads(THD)
+            #pragma omp parallel firstprivate(submat) num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -112,7 +112,8 @@ int main(const int argc, const char **argv)
 
                 for(short r = 1; r < B; ++r)
                     for(short c = 1; c < B; ++c)
-                        mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
+                        //mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
+                        mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
             }
             cerr << t <<": dopo body\n";
 
@@ -120,11 +121,11 @@ int main(const int argc, const char **argv)
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             
-            my_out << mat;
+            //my_out << mat <<"\n\n";
             cerr << t <<": prima borrrdi\n";
             
             //border actualization
-            #pragma omp parallel sections    //potenziare operazione per simd
+            #pragma omp parallel sections private(i)    //potenziare operazione per simd
             {
                 #pragma omp section //first row
                 {
@@ -153,7 +154,7 @@ int main(const int argc, const char **argv)
             }
 
             cerr << t <<": dopo borrrdi\n";
-            
+/*            
             //discard calculation
             //#pragma omp parallel for reduction(+:diff) //num_threads(THD)
             for(i = 0; i < N*N; ++i)
@@ -165,7 +166,7 @@ int main(const int argc, const char **argv)
                 diff = 0;
             
             cerr << t <<": dopo epsilon\n";
-
+*/
         }
 
         end_t = omp_get_wtime();
@@ -173,7 +174,7 @@ int main(const int argc, const char **argv)
 
         // SCOMMENTARE per effettuare statistiche
         if(exe_i == RUN - 1) { my_out << mat; }
-        //my_out << mat;  //COMMENTARE per le statistiche
+        my_out << mat;  //COMMENTARE per le statistiche
 
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<", diff: " <<diff <<'\n' ;
