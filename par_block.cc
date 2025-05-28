@@ -8,6 +8,7 @@ int main(const int argc, const char **argv)
         exit(-1);
     }
 
+    //nota THD potenza di 4!
     if( (stoi(argv[1]) % THD) != 0 ) {  // gestire se nullptr
         cerr << "Error: size of matrix MUST be a multiple of " << THD << "threads!\n";
         exit(-1);
@@ -61,9 +62,14 @@ int main(const int argc, const char **argv)
     double start_t, end_t;
 
     // Variables to divide the matrix in multiple smaller matrices
-    const short blocks_per_row = sqrt(THD);
-    const short B = N / blocks_per_row; // block dimension
+    //const short blocks_per_row = sqrt(THD);
+    //const short B = N / blocks_per_row; // block dimension
     
+    const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+    const short blocks_per_col = THD / blocks_per_row;
+    const short B_row = N / blocks_per_row;
+    const short B_col = N / blocks_per_col;
+
     Matrix backup = mat;
     Matrix temp(N, true);
     Matrix submat(B+1, true);
@@ -86,31 +92,53 @@ int main(const int argc, const char **argv)
 
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
-            //copy of the temporary matrix
+            //1. copy of the temporary matrix
             #pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
 
-            //matrix body actualization
+            //2. matrix body actualization
+            //#pragma omp parallel num_threads(THD)
+            //{
+            //    const short t_ID = omp_get_thread_num();
+//
+            //    // Division in multiple matrices (chatGPT)
+            //    const short block_row = t_ID / blocks_per_row;
+            //    const short block_col = t_ID % blocks_per_row;
+            //    const short r_on_mat = block_row * (B - 1); 
+            //    const short c_on_mat = block_col * (B - 1); 
+//
+            //     // position first el. of the external block i the original matrix
+//
+            //    for(short r = 1; r < B; ++r)
+            //        for(short c = 1; c < B; ++c)
+            //            mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
+            //}
+
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
+                const short block_row = t_ID / blocks_per_col;
+                const short block_col = t_ID % blocks_per_col;
+                const short r_on_mat = block_row * (B_row - 1);
+                const short c_on_mat = block_col * (B_col - 1);
 
-                // Division in multiple matrices (chatGPT)
-                const short block_row = t_ID / blocks_per_row;
-                const short block_col = t_ID % blocks_per_row;
-                const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
+                for(short r = 1; r < B_row; ++r)
+                    for(short c = 1; c < B_col; ++c)
+                        mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * (
+                            temp(r_on_mat + r + 1, c_on_mat + c) +
+                            temp(r_on_mat + r, c_on_mat + c + 1) +
+                            temp(r_on_mat + r - 1, c_on_mat + c) +
+                            temp(r_on_mat + r, c_on_mat + c - 1) -
+                            4 * temp(r_on_mat + r, c_on_mat + c)
+                        );
+            }           
 
-                for(short r = 1; r < B; ++r)
-                    for(short c = 1; c < B; ++c)
-                        mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
-            }
-
-            //heat sources restoring
+            //3. heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             
-            //border actualization
+            //4. border actualization
             #pragma omp parallel sections   //ragionaci su se conviene simd
             {
                 #pragma omp section //first row
@@ -135,8 +163,8 @@ int main(const int argc, const char **argv)
                 }
             }
 
-            //discard calculation
-            #pragma omp parallel for reduction(+:diff) //schedule(simd:static, 8)
+            //5. discard calculation
+            #pragma omp parallel for reduction(+:diff) //simd schedule(simd:static, 8) -> sembra non convenire
             for(int k = 0; k < N*N; ++k)
                 diff += mat[k] - temp[k];
                 
@@ -176,6 +204,10 @@ int main(const int argc, const char **argv)
     return 0;
 }
 
+// + idx/subTHD * block_per_row
+//idx%subTHD * block_per_row
+  
+
 /*
 #pragma omp parallel firstprivate(submat) num_threads(THD)
             {
@@ -193,18 +225,3 @@ int main(const int argc, const char **argv)
                         //mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
             }
 */
-
-
-// Commenti del debug
-
-
-                //out_temp[t_ID] << block_row << " -- " << block_col << " -- " << y_0 << " -- " << x_0 << '\n';
-                //out_temp[t_ID] << '\n' << t_ID << ": Prima:\n" << temp << '\n';
-
-//if( (r_on_mat + r == HS_POS_1 && c_on_mat + c == HS_POS_1) || (r_on_mat + r == HS_POS_2 && c_on_mat + c == HS_POS_2) ) {out_temp[t_ID] << "\n continua \n "; continue; }
-
-                        //out_temp[t_ID] << r <<" , " << c << ": "<< "mat(" <<r_on_mat + r <<", " << c_on_mat + c << ") = " << temp(r,c) << "+" << alpha << "*" <<dt << "* ( " << temp(r+1,c) <<"+" << temp(r,c+1) << "+" <<temp(r-1,c) <<"+" <<temp(r,c-1) <<"-" <<4 <<"*" <<temp(r,c) << ")";
-
-                        //out_temp[t_ID] << " = " << mat(r_on_mat + r, c_on_mat + c) << '\n';
-
-                        //out_temp[t_ID] << '\n' << t_ID << ": Dopo:\n" << mat;

@@ -1,7 +1,5 @@
 GCC = g++
-OMP = -fopenmp
-
-all: seq par
+OMP = #-fopenmp
 
 seq: seq_main.o matrix.o std_libraries.o
 	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
@@ -9,11 +7,17 @@ seq: seq_main.o matrix.o std_libraries.o
 par: par_block.o matrix.o std_libraries.o
 	$(GCC) $(OMP) -o par par_block.o matrix.o std_libraries.o
 
-par_block.o: par_block.cc
-	$(GCC) $(OMP) -c par_block.cc
+dim: size.o matrix.o std_libraries.o
+	$(GCC) -o dim size.o matrix.o std_libraries.o
 
 seq_main.o: seq_main.cc
 	$(GCC) $(OMP) -c seq_main.cc
+
+par_block.o: par_block.cc
+	$(GCC) $(OMP) -c par_block.cc
+
+dim.o: size.cc
+	$(GCC) -c size.cc
 
 matrix.o: matrix.cc matrix.hh
 	$(GCC) $(OMP) -c matrix.cc
