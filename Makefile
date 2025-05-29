@@ -25,9 +25,9 @@ matrix.o: matrix.cc matrix.hh
 std_libraries.o: std_libraries.cc std_libraries.hh
 	$(GCC) $(OMP) -c std_libraries.cc
 
-# n: matrix size; s: calculation steps; r: execution repetition; s: calculation steps
+# n: matrix size; t: used threads; s: calculation steps; r: execution repetition; s: calculation steps
 srun:
-	./seq $(n) $(s) $(r)
+	./seq $(n) $(t) $(s) $(r)
 
 fig:
 	python3 display_mxm.py $(f)

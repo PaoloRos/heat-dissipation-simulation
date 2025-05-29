@@ -1,17 +1,20 @@
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: calculation steps; argv[3]: execution repetitions
+// argv[1]: matrix size; argv[2]: used threads; argv[3]: calculation steps; argv[4]: execution repetitions
 int main(const int argc, const char **argv)
 {
-    cout << "\nThreads used: " << THD << '\n';
+    // ==== Read matrix size & used threads ====
 
     if(argv[1] == nullptr) {
         cerr << "Error: matrix size not entered!\n";
         exit(-1);
     }
 
-    //nota THD potenza di 4!
-    if( (stoi(argv[1]) % THD) != 0 ) {  // gestire se nullptr
+    // $$$ Check che THD sia potenza di 2!
+
+    const short THD = short(stoi(argv[2]));
+
+    if( (stoi(argv[1]) % THD) != 0 ) {
         cerr << "Error: size of matrix MUST be a multiple of " << THD << "threads!\n";
         exit(-1);
     }
@@ -37,7 +40,7 @@ int main(const int argc, const char **argv)
 
     /* $$$$ aggiungi un check per dimensione short $$$$ */
     // by default 24 -> considering I've 4 core
-    const short N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : stoi(argv[1]);
+    const short N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : short( stoi(argv[1]) );
 
     if(argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)
     { cerr << "\nWarning: incorrect matrix size -> by default matrix set to 24x24.\n"; }
@@ -120,8 +123,8 @@ int main(const int argc, const char **argv)
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
-                const short block_row = t_ID / blocks_per_col;  //->block_per_row
-                const short block_col = t_ID % blocks_per_col;  //->block_per_row
+                const short block_row = t_ID / blocks_per_col;
+                const short block_col = t_ID % blocks_per_col;
                 const short r_on_mat = block_row * B_row;
                 const short c_on_mat = block_col * B_col;
 
