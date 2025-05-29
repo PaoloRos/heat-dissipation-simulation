@@ -53,7 +53,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 1;//50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -194,7 +194,7 @@ int main(const int argc, const char **argv)
         if(exe_i == RUN - 1) { my_out << mat; }
         //my_out << mat;  //COMMENTARE per le statistiche
 
-        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN <<", diff: " <<diff <<'\n' ;
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
         
         //restore variables
         mat = backup;
