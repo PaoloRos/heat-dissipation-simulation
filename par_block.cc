@@ -67,19 +67,18 @@ int main(const int argc, const char **argv)
     double diff = 0;
 
     double start_t, end_t;
-
-    // Variables to divide the matrix in multiple smaller matrices
-    //const short blocks_per_row = sqrt(THD);
-    //const short B = N / blocks_per_row; // block dimension
     
     const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
     const short blocks_per_col = THD / blocks_per_row;
-    const short B_row = N / blocks_per_row; // N/blocks_per_col
+    const short B_row = N / blocks_per_row; // -> B_row = N_row_max
     const short B_col = N / blocks_per_col; // N/blocks_per_row
+
+    // if(B_row > massimo )
+        // assegna B_row in base a numero di THD
+    // analogo a B_col
 
     Matrix backup = mat;
     Matrix temp(N, true);
-    //Matrix submat(B+1, true);
 
     // ==== Actualization algorithm ====
     
@@ -103,24 +102,6 @@ int main(const int argc, const char **argv)
             #pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
-
-            //2. matrix body actualization
-            //#pragma omp parallel num_threads(THD)
-            //{
-            //    const short t_ID = omp_get_thread_num();
-//
-            //    // Division in multiple matrices (chatGPT)
-            //    const short block_row = t_ID / blocks_per_row;
-            //    const short block_col = t_ID % blocks_per_row;
-            //    const short r_on_mat = block_row * (B - 1); 
-            //    const short c_on_mat = block_col * (B - 1); 
-//
-            //     // position first el. of the external block i the original matrix
-//
-            //    for(short r = 1; r < B; ++r)
-            //        for(short c = 1; c < B; ++c)
-            //            mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * ( temp(r_on_mat + r + 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat+ c + 1) + temp(r_on_mat + r - 1, c_on_mat + c) + temp(r_on_mat + r, c_on_mat + c - 1) - 4*temp(r_on_mat + r, c_on_mat + c) );
-            //}
 
             #pragma omp parallel num_threads(THD)
             {
@@ -209,8 +190,6 @@ int main(const int argc, const char **argv)
 
     delete[] exe_result;
 
-
-
     cerr << '\n';
 
     return 0;
@@ -218,22 +197,3 @@ int main(const int argc, const char **argv)
 
 // + idx/subTHD * block_per_row
 //idx%subTHD * block_per_row
-  
-
-/*
-#pragma omp parallel firstprivate(submat) num_threads(THD)
-            {
-                const short t_ID = omp_get_thread_num();
-
-                // Division in multiple matrices (chatGPT)
-                const short block_row = t_ID / blocks_per_row;
-                const short block_col = t_ID % blocks_per_row;
-                const short r_on_mat = block_row * (B - 1), c_on_mat = block_col * (B - 1); // position first el. of the external block in the original matrix
-
-                submat.copy_subMatrix(mat, r_on_mat, c_on_mat);
-
-                for(short r = 1; r < B; ++r)
-                    for(short c = 1; c < B; ++c)
-                        //mat(r_on_mat + r, c_on_mat + c) = submat(r, c) + alpha * dt * ( submat(r + 1,c) + submat(r, c + 1) + submat(r - 1, c) + submat(r, c - 1) - 4*submat(r, c) );
-            }
-*/
