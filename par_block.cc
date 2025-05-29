@@ -3,6 +3,8 @@
 // argv[1]: matrix size; argv[2]: calculation steps; argv[3]: execution repetitions
 int main(const int argc, const char **argv)
 {
+    cout << "\nThreads used: " << THD << '\n';
+
     if(argv[1] == nullptr) {
         cerr << "Error: matrix size not entered!\n";
         exit(-1);
