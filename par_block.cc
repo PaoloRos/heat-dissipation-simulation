@@ -126,7 +126,7 @@ int main(const int argc, const char **argv)
                 const short start_r = (r_on_mat == 0)? 1 : 0;
                 const short end_r = (r_on_mat+B_row == N-1)? B_row - 1 : B_row;
                 const short start_c = (c_on_mat == 0)? 1 : 0;
-                const short end_c(c_on_mat+B_col == N-1)? B_col - 1 : B_col;
+                const short end_c = (c_on_mat+B_col == N-1)? B_col - 1 : B_col;
 
                 for(short r = start_r; r < end_r; ++r)
                     for(short c = start_c; c < end_c; ++c)
