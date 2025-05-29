@@ -12,10 +12,12 @@ int main(const int argc, const char **argv)
 
     // $$$ Check che THD sia potenza di 2!
 
-    const short THD = short(stoi(argv[2]));
+    const short THD = (argv[2] == nullptr)? 2 : short( stoi(argv[2]) );
+
+    cout << "\nThreads used: " << THD << '\n';
 
     if( (stoi(argv[1]) % THD) != 0 ) {
-        cerr << "Error: size of matrix MUST be a multiple of " << THD << "threads!\n";
+        cerr << "Error: size of matrix MUST be a multiple of " << THD << " threads!\n";
         exit(-1);
     }
 
