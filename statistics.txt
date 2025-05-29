@@ -4,4 +4,4 @@ Mean: -0 (s)
 Standard deviation: -0 (s)
 --------------------------------------------
 
-Warm up value -> not considered in the statistic: 0.0317301
+Warm up value -> not considered in the statistic: 0.0206369

@@ -120,13 +120,13 @@ int main(const int argc, const char **argv)
                 const short t_ID = omp_get_thread_num();
                 const short block_row = t_ID / blocks_per_col;  //->block_per_row
                 const short block_col = t_ID % blocks_per_col;  //->block_per_row
-                const short r_on_mat = block_row * (B_row - 1);
-                const short c_on_mat = block_col * (B_col - 1);
+                const short r_on_mat = block_row * B_row;
+                const short c_on_mat = block_col * B_col;
 
                 const short start_r = (r_on_mat == 0)? 1 : 0;
-                const short end_r = (r_on_mat+B_row == N-1)? B_row - 1 : B_row;
+                const short end_r = (r_on_mat+B_row == N)? B_row - 1 : B_row;
                 const short start_c = (c_on_mat == 0)? 1 : 0;
-                const short end_c = (c_on_mat+B_col == N-1)? B_col - 1 : B_col;
+                const short end_c = (c_on_mat+B_col == N)? B_col - 1 : B_col;
 
                 for(short r = start_r; r < end_r; ++r)
                     for(short c = start_c; c < end_c; ++c)
