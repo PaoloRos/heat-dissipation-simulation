@@ -46,7 +46,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = 1;//50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -67,12 +67,12 @@ int main(const int argc, const char **argv)
     
     const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
     const short blocks_per_col = THD / blocks_per_row;
-    const short B_row = N / blocks_per_row;
-    const short B_col = N / blocks_per_col;
+    const short B_row = N / blocks_per_row; // N/blocks_per_col
+    const short B_col = N / blocks_per_col; // N/blocks_per_row
 
     Matrix backup = mat;
     Matrix temp(N, true);
-    Matrix submat(B+1, true);
+    //Matrix submat(B+1, true);
 
     // ==== Actualization algorithm ====
     
@@ -118,13 +118,18 @@ int main(const int argc, const char **argv)
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
-                const short block_row = t_ID / blocks_per_col;
-                const short block_col = t_ID % blocks_per_col;
+                const short block_row = t_ID / blocks_per_col;  //->block_per_row
+                const short block_col = t_ID % blocks_per_col;  //->block_per_row
                 const short r_on_mat = block_row * (B_row - 1);
                 const short c_on_mat = block_col * (B_col - 1);
 
-                for(short r = 1; r < B_row; ++r)
-                    for(short c = 1; c < B_col; ++c)
+                const short start_r = (r_on_mat == 0)? 1 : 0;
+                const short end_r = (r_on_mat+B_row == N-1)? B_row - 1 : B_row;
+                const short start_c = (c_on_mat == 0)? 1 : 0;
+                const short end_c(c_on_mat+B_col == N-1)? B_col - 1 : B_col;
+
+                for(short r = start_r; r < end_r; ++r)
+                    for(short c = start_c; c < end_c; ++c)
                         mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * (
                             temp(r_on_mat + r + 1, c_on_mat + c) +
                             temp(r_on_mat + r, c_on_mat + c + 1) +
