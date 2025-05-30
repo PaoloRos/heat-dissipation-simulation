@@ -117,6 +117,7 @@ int main(const int argc, const char **argv)
                 short r_on_matrix, c_on_matrix; //indici sulla matrice dei primi elementi del blocco
                 short start_r, end_r, start_c, end_c; //indice sulla matrice su cui opera t_ID
 
+                if(STEP%100==0) {out_temp[t_ID] << "prima:\n" << mat << '\n';}
                 for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
                 {
                     //if(STEP%10==0) {out_temp[t_ID] << "prima:\n" << mat << '\n';}
@@ -142,6 +143,7 @@ int main(const int argc, const char **argv)
                     
                     //if(STEP%10==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
                 }
+                if(STEP%100==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
 
             }
 
