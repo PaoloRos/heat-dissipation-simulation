@@ -53,7 +53,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = 1//50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -120,22 +120,29 @@ int main(const int argc, const char **argv)
 
                 for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
                 {
+                    out_temp[t_ID] << "prima:\n" << mat << '\n';
+
                     // distribuisce i thread LUNGO le righe!
                     block_row = block_idx / blocks_per_col;
                     block_col = block_idx % blocks_per_col;
                     r_on_matrix = block_row * BLOCK_SIZE;
                     c_on_matrix = block_col * BLOCK_SIZE;
 
+                    
                     start_r = (r_on_matrix == 0)? 1 : r_on_matrix;
                     end_r = (r_on_matrix + BLOCK_SIZE == N)? N - 1 : r_on_matrix + BLOCK_SIZE;
                     start_c = (c_on_matrix == 0)? 1 : c_on_matrix;
                     end_c = (c_on_matrix + BLOCK_SIZE == N)? N - 1 : c_on_matrix + BLOCK_SIZE;
-
+                    
+                    printf("%d: %d | %d | %d | %d | %d | %d | %d | %d\n", t_ID, block_row, block_col, r_on_matrix, c_on_matrix, start_t, end_r, start_c, end_c);
+                    
                     for(short r = start_r; r < end_r; ++r)
                         for(short c = start_c; c < end_c; ++c)
                             mat(r,c) = temp(r,c) + alpha * dt * (
                                 temp(r + 1,c) + temp(r,c + 1) + temp(r - 1,c) + 4 * temp(r,c) 
                             );
+                    
+                    out_temp[t_ID] << "dipo:\n" << mat << '\n\n';
                 }
 
             }
