@@ -78,7 +78,7 @@ int main(const int argc, const char **argv)
     // analogo a B_col
     */
 
-    const short BLOCK_SIZE = 4;
+    const short BLOCK_SIZE = 16;
 
     const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
     const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
@@ -103,7 +103,7 @@ int main(const int argc, const char **argv)
     {
         start_t = omp_get_wtime();
 
-        for(t = 0; t < /*STEP*/ 10 && !stop; ++t)   //cycle that flows through time
+        for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the temporary matrix
             #pragma omp parallel for simd schedule(simd:static, 16)
@@ -120,7 +120,7 @@ int main(const int argc, const char **argv)
 
                 for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
                 {
-                    out_temp[t_ID] << "prima:\n" << mat << '\n';
+                    if(STEP%10==0) {out_temp[t_ID] << "prima:\n" << mat << '\n';}
 
                     // distribuisce i thread LUNGO le righe!
                     block_row = block_idx / blocks_per_col;
@@ -134,7 +134,7 @@ int main(const int argc, const char **argv)
                     start_c = (c_on_matrix == 0)? 1 : c_on_matrix;
                     end_c = (c_on_matrix + BLOCK_SIZE == N)? N - 1 : c_on_matrix + BLOCK_SIZE;
                     
-                    printf("%d: %d | %d | %d | %d | %d | %d | %d | %d\n", t_ID, block_row, block_col, r_on_matrix, c_on_matrix, start_r, end_r, start_c, end_c);
+                    if(STEP%10==0) {printf("%d: %d | %d | %d | %d | %d | %d | %d | %d\n", t_ID, block_row, block_col, r_on_matrix, c_on_matrix, start_r, end_r, start_c, end_c);}
                     
                     for(short r = start_r; r < end_r; ++r)
                         for(short c = start_c; c < end_c; ++c)
@@ -142,7 +142,7 @@ int main(const int argc, const char **argv)
                                 temp(r + 1,c) + temp(r,c + 1) + temp(r - 1,c) + 4 * temp(r,c) 
                             );
                     
-                    out_temp[t_ID] << "dipo:\n" << mat << "\n\n";
+                    if(STEP%10==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
                 }
 
             }
