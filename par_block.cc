@@ -76,7 +76,7 @@ int main(const int argc, const char **argv)
     // Calcola il numero di blocchi per riga/colonna
     const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
     const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short tot_blocks = blocks_per_row * blocks_per_col;
+    const short total_blocks = blocks_per_row * blocks_per_col;
 
     // ==== Actualization algorithm ====
     
@@ -117,8 +117,8 @@ int main(const int argc, const char **argv)
 
                     r_start = block_row * BLOCK_SIZE;
                     c_start = block_col * BLOCK_SIZE;
-                    r_end = (r_start + BLOCK_SIZE < N)? r_start + BLOCK_SIZE : N;
-                    c_end = (c_start + BLOCK_SIZE < N)? c_start + BLOCK_SIZE : N;
+                    r_end = r_start + BLOCK_SIZE;//(r_start + BLOCK_SIZE < N)? r_start + BLOCK_SIZE : N;
+                    c_end = c_start + BLOCK_SIZE;//(c_start + BLOCK_SIZE < N)? c_start + BLOCK_SIZE : N;
                     
                     start_r = (r_start == 0) ? 1 : r_start;
                     end_r = (r_end == N) ? N - 1 : r_end;
