@@ -78,11 +78,11 @@ int main(const int argc, const char **argv)
     // analogo a B_col
     
 
-    const short BLOCK_SIZE = 16;
-
-    const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short tot_blocks = blocks_per_row * blocks_per_col;
+    //const short BLOCK_SIZE = 16;
+//
+    //const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    //const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    //const short tot_blocks = blocks_per_row * blocks_per_col;
 
     Matrix backup = mat;
     Matrix temp(N, true);
