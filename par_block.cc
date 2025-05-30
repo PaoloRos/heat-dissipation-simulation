@@ -68,11 +68,11 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
     
-    const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
-    const short blocks_per_col = THD / blocks_per_row;
-    const short B_row = 8;//N / blocks_per_row; // -> B_row = N_row_max
-    const short B_col = 8;//N / blocks_per_col; // N/blocks_per_row
-    const short tot_blocks = blocks_per_row * blocks_per_col;
+    //const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+    //const short blocks_per_col = THD / blocks_per_row;
+    //const short B_row = 8;//N / blocks_per_row; // -> B_row = N_row_max
+    //const short B_col = 8;//N / blocks_per_col; // N/blocks_per_row
+    //const short tot_blocks = blocks_per_row * blocks_per_col;
 
     // if(B_row > massimo )
         // assegna B_row in base a numero di THD
@@ -87,6 +87,14 @@ int main(const int argc, const char **argv)
 
     Matrix backup = mat;
     Matrix temp(N, true);
+
+    // Definisci la dimensione massima del blocco
+const int MAX_BLOCK_SIZE = 64; // esempio, da adattare alla cache
+
+// Calcola il numero di blocchi per riga/colonna
+const int blocks_per_row = (N + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
+const int blocks_per_col = (N + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
+
 
     // ==== Actualization algorithm ====
     
@@ -149,35 +157,63 @@ int main(const int argc, const char **argv)
 
             }*/
 
-            
             #pragma omp parallel num_threads(THD)
-            {
-                const short t_ID = omp_get_thread_num();
-                for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
-                {
-                    const short block_row = block_idx / blocks_per_col;
-                    const short block_col = block_idx % blocks_per_col;
-                    const short r_on_mat = block_row * B_row;
-                    const short c_on_mat = block_col * B_col;
-                
-                    const short start_r = (r_on_mat == 0)? 1 : 0;
-                    const short end_r = (r_on_mat+B_row == N)? B_row - 1 : B_row;
-                    const short start_c = (c_on_mat == 0)? 1 : 0;
-                    const short end_c = (c_on_mat+B_col == N)? B_col - 1 : B_col;
-                
-                    for(short r = start_r; r < end_r; ++r)
-                        for(short c = start_c; c < end_c; ++c)
-                            mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * (
-                                temp(r_on_mat + r + 1, c_on_mat + c) +
-                                temp(r_on_mat + r, c_on_mat + c + 1) +
-                                temp(r_on_mat + r - 1, c_on_mat + c) +
-                                temp(r_on_mat + r, c_on_mat + c - 1) -
-                                4 * temp(r_on_mat + r, c_on_mat + c)
-                            );
-                }
-            }           
-            
+        {
+            int t_ID = omp_get_thread_num();
+            for(int block_idx = t_ID; block_idx < total_blocks; block_idx += THD) {
+                int block_row = block_idx / blocks_per_col;
+                int block_col = block_idx % blocks_per_col;
+                int r_start = block_row * MAX_BLOCK_SIZE;
+                int c_start = block_col * MAX_BLOCK_SIZE;
+                int r_end = std::min(r_start + MAX_BLOCK_SIZE, N);
+                int c_end = std::min(c_start + MAX_BLOCK_SIZE, N);
 
+                // Attenzione ai bordi!
+                int start_r = (r_start == 0) ? 1 : r_start;
+                int end_r = (r_end == N) ? N - 1 : r_end;
+                int start_c = (c_start == 0) ? 1 : c_start;
+                int end_c = (c_end == N) ? N - 1 : c_end;
+
+                for(int r = start_r; r < end_r; ++r)
+                    for(int c = start_c; c < end_c; ++c)
+                        mat(r, c) = temp(r, c) + alpha * dt * (
+                            temp(r + 1, c) +
+                            temp(r, c + 1) +
+                            temp(r - 1, c) +
+                            temp(r, c - 1) -
+                            4 * temp(r, c)
+                        );
+            }
+        }
+            
+            //#pragma omp parallel num_threads(THD)
+            //{
+            //    const short t_ID = omp_get_thread_num();
+            //    for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
+            //    {
+            //        const short block_row = block_idx / blocks_per_col;
+            //        const short block_col = block_idx % blocks_per_col;
+            //        const short r_on_mat = block_row * B_row;
+            //        const short c_on_mat = block_col * B_col;
+            //    
+            //        const short start_r = (r_on_mat == 0)? 1 : 0;
+            //        const short end_r = (r_on_mat+B_row == N)? B_row - 1 : B_row;
+            //        const short start_c = (c_on_mat == 0)? 1 : 0;
+            //        const short end_c = (c_on_mat+B_col == N)? B_col - 1 : B_col;
+            //    
+            //        for(short r = start_r; r < end_r; ++r)
+            //            for(short c = start_c; c < end_c; ++c)
+            //                mat(r_on_mat + r, c_on_mat + c) = temp(r_on_mat + r, c_on_mat + c) + alpha * dt * (
+            //                    temp(r_on_mat + r + 1, c_on_mat + c) +
+            //                    temp(r_on_mat + r, c_on_mat + c + 1) +
+            //                    temp(r_on_mat + r - 1, c_on_mat + c) +
+            //                    temp(r_on_mat + r, c_on_mat + c - 1) -
+            //                    4 * temp(r_on_mat + r, c_on_mat + c)
+            //                );
+            //    }
+            //}           
+            //
+//
             //3. heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
