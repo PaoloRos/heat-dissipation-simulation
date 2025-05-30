@@ -67,7 +67,7 @@ int main(const int argc, const char **argv)
     double diff = 0;
 
     double start_t, end_t;
-     /*
+    
     const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
     const short blocks_per_col = THD / blocks_per_row;
     const short B_row = N / blocks_per_row; // -> B_row = N_row_max
@@ -76,7 +76,7 @@ int main(const int argc, const char **argv)
     // if(B_row > massimo )
         // assegna B_row in base a numero di THD
     // analogo a B_col
-    */
+    
 
     const short BLOCK_SIZE = 16;
 
@@ -110,6 +110,7 @@ int main(const int argc, const char **argv)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
 
+            /*
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
@@ -145,9 +146,9 @@ int main(const int argc, const char **argv)
                 }
                 if(STEP%100==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
 
-            }
+            }*/
 
-            /*
+            
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
@@ -171,7 +172,7 @@ int main(const int argc, const char **argv)
                             4 * temp(r_on_mat + r, c_on_mat + c)
                         );
             }           
-            */
+            
 
             //3. heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
