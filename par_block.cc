@@ -67,7 +67,7 @@ int main(const int argc, const char **argv)
     double diff = 0;
 
     double start_t, end_t;
-    
+     /*
     const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
     const short blocks_per_col = THD / blocks_per_row;
     const short B_row = N / blocks_per_row; // -> B_row = N_row_max
@@ -76,6 +76,13 @@ int main(const int argc, const char **argv)
     // if(B_row > massimo )
         // assegna B_row in base a numero di THD
     // analogo a B_col
+    */
+
+    const short BLOCK_SIZE = 4;
+
+    const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    const short tot_blocks = blocks_per_row * blocks_per_col;
 
     Matrix backup = mat;
     Matrix temp(N, true);
@@ -106,6 +113,37 @@ int main(const int argc, const char **argv)
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
+                short block_row, block_col;   //identificano il quadrante su cui opera t_ID
+                short r_on_matrix, c_on_matrix; //indici sulla matrice dei primi elementi del blocco
+                short start_r, end_r, start_c, end_c; //indice sulla matrice su cui opera t_ID
+
+
+                for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
+                {
+                    // distribuisce i thread LUNGO le righe!
+                    block_row = block_idx / blocks_per_col;
+                    block_col = block_idx % blocks_per_col;
+                    r_on_matrix = block_row * BLOCK_SIZE;
+                    c_on_matrix = block_col * BLOCK_SIZE;
+
+                    start_r = (r_on_matrix == 0)? 1 : r_on_matrix;
+                    end_r = (r_on_matrix + BLOCK_SIZE == N)? N - 1 : r_on_matrix + BLOCK_SIZE;
+                    start_c = (c_on_matrix == 0)? 1 : c_on_matrix;
+                    end_c = (c_on_matrix + BLOCK_SIZE == N)? N - 1 : c_on_matrix + BLOCK_SIZE;
+
+                    for(short r = start_r; r < end_r; ++r)
+                        for(short c = start_c; c < end_c; ++c)
+                            mat(r,c) = temp(r,c) + alpha * dt * (
+                                temp(r + 1,c) + temp(r,c + 1) + temp(r - 1,c) + 4 * temp(r,c) 
+                            );
+                }
+
+            }
+
+            /*
+            #pragma omp parallel num_threads(THD)
+            {
+                const short t_ID = omp_get_thread_num();
                 const short block_row = t_ID / blocks_per_col;
                 const short block_col = t_ID % blocks_per_col;
                 const short r_on_mat = block_row * B_row;
@@ -126,6 +164,7 @@ int main(const int argc, const char **argv)
                             4 * temp(r_on_mat + r, c_on_mat + c)
                         );
             }           
+            */
 
             //3. heat sources restoring
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
