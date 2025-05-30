@@ -89,12 +89,12 @@ int main(const int argc, const char **argv)
     Matrix temp(N, true);
 
     // Definisci la dimensione massima del blocco
-const int MAX_BLOCK_SIZE = 64; // esempio, da adattare alla cache
+const int MAX_BLOCK_SIZE = 16; // esempio, da adattare alla cache
 
 // Calcola il numero di blocchi per riga/colonna
 const int blocks_per_row = (N + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
 const int blocks_per_col = (N + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
-
+const int total_blocks = blocks_per_row * blocks_per_col;
 
     // ==== Actualization algorithm ====
     
@@ -165,8 +165,8 @@ const int blocks_per_col = (N + MAX_BLOCK_SIZE - 1) / MAX_BLOCK_SIZE;
                 int block_col = block_idx % blocks_per_col;
                 int r_start = block_row * MAX_BLOCK_SIZE;
                 int c_start = block_col * MAX_BLOCK_SIZE;
-                int r_end = std::min(r_start + MAX_BLOCK_SIZE, N);
-                int c_end = std::min(c_start + MAX_BLOCK_SIZE, N);
+                int r_end = (r_start + MAX_BLOCK_SIZE < N)? r_start + MAX_BLOCK_SIZE : N;//std::min(r_start + MAX_BLOCK_SIZE, N);
+                int c_end = (c_start + MAX_BLOCK_SIZE < N)? c_start + MAX_BLOCK_SIZE : N;//std::min(c_start + MAX_BLOCK_SIZE, N);
 
                 // Attenzione ai bordi!
                 int start_r = (r_start == 0) ? 1 : r_start;
