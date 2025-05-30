@@ -103,7 +103,7 @@ int main(const int argc, const char **argv)
     {
         start_t = omp_get_wtime();
 
-        for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
+        for(t = 0; t < /*STEP*/ 10 && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the temporary matrix
             #pragma omp parallel for simd schedule(simd:static, 16)
@@ -142,7 +142,7 @@ int main(const int argc, const char **argv)
                                 temp(r + 1,c) + temp(r,c + 1) + temp(r - 1,c) + 4 * temp(r,c) 
                             );
                     
-                    out_temp[t_ID] << "dipo:\n" << mat << '\n\n';
+                    out_temp[t_ID] << "dipo:\n" << mat << "\n\n";
                 }
 
             }
