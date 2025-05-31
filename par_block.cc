@@ -71,24 +71,26 @@ int main(const int argc, const char **argv)
     Matrix backup = mat;
     Matrix temp(N, true);
 
-    unsigned short MAX_SIZE = 16;
+    unsigned short MAX_SIZE = 6000;
     short blocks_per_row, blocks_per_col;
     unsigned short B_row, B_col;
     short idx;
 
-    //if(N*N / THD > MAX_SIZE*MAX_SIZE) {
+    if(N*N / THD > MAX_SIZE*MAX_SIZE) {
         // Calcola il numero di blocchi per riga/colonna
         blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
         B_row = B_col = MAX_SIZE;
         idx = -100; // non avrò mai 100thd
-    //}
-    //else {
-    //    blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
-    //    blocks_per_col = THD / blocks_per_row;
-    //    B_row = N / blocks_per_row, B_col = N / blocks_per_col;
-    //    idx = 0;
-    //}
+cout << 1 << '\n';
+    }
+    else {
+        blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+        blocks_per_col = THD / blocks_per_row;
+        B_row = N / blocks_per_row, B_col = N / blocks_per_col;
+        idx = 0;
+cout << 2 << '\n';
+    }
 
     const short total_blocks = blocks_per_row * blocks_per_col;
 
@@ -124,7 +126,7 @@ int main(const int argc, const char **argv)
                 temp[k] = mat[k];
 
             //2. Matrix body actualization
-            #pragma omp parallel num_threads(THD)
+            #pragma omp parallel private(idx) num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -136,13 +138,14 @@ int main(const int argc, const char **argv)
 
                 for(short block_idx = t_ID; block_idx < total_blocks && idx < 1; block_idx += THD, ++idx) 
                 {
+                    //printf("%d: %d\n", t_ID, idx);
                     block_row = block_idx / blocks_per_col;
                     block_col = block_idx % blocks_per_col;
 
                     r_start = block_row * B_row;
                     c_start = block_col * B_col;
-                    r_end = (r_start + B_row < N)? r_start + B_row : N; // permette di non andare oltre la matrice
-                    c_end = (c_start + B_col < N)? c_start + B_col : N; // permette di non andare oltre la matrice
+                    r_end = r_start + B_row;//(r_start + B_row < N)? r_start + B_row : N; // permette di non andare oltre la matrice
+                    c_end = c_start + B_col;(c_start + B_col < N)? c_start + B_col : N; // permette di non andare oltre la matrice
                     
                     start_r = (r_start == 0) ? 1 : r_start;
                     end_r = (r_end == N) ? N - 1 : r_end;
