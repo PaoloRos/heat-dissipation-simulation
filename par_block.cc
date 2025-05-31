@@ -71,24 +71,24 @@ int main(const int argc, const char **argv)
     Matrix backup = mat;
     Matrix temp(N, true);
 
-    unsigned short MAX_SIZE = 6000;
+    unsigned short MAX_SIZE = 16;
     short blocks_per_row, blocks_per_col;
     unsigned short B_row, B_col;
     short idx;
 
-    if(N*N / THD > MAX_SIZE*MAX_SIZE) {
+    //if(N*N / THD > MAX_SIZE*MAX_SIZE) {
         // Calcola il numero di blocchi per riga/colonna
         blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
-        B_row = MAX_SIZE, B_col = MAX_SIZE;
+        B_row = B_col = MAX_SIZE;
         idx = -100; // non avrò mai 100thd
-    }
-    else {
-        blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
-        blocks_per_col = THD / blocks_per_row;
-        B_row = N / blocks_per_row, B_col = N / blocks_per_col;
-        idx = 0;
-    }
+    //}
+    //else {
+    //    blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+    //    blocks_per_col = THD / blocks_per_row;
+    //    B_row = N / blocks_per_row, B_col = N / blocks_per_col;
+    //    idx = 0;
+    //}
 
     const short total_blocks = blocks_per_row * blocks_per_col;
 
