@@ -71,15 +71,32 @@ int main(const int argc, const char **argv)
     Matrix backup = mat;
     Matrix temp(N, true);
 
-    //const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
-    //const short blocks_per_col = THD / blocks_per_row;
+    const short MAX_SIZE = 200000;
+    short idx;
 
-    const short BLOCK_SIZE = 16; // esempio, da adattare alla cache
+    if(N*N / THD > MAX_SIZE*MAX_SIZE) {
+        // Calcola il numero di blocchi per riga/colonna
+        const short blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
+        const short blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
+        const short B_row = MAX_SIZE, B_col = MAX_SIZE;
+        idx = -100; // non avrò mai 100thd
+    }
+    else {
+        const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+        const short blocks_per_col = THD / blocks_per_row;
+        const short B_row = N / blocks_per_row, B_col = N / blocks_per_col;
+        idx = 0;
+    }
 
+    const short total_blocks = blocks_per_row * blocks_per_col;
+
+    /*
     // Calcola il numero di blocchi per riga/colonna
     const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
     const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
     const short total_blocks = blocks_per_row * blocks_per_col;
+    */
+    const short BLOCK_SIZE = 16; // esempio, da adattare alla cache
 
     // ==== Actualization algorithm ====
     
@@ -113,15 +130,15 @@ int main(const int argc, const char **argv)
                 short r_start, c_start, r_end, c_end;   //indici globali del primo ed ultimo elemento su cui opera il thread corrente
                 short start_r, start_c, end_r, end_c;   //cosè
 
-                for(short block_idx = t_ID; block_idx < total_blocks; block_idx += THD) 
+                for(short block_idx = t_ID; block_idx < total_blocks && idx < 1; block_idx += THD, ++idx) 
                 {
                     block_row = block_idx / blocks_per_col;
                     block_col = block_idx % blocks_per_col;
 
-                    r_start = block_row * BLOCK_SIZE;
-                    c_start = block_col * BLOCK_SIZE;
-                    r_end = r_start + BLOCK_SIZE;//(r_start + BLOCK_SIZE < N)? r_start + BLOCK_SIZE : N;
-                    c_end = c_start + BLOCK_SIZE;//(c_start + BLOCK_SIZE < N)? c_start + BLOCK_SIZE : N;
+                    r_start = block_row * B_row;
+                    c_start = block_col * B_col;
+                    r_end = (r_start + B_row < N)? r_start + B_row : N; // permette di non andare oltre la matrice
+                    c_end = (c_start + B_col < N)? c_start + B_col : N; // permette di non andare oltre la matrice
                     
                     start_r = (r_start == 0) ? 1 : r_start;
                     end_r = (r_end == N) ? N - 1 : r_end;
@@ -261,19 +278,28 @@ int main(const int argc, const char **argv)
 
 /*
 
-* * * * * *
-* * * * * *
-* * * * * *
-* * * * * *
-* * * * * *
-* * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+* * * * * * * *
+
+8 + 6 - 1 = 13 / 6 = 2
 
 if(N*N / THD > MAX*MAX)
-    scorro blocchi
+    scorro blocchi quadrati
 else
     blocchi rettangolari
 
 
 indipendentemente dal num di thd ho una dimensione massima
+
+
+// prima prova a dividere in blocchi quadrati, con eventualmente carico non distribuito tra loro
+
+// poi provo a distribuire in maniera equivalente qualora la dimensione lo permetta
 
 */
