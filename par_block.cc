@@ -42,7 +42,7 @@ int main(const int argc, const char **argv)
 
     /* $$$$ aggiungi un check per dimensione short $$$$ */
     // by default 24 -> considering I've 4 core
-    const short N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : short( stoi(argv[1]) );
+    const unsigned short N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : short( stoi(argv[1]) );
 
     if(argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)
     { cerr << "\nWarning: incorrect matrix size -> by default matrix set to 24x24.\n"; }
@@ -71,9 +71,9 @@ int main(const int argc, const char **argv)
     Matrix backup = mat;
     Matrix temp(N, true);
 
-    const short MAX_SIZE = 200000;
-    const short blocks_per_row, blocks_per_col;
-    const short B_row, B_col;
+    unsigned short MAX_SIZE = 6000;
+    short blocks_per_row, blocks_per_col;
+    unsigned short B_row, B_col;
     short idx;
 
     if(N*N / THD > MAX_SIZE*MAX_SIZE) {
@@ -129,8 +129,10 @@ int main(const int argc, const char **argv)
                 const short t_ID = omp_get_thread_num();
 
                 short block_row, block_col; //identificano il quadrante su cui opera t_ID
-                short r_start, c_start, r_end, c_end;   //indici globali del primo ed ultimo elemento su cui opera il thread corrente
-                short start_r, start_c, end_r, end_c;   //cosè
+                unsigned short r_start, c_start, r_end, c_end;   //indici globali del primo ed ultimo elemento su cui opera il thread corrente
+                unsigned short start_r, start_c, end_r, end_c;   //cosè
+
+                short r, c;
 
                 for(short block_idx = t_ID; block_idx < total_blocks && idx < 1; block_idx += THD, ++idx) 
                 {
@@ -147,8 +149,8 @@ int main(const int argc, const char **argv)
                     start_c = (c_start == 0) ? 1 : c_start;
                     end_c = (c_end == N) ? N - 1 : c_end;
 
-                    for(int r = start_r; r < end_r; ++r)
-                        for(int c = start_c; c < end_c; ++c)
+                    for(r = start_r; r < end_r; ++r)
+                        for(c = start_c; c < end_c; ++c)
                             mat(r, c) = temp(r, c) + alpha * dt * ( temp(r + 1, c) + temp(r, c + 1) + temp(r - 1, c) + temp(r, c - 1) - 4 * temp(r, c)
                             );
                 }
