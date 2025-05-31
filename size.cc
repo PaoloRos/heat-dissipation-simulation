@@ -2,10 +2,9 @@
 
 int main()
 {
-    Matrix mat(1024);
-    cout << "Size of:\n";
+    const short N = 1024;
     
-    cout << "1: " << sizeof(double**) + sizeof(short);
+    cout << ;
 
     cout << '\n';
     

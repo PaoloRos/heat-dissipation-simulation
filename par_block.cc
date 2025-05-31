@@ -71,6 +71,9 @@ int main(const int argc, const char **argv)
     Matrix backup = mat;
     Matrix temp(N, true);
 
+    //const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+    //const short blocks_per_col = THD / blocks_per_row;
+
     const short BLOCK_SIZE = 16; // esempio, da adattare alla cache
 
     // Calcola il numero di blocchi per riga/colonna
@@ -254,4 +257,23 @@ int main(const int argc, const char **argv)
                 if(STEP%100==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
 
             }
+*/
+
+/*
+
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+* * * * * *
+
+if(N*N / THD > MAX*MAX)
+    scorro blocchi
+else
+    blocchi rettangolari
+
+
+indipendentemente dal num di thd ho una dimensione massima
+
 */
