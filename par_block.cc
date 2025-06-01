@@ -126,7 +126,7 @@ int main(const int argc, const char **argv)
                 temp[k] = mat[k];
 
             //2. Matrix body actualization
-            #pragma omp parallel lastprivate(idx) num_threads(THD)
+            #pragma omp parallel firstprivate(idx) num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
