@@ -1,5 +1,5 @@
 GCC = g++
-OMP = #-fopenmp
+OMP = -fopenmp
 
 seq: seq_main.o matrix.o std_libraries.o
 	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
