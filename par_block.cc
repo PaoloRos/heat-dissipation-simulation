@@ -88,9 +88,9 @@ int main(const int argc, const char **argv)
     const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
-    const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
-    if(argv[2] == nullptr || stoi(argv[2]) < 1000)
-    { cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
+    const int STEP = 1000;//(argv[3] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
+    //if(argv[3] == nullptr || stoi(argv[3]) < 1000)
+    //{ cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
 
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
@@ -100,17 +100,20 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
-    unsigned short MAX_SIZE = 64;
+    short MAX_SIZE = 64;
     short blocks_per_row, blocks_per_col;
-    unsigned short B_row, B_col;
+    short B_row, B_col;
 
-    if(N*N / THD > MAX_SIZE*MAX_SIZE) {
+    //così distribuisco il lavoro se sono entro i N=64
+    if(N*N / THD > MAX_SIZE*MAX_SIZE)
+    {
         // Calcola il numero di blocchi per riga/colonna
         blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
         B_row = B_col = MAX_SIZE;
     }
-    else {
+    else
+    {
         blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
         blocks_per_col = THD / blocks_per_row;
         B_row = N / blocks_per_row, B_col = N / blocks_per_col;
@@ -227,7 +230,7 @@ int main(const int argc, const char **argv)
 
     delete[] exe_result;
 
-    */
+    //*/
 
     cerr << '\n';
 
