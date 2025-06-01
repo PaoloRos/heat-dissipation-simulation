@@ -53,7 +53,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 1;//50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -74,22 +74,17 @@ int main(const int argc, const char **argv)
     unsigned short MAX_SIZE = 6000;
     short blocks_per_row, blocks_per_col;
     unsigned short B_row, B_col;
-    short idx;
 
     if(N*N / THD > MAX_SIZE*MAX_SIZE) {
         // Calcola il numero di blocchi per riga/colonna
         blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
         B_row = B_col = MAX_SIZE;
-        idx = -100; // non avrò mai 100thd
-        cout << 1 << '\n';
     }
     else {
         blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
         blocks_per_col = THD / blocks_per_row;
         B_row = N / blocks_per_row, B_col = N / blocks_per_col;
-        idx = 0;
-        cout << 2 << '\n';
     }
 
     const short total_blocks = blocks_per_row * blocks_per_col;
@@ -126,7 +121,7 @@ int main(const int argc, const char **argv)
                 temp[k] = mat[k];
 
             //2. Matrix body actualization
-            #pragma omp parallel firstprivate(idx) num_threads(THD)
+            #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
@@ -136,9 +131,8 @@ int main(const int argc, const char **argv)
 
                 short r, c;
 
-                for(short block_idx = t_ID; block_idx < total_blocks  && idx < 1; block_idx += THD, ++idx) 
+                for(short block_idx = t_ID; block_idx < total_blocks; block_idx += THD) 
                 {
-                    //printf("%d: %d\n", t_ID, idx);
                     block_row = block_idx / blocks_per_col;
                     block_col = block_idx % blocks_per_col;
 
