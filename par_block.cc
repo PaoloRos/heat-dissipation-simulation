@@ -71,7 +71,7 @@ int main(const int argc, const char **argv)
     Matrix backup = mat;
     Matrix temp(N, true);
 
-    unsigned short MAX_SIZE = 6000;
+    unsigned short MAX_SIZE = 64;
     short blocks_per_row, blocks_per_col;
     unsigned short B_row, B_col;
 
@@ -88,14 +88,6 @@ int main(const int argc, const char **argv)
     }
 
     const short total_blocks = blocks_per_row * blocks_per_col;
-
-    /*
-    // Calcola il numero di blocchi per riga/colonna
-    const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short total_blocks = blocks_per_row * blocks_per_col;
-    */
-    const short BLOCK_SIZE = 16; // esempio, da adattare alla cache
 
     // ==== Actualization algorithm ====
     
