@@ -38,3 +38,6 @@ void print_stats(const double* arr, const int& size)
     my_out.close();
 }
 
+bool is_Power_Two(const int n)
+{ return (n > 0) && ( (n & (n-1)) == 0 ); }
+

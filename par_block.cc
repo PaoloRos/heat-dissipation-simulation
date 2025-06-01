@@ -3,25 +3,54 @@
 // argv[1]: matrix size; argv[2]: used threads; argv[3]: calculation steps; argv[4]: execution repetitions
 int main(const int argc, const char **argv)
 {
+    cerr << '\n';
+
+    int i, t;   //counters
+
     // ==== Read matrix size & used threads ====
 
-    if(argv[1] == nullptr) {
-        cerr << "Error: matrix size not entered!\n";
-        exit(-1);
+    try
+    {
+        if(argv[1] == nullptr)
+            throw invalid_argument("Error: matrix size not entered!\n\n");
+        if(stoi(argv[1]) < HS_POS_2 + 1)    // check whether the second heat source is included
+            throw 1;
+        if(stoi(argv[1]) > numeric_limits<short>::max())
+            throw out_of_range("Error: matrix size too big!");
+        
+        i = stoi(argv[1]);
     }
+    catch(invalid_argument& e) { cerr << e.what(); exit(-1); }
+    catch(int e) {
+        cerr << "Warning: incorrect matrix size -> by default matrix set to " << HS_POS_2 + 1 << 'x' << HS_POS_2 + 1 << ".\n";
+        i = HS_POS_2 + 1;
+    }
+    catch(out_of_range& e) {
+        cerr << e.what() << " -> size must be lower than " << numeric_limits<short>::max() << ".\n";
+        exit(-1);
+}
 
-    // $$$ Check che THD sia potenza di 2!
+    const short N = short(i);
 
-    const short THD = (argv[2] == nullptr)? 2 : short( stoi(argv[2]) );
-
+    try
+    {
+        if(argv[2] == nullptr)
+            throw invalid_argument("Error: number of threads NOT entered!\n\n");
+        if(!is_Power_Two( stoi(argv[2]) ))
+            throw out_of_range("Error: number of threads must be a power of 2!\n\n");
+        
+        i = stoi(argv[2]);
+    }
+    catch(invalid_argument& e) { cerr << e.what(); exit(-1); }
+    catch(out_of_range& e) { cerr << e.what(); exit(-1); }
+    
+    const short THD = short(i);
     cout << "\nThreads used: " << THD << '\n';
 
-    if( (stoi(argv[1]) % THD) != 0 ) {
-        cerr << "Error: size of matrix MUST be a multiple of " << THD << " threads!\n";
-        exit(-1);
-    }
+    // Ho tolto il controllo se dimensione matrix è multipla di THD: non serve per come ho strutturaro il codice (credo)
+    // tanto le prove le effettuero sempre su numeri pari --> verifica se devo mettere il check
 
-    // ==== I/O strem opening ====
+    // ==== I/O stream opening ====
 
     fstream my_start, my_out;
     my_start.open("starting_mat.txt", ios::out);
@@ -36,18 +65,21 @@ int main(const int argc, const char **argv)
     my_start << setw(3) << fixed << setprecision(2);
     my_out << setw(3) << fixed << setprecision(2);
 
-    int i, t;   // counters
+    // per il debug
+    fstream out_temp[4];
+    out_temp[0].open("temp0.txt", ios::out);
+    out_temp[1].open("temp1.txt", ios::out);
+    out_temp[2].open("temp2.txt", ios::out);
+    out_temp[3].open("temp3.txt", ios::out);
+    
+    for(i = 0; i < 4; ++i)
+        out_temp[i] << setw(3) << fixed << setprecision(2);
 
     // ==== Matrix generation ====
 
-    /* $$$$ aggiungi un check per dimensione short $$$$ */
-    // by default 24 -> considering I've 4 core
-    const unsigned short N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : short( stoi(argv[1]) );
-
-    if(argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)
-    { cerr << "\nWarning: incorrect matrix size -> by default matrix set to 24x24.\n"; }
-
     Matrix mat(N);
+    Matrix backup = mat;
+    Matrix temp(N, true);
 
     my_start << mat;
 
@@ -68,9 +100,6 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
-    Matrix backup = mat;
-    Matrix temp(N, true);
-
     unsigned short MAX_SIZE = 64;
     short blocks_per_row, blocks_per_col;
     unsigned short B_row, B_col;
@@ -90,16 +119,6 @@ int main(const int argc, const char **argv)
     const short total_blocks = blocks_per_row * blocks_per_col;
 
     // ==== Actualization algorithm ====
-    
-    // per il debug
-    fstream out_temp[4];
-    out_temp[0].open("temp0.txt", ios::out);
-    out_temp[1].open("temp1.txt", ios::out);
-    out_temp[2].open("temp2.txt", ios::out);
-    out_temp[3].open("temp3.txt", ios::out);
-    
-    for(i = 0; i < 4; ++i)
-        out_temp[i] << setw(3) << fixed << setprecision(2);
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
@@ -107,7 +126,7 @@ int main(const int argc, const char **argv)
 
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
-            //1. copy of the temporary matrix
+            //1. copy of the i matrix
             #pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
@@ -208,6 +227,8 @@ int main(const int argc, const char **argv)
 
     delete[] exe_result;
 
+    */
+
     cerr << '\n';
 
     return 0;
@@ -271,28 +292,7 @@ int main(const int argc, const char **argv)
 
 /*
 
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-* * * * * * * *
-
-8 + 6 - 1 = 13 / 6 = 2
-
-if(N*N / THD > MAX*MAX)
-    scorro blocchi quadrati
-else
-    blocchi rettangolari
-
-
-indipendentemente dal num di thd ho una dimensione massima
-
-
-// prima prova a dividere in blocchi quadrati, con eventualmente carico non distribuito tra loro: funziona solo questo -> impostare dimensione: N*N/THD
-
-// poi provo a distribuire in maniera equivalente qualora la dimensione lo permetta -> non funziona
+0111 
+0100
 
 */
