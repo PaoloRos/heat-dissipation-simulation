@@ -34,7 +34,7 @@ fig:
 # $(f) -> se ci aggiungo il file
 
 clean:
-	rm -f *.out *.o seq par
+	rm -f *.out *.o seq par parallel
 	rm -rf .vscode
 
 clear:

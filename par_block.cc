@@ -56,8 +56,11 @@ int main(const int argc, const char **argv)
     my_start.open("starting_mat.txt", ios::out);
     my_out.open("par_output.txt", ios::out);
 
-    if(my_start.fail() || my_out.fail()) {
-        cerr << "Error in opening file.\n";
+    fstream my_csv;
+    my_csv.open("par_time.csv", ios::out);
+
+    if(my_start.fail() || my_out.fail() || my_csv.fail()) {
+        cerr << "Error in opening files.\n";
         return -1;
     }
 
@@ -85,10 +88,10 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = (argv[4] == nullptr || stoi(argv[4]) < 50)? 50 + WARMUP : stoi(argv[4]) + WARMUP;
     double* exe_result = new double[RUN];
 
-    const int STEP = 1000;//(argv[3] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
+    const int STEP = (argv[3] == nullptr || stoi(argv[3]) < 1000)? 1000 : stoi(argv[3]);
     //if(argv[3] == nullptr || stoi(argv[3]) < 1000)
     //{ cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
 
@@ -212,7 +215,7 @@ int main(const int argc, const char **argv)
         exe_result[exe_i] = end_t - start_t;
 
         // SCOMMENTARE per effettuare statistiche
-        if(exe_i == RUN - 1) { my_out << mat; }
+        if(exe_i == RUN - 1) { my_out << mat; my_csv << end_t - start_t << '\n'; }
         //my_out << mat;  //COMMENTARE per le statistiche
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
@@ -222,11 +225,11 @@ int main(const int argc, const char **argv)
         stop = false;
         diff = 0;
 
-    }
+    //}
 
     print_stats(exe_result, RUN);
 
-    my_start.close(); my_out.close();
+    my_start.close(); my_out.close(); my_csv.close();
 
     delete[] exe_result;
 
@@ -293,9 +296,3 @@ int main(const int argc, const char **argv)
             }
 */
 
-/*
-
-0111 
-0100
-
-*/
