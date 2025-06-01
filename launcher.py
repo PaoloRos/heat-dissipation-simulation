@@ -21,7 +21,7 @@ WARMUP = 3
 N = 50  # exe. repetitions
 args = ["32", "4", "1000", "50"]
 
-print("Execution:\n")
+print("Execution:")
 subprocess.run( ["./parallel"] + args)
 
 #for i in range(N + WARMUP):
@@ -47,5 +47,5 @@ if not time:
 media = np.mean(time)
 dev_std = np.std(time)
 
-print(f"Mean on {idx + 1 - WARMUP} elements: {media:.6f} s")
-print(f"Standard deviation: {dev_std:.6f} s")
+print(f"Mean on {idx + 1 - WARMUP} elements: {media:.6f} (s)")
+print(f"Standard deviation: {dev_std:.6f} (s)\n")

@@ -1,12 +1,6 @@
----------------- Statistics ----------------
-Calculated on 50 iteration
-Mean: 0.0164312 (s)
-Standard deviation: 0.000146817 (s)
---------------------------------------------
-
-Warm up value -> not considered in the statistic: 0.0165712
-Warm up value -> not considered in the statistic: 0.0163425
-Warm up value -> not considered in the statistic: 0.0164966
+0.0165712
+0.0163425
+0.0164966
 0.0163405
 0.0163982
 0.0164173

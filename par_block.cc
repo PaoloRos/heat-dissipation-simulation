@@ -45,7 +45,7 @@ int main(const int argc, const char **argv)
     catch(out_of_range& e) { cerr << e.what(); exit(-1); }
     
     const short THD = short(i);
-    cout << "\nThreads used: " << THD << '\n';
+    cout << "Threads used: " << THD << "\n\n";
 
     // Ho tolto il controllo se dimensione matrix è multipla di THD: non serve per come ho strutturaro il codice (credo)
     // tanto le prove le effettuero sempre su numeri pari --> verifica se devo mettere il check
@@ -213,9 +213,10 @@ int main(const int argc, const char **argv)
 
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
+        my_csv << end_t - start_t << '\n';
 
         // SCOMMENTARE per effettuare statistiche
-        if(exe_i == RUN - 1) { my_out << mat; my_csv << end_t - start_t << '\n'; }
+        if(exe_i == RUN - 1) { my_out << mat; }
         //my_out << mat;  //COMMENTARE per le statistiche
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
@@ -225,7 +226,7 @@ int main(const int argc, const char **argv)
         stop = false;
         diff = 0;
 
-    //}
+    }
 
     print_stats(exe_result, RUN);
 
