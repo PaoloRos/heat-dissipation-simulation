@@ -25,7 +25,7 @@ args = [matrix_size, "4", "1000", "50"]
 print("Execution:")
 #subprocess.run( ["./parallel"] + args)
 
-for i in range(4):
+for cycle in range(4):
     for i in range(N + WARMUP):
         print(f"Execution {i+1}/{N}:")
         subprocess.run(["./par_block"] + args)
