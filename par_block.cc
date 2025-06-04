@@ -83,9 +83,10 @@ int main(const int argc, const char **argv)
     Matrix mat(N);
     Matrix backup = mat;
     Matrix temp(N, true);
-
+    
     my_start << mat;
 
+    
     // ==== Parameters ==== 
 
     const int RUN = (argv[4] == nullptr || stoi(argv[4]) < 50)? 50 + WARMUP : stoi(argv[4]) + WARMUP;
@@ -133,7 +134,7 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
-            //#pragma omp parallel for simd schedule(simd:static, 16)
+            #pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
 

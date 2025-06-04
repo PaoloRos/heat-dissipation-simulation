@@ -34,9 +34,10 @@ class Matrix
 
         double operator-(const Matrix&) const;
 
+        double** el;
 
     private:
-        double **el;
+        //double **el;
         short N;
 };
 

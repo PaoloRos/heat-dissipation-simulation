@@ -19,16 +19,19 @@ else:
 # 2. Execute the software
 WARMUP = 3
 N = 50  # exe. repetitions
-matrix_size = "32"#sys.argv[1]
+matrix_size = "32"
 args = [matrix_size, "4", "1000", "50"]
 
-print("Execution:")
+print("Execution:\n")
 #subprocess.run( ["./parallel"] + args)
 
-for cycle in range(4):
-    for i in range(N + WARMUP):
-        print(f"Execution {i+1}/{N}:")
-        subprocess.run(["./par_block"] + args)
+T = int(sys.argv[1])
+
+for cycle in range(T):
+
+    print(f"Execution {cycle+1} -> {args[0]}:")
+    
+    subprocess.run(["./parallel"] + args)
 
     # 3. Read data
     time = []
@@ -54,3 +57,4 @@ for cycle in range(4):
     print("\n--------\n")
 
     args[0] = str( int(args[0]) * 2 )
+
