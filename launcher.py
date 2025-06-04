@@ -19,13 +19,13 @@ else:
 # 2. Execute the software
 WARMUP = 3
 N = 50  # exe. repetitions
-matrix_size = 32#sys.argv[1]
+matrix_size = "32"#sys.argv[1]
 args = [matrix_size, "4", "1000", "50"]
 
 print("Execution:")
 #subprocess.run( ["./parallel"] + args)
 
-for i in range(6):
+for i in range(4):
     for i in range(N + WARMUP):
         print(f"Execution {i+1}/{N}:")
         subprocess.run(["./par_block"] + args)
