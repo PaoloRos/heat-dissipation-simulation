@@ -23,7 +23,7 @@ matrix_size = 32#sys.argv[1]
 args = [matrix_size, "4", "1000", "50"]
 
 print("Execution:")
-subprocess.run( ["./parallel"] + args)
+#subprocess.run( ["./parallel"] + args)
 
 for i in range(6):
     for i in range(N + WARMUP):
