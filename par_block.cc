@@ -115,12 +115,12 @@ int main(const int argc, const char **argv)
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
         B_row = B_col = MAX_SIZE;
     }
-    //else
-    //{
-    //    blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
-    //    blocks_per_col = THD / blocks_per_row;
-    //    B_row = N / blocks_per_row, B_col = N / blocks_per_col;
-    //}
+    else
+    {
+        blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+        blocks_per_col = THD / blocks_per_row;
+        B_row = N / blocks_per_row, B_col = N / blocks_per_col;
+    }
 
     const short total_blocks = blocks_per_row * blocks_per_col;
 
@@ -133,7 +133,7 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
-            #pragma omp parallel for simd schedule(simd:static, 16)
+            //#pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];
 
