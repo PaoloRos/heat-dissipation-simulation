@@ -100,7 +100,7 @@ int main(const int argc, const char **argv)
     const double epsilon = 0.0001;  // minimum discard
     bool stop = false;
     double diff = 0;
-    int chunk_size = ( (N * N) / (THD * 4) < 1)? 1 : (N * N) / (THD * 4);
+    const int chunk_size = ( (N * N) / (THD * 4) < 1)? 1 : (N * N) / (THD * 4);
 
 
     double start_t, end_t;
@@ -135,7 +135,7 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
-            temp.copy_in_parallel(mat); //faster than use the operator overload
+            temp.copy_in_parallel(mat, chunk_size); //faster than use the operator overload
 
             //2. Matrix body actualization
             #pragma omp parallel num_threads(THD)
