@@ -37,7 +37,15 @@ void Matrix::get_ID(const short r, const short c)
 
 void Matrix::copy_in_parallel(const Matrix& other)
 {
-    #pragma omp parallel simd aligned(this->el, other.el: 8)
+    if(this->N != other.N) {
+        cerr << "Error: size doesn't match.\n";
+        exit(-1);
+    }
+
+    double* a = this->el; 
+    const double* b = other.el;
+
+    #pragma omp parallel for simd aligned(a, b : 8)
     for(int i = 0; i < this->N*this->N; ++i)
         this->el[i] = other.el[i];
 }

@@ -4,10 +4,13 @@ import numpy as np
 
 # 1. Build the software
 compile_cmd = ["g++", "-fopenmp", 
-               "seq_main.cc", #"par_block.cc", 
+               "par_block.cc", 
+               #"seq_main.cc",
                "matrix.cc",
                "std_libraries.cc",
-               "-o", "sequel"] #"parallel"]
+               "-o", 
+               "parallel"] 
+               #"sequel"]
 
 compilation = subprocess.run(compile_cmd, capture_output=True, text=True)
 if compilation.returncode != 0:
@@ -19,9 +22,9 @@ else:
 # 2. Execute the software
 WARMUP = 3
 N = 50  # exe. repetitions
-matrix_size = "1024"
-#args = [matrix_size, "2", "1000", "50"]
-args = [matrix_size, "1000", "50"]
+matrix_size = "32"
+args = [matrix_size, "4", "1000", "50"]
+#args = [matrix_size, "1000", "50"]
 
 print("Execution:\n")
 #subprocess.run( ["./parallel"] + args)
@@ -32,8 +35,8 @@ for cycle in range(T):
 
     print(f"Execution {cycle+1} -> {args[0]}:")
     
-    #subprocess.run(["./parallel"] + args)
-    subprocess.run(["./sequel"] + args)
+    subprocess.run(["./parallel"] + args)
+    #subprocess.run(["./sequel"] + args)
 
     # 3. Read data
     time = []
