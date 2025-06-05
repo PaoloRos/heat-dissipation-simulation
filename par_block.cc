@@ -100,6 +100,8 @@ int main(const int argc, const char **argv)
     const double epsilon = 0.0001;  // minimum discard
     bool stop = false;
     double diff = 0;
+    int chunk_size = ( (N * N) / (THD * 4) < 1)? 1 : (N * N) / (THD * 4);
+
 
     double start_t, end_t;
 
@@ -163,8 +165,7 @@ int main(const int argc, const char **argv)
 
                     for(r = start_r; r < end_r; ++r)
                         for(c = start_c; c < end_c; ++c)
-                            mat(r, c) = temp(r, c) + alpha * dt * ( temp(r + 1, c) + temp(r, c + 1) + temp(r - 1, c) + temp(r, c - 1) - 4 * temp(r, c)
-                            );
+                            mat(r, c) = temp(r, c) + alpha * dt * ( temp(r + 1, c) + temp(r, c + 1) + temp(r - 1, c) + temp(r, c - 1) - 4 * temp(r, c) );
                 }
             }
 
@@ -198,7 +199,7 @@ int main(const int argc, const char **argv)
             }
 
             //5. discard calculation
-            #pragma omp parallel for simd schedule(static, chunk) reduction(+:diff)
+            #pragma omp parallel for simd schedule(static, chunk_size) reduction(+:diff)
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
                 

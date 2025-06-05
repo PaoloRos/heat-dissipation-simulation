@@ -35,7 +35,7 @@ void Matrix::get_ID(const short r, const short c)
     cout << ( (c < 0)? &(this->el[r]) : &(this->el[r*this->N + c]) ) << '\n';
 }
 
-void Matrix::copy_in_parallel(const Matrix& other)
+void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
 {
     if(this->N != other.N) {
         cerr << "Error: size doesn't match.\n";
@@ -43,7 +43,7 @@ void Matrix::copy_in_parallel(const Matrix& other)
     }
 
     int i;
-    #pragma omp parallel for simd linear(i : 1)
+    #pragma omp parallel for simd linear(i : 1) schedule(static, chunk_size)
     for(i = 0; i < this->N * this->N; ++i)
         this->el[i] = other.el[i];
 }

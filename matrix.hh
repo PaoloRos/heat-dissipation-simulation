@@ -27,7 +27,7 @@ class Matrix
 
         void get_ID(const short r, const short c = -1);
 
-        void copy_in_parallel(const Matrix&);
+        void copy_in_parallel(const Matrix&, const int chunk_size);
 
         Matrix& operator=(const Matrix&);
 
