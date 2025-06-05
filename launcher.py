@@ -20,7 +20,7 @@ else:
 WARMUP = 3
 N = 50  # exe. repetitions
 matrix_size = "32"
-args = [matrix_size, "4", "1000", "50"]
+args = [matrix_size, "2", "1000", "50"]
 
 print("Execution:\n")
 #subprocess.run( ["./parallel"] + args)
