@@ -18,8 +18,9 @@ Matrix::Matrix(const Matrix& other)
 {
     this->N = other.N;
 
-    this->el = new double [this->N*this->N];
-    
+    this->el = new double [this->N * this->N];
+
+    #pragma omp parallel for simd schedule(static)
     for(int i = 0; i < this->N*this->N; ++i)
         this->el[i] = other.el[i];
 }
@@ -42,8 +43,7 @@ void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
         exit(-1);
     }
 
-    int i;
-    #pragma omp parallel for simd linear(i : 1) schedule(static, chunk_size)
+    #pragma omp parallel for simd schedule(static, chunk_size)
     for(i = 0; i < this->N * this->N; ++i)
         this->el[i] = other.el[i];
 }
@@ -56,6 +56,7 @@ Matrix& Matrix::operator=(const Matrix& other)
         exit(-1);
     }
 
+    #pragma omp parallel for simd schedule(static)
     for(int i=0; i < this->N*this->N; ++i)
         this->el[i] = other.el[i];
 

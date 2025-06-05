@@ -83,8 +83,8 @@ int main(const int argc, const char **argv)
     Matrix mat(N);
     Matrix backup = mat;
     Matrix temp(N, true);
-
-    my_start << mat;
+    
+    my_start << mat;    //poi toglila
     
     // ==== Parameters ==== 
 
@@ -92,8 +92,6 @@ int main(const int argc, const char **argv)
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[3] == nullptr || stoi(argv[3]) < 1000)? 1000 : stoi(argv[3]);
-    //if(argv[3] == nullptr || stoi(argv[3]) < 1000)
-    //{ cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
 
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
@@ -101,7 +99,6 @@ int main(const int argc, const char **argv)
     bool stop = false;
     double diff = 0;
     const int chunk_size = ( (N * N) / (THD * 4) < 1)? 1 : (N * N) / (THD * 4);
-
 
     double start_t, end_t;
 
