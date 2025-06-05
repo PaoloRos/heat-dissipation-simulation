@@ -83,9 +83,8 @@ int main(const int argc, const char **argv)
     Matrix mat(N);
     Matrix backup = mat;
     Matrix temp(N, true);
-    
-    my_start << mat;
 
+    my_start << mat;
     
     // ==== Parameters ==== 
 
@@ -134,6 +133,7 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
+            // Provo a copia in un metodo di Matrix -> questo mi permette di accedere ai puntatori
             #pragma omp parallel for simd schedule(simd:static, 16)
             for(int k = 0; k < N*N; ++k)
                 temp[k] = mat[k];

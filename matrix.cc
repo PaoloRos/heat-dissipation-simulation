@@ -6,53 +6,33 @@ Matrix::Matrix(short size, bool zero)
 {
     this->N = size;
 
-    this->el = new double *[N];
-    for(int i = 0; i < N; ++i)
-        el[i] = new double[N];
-
+    this->el = new double [this->N*this->N];
+    
     if(!zero) {
-        this->el[HS_POS_1][HS_POS_1] = HEAT_SOURCE_1;
-        this->el[HS_POS_2][HS_POS_2] = HEAT_SOURCE_2;
+        el[HS_POS_1*N + HS_POS_1] = HEAT_SOURCE_1;
+        el[HS_POS_2*N + HS_POS_2] = HEAT_SOURCE_2;
     }
-
-    //cerr << "Matrix constructed.\n";
 }
 
 Matrix::Matrix(const Matrix& other)
 {
     this->N = other.N;
 
-    this->el = new double *[N];
-    int i, j;
-    for(i = 0; i < N; ++i) 
-    {
-        el[i] = new double[N];
-        for(j = 0; j < N; ++j)
-            el[i][j] = other.el[i][j];
-    }
+    this->el = new double [this->N*this->N];
+    
+    for(int i = 0; i < this->N*this->N; ++i)
+        this->el[i] = other.el[i];
 }
 
 Matrix::~Matrix()
 {
-    if(el != nullptr){
-        for(int i = 0; i < N; ++i)
-            delete []el[i];
-        delete []el;
-    }
-
-    //cerr << "Matrix destroyed.\n";
+    if(el != nullptr)
+        delete []this->el;
 }
 
-void Matrix::copy_subMatrix(const Matrix& other, const short& r0, const short& c0)
+void Matrix::get_ID(const short r, const short c)
 {
-    for(int r = 0; r < this->N; ++r)
-        for(int c = 0; c < this->N; ++c)
-            this->el[r][c] = other.el[r0 + r][c0 + c];
-}
-
-void Matrix::get_ID(const short& r, const short& c)
-{
-    cout /*<< this->el <<' ' <<this->el[r] <<' '*/ << &(this->el[r][c]) <<'\n';
+    cout << ( (c < 0)? &(this->el[r]) : &(this->el[r*this->N + c]) ) << '\n';
 }
 
 Matrix& Matrix::operator=(const Matrix& other)
@@ -61,28 +41,27 @@ Matrix& Matrix::operator=(const Matrix& other)
         cerr << "Error: size doesn't match.\n";
         exit(-1);
     }
-    int i, j;
-    for(i = 0; i < this->N; ++i)
-        for(j = 0; j < this->N; ++j)
-            this->el[i][j] = other.el[i][j];
-    
+
+    for(int i=0; i < this->N*this->N; ++i)
+        this->el[i] = other.el[i];
+
     return *this;
+}
+
+double Matrix::operator-(const Matrix& other) const
+{
+    double res = 0;
+    for(int i = 0; i < this->N*this->N; ++i)
+        res += this->el[i] - other.el[i];
+        
+    return res;
 }
 
 ostream& operator<<(ostream& os, const Matrix& other)
 {
     for(int i = 0; i < other.N; ++i)
         for(int j = 0; j < other.N; ++j)
-            os << other.el[i][j] << ( (j < other.N -1)? ' ' : '\n' );
+            os << other.el[i*other.N + j] << ( (j < other.N - 1)? ' ' : '\n' );
 
     return os;
-}
-
-double Matrix::operator-(const Matrix& other) const
-{
-    double res = 0;
-    for(int i = 0; i < this->N; ++i)
-        for(int j = 0; j < this->N; ++j)
-            res += this->el[i][j] - other.el[i][j];
-    return res;
 }
