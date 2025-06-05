@@ -83,7 +83,7 @@ int main(const int argc, const char **argv)
     Matrix mat(N);
     Matrix backup = mat;
     Matrix temp(N, true);
-    
+
     my_start << mat;    //poi toglila
     
     // ==== Parameters ==== 
@@ -211,9 +211,7 @@ int main(const int argc, const char **argv)
         exe_result[exe_i] = end_t - start_t;
         my_csv << end_t - start_t << '\n';
 
-        // SCOMMENTARE per effettuare statistiche
         if(exe_i == RUN - 1) { my_out << mat; }
-        //my_out << mat;  //COMMENTARE per le statistiche
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
         
@@ -236,60 +234,3 @@ int main(const int argc, const char **argv)
 
     return 0;
 }
-
-/*
-
-    const short blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
-    const short blocks_per_col = THD / blocks_per_row;
-    const short B_row = 8;//N / blocks_per_row; // -> B_row = N_row_max
-    const short B_col = 8;//N / blocks_per_col; // N/blocks_per_row
-    const short tot_blocks = blocks_per_row * blocks_per_col
-     if(B_row > massimo )
-  // assegna B_row in base a numero di THD
-     analogo a B_col
-    const short BLOCK_SIZE = 16;
-
-    const short blocks_per_row = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short blocks_per_col = (N + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    const short tot_blocks = blocks_per_row * blocks_per_col;
-
-
-
-#pragma omp parallel num_threads(THD)
-            {
-                const short t_ID = omp_get_thread_num();
-                short block_row, block_col;   //identificano il quadrante su cui opera t_ID
-                short r_on_matrix, c_on_matrix; //indici sulla matrice dei primi elementi del blocco
-                short start_r, end_r, start_c, end_c; //indice sulla matrice su cui opera t_ID
-
-                //if(STEP%100==0) {out_temp[t_ID] << "prima:\n" << mat << '\n';}
-                for(short block_idx = t_ID; block_idx < tot_blocks; block_idx += THD)
-                {
-                    //if(STEP%10==0) {out_temp[t_ID] << "prima:\n" << mat << '\n';}
-
-                    // distribuisce i thread LUNGO le righe!
-                    block_row = block_idx / blocks_per_col;
-                    block_col = block_idx % blocks_per_col;
-                    r_on_matrix = block_row * BLOCK_SIZE;
-                    c_on_matrix = block_col * BLOCK_SIZE;
-                    
-                    start_r = (r_on_matrix == 0)? 1 : r_on_matrix;
-                    end_r = (r_on_matrix + BLOCK_SIZE == N)? N - 1 : r_on_matrix + BLOCK_SIZE;
-                    start_c = (c_on_matrix == 0)? 1 : c_on_matrix;
-                    end_c = (c_on_matrix + BLOCK_SIZE == N)? N - 1 : c_on_matrix + BLOCK_SIZE;
-                    
-                    if(STEP%100==0) {printf("%d: %d | %d | %d | %d | %d | %d | %d | %d\n", t_ID, block_row, block_col, r_on_matrix, c_on_matrix, start_r, end_r, start_c, end_c);}
-                    
-                    for(short r = start_r; r < end_r; ++r)
-                        for(short c = start_c; c < end_c; ++c)
-                            mat(r,c) = temp(r,c) + alpha * dt * (
-                                temp(r + 1,c) + temp(r,c + 1) + temp(r - 1,c) + 4 * temp(r,c) 
-                            );
-                    
-                    //if(STEP%10==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
-                }
-                if(STEP%100==0){out_temp[t_ID] << "dopo:\n" << mat << "\n\n";}
-
-            }
-*/
-
