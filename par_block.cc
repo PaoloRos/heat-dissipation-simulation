@@ -133,16 +133,19 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
-            temp.copy_in_parallel(mat);
+            //temp.copy_in_parallel(mat);
+            #pragma omp parallel simd linear(i : 1)
+            for(i = 0; i < N * N; ++i)
+                temp[i] = mat[i];
 
             //2. Matrix body actualization
             #pragma omp parallel num_threads(THD)
             {
                 const short t_ID = omp_get_thread_num();
 
-                short block_row, block_col; //identificano il quadrante su cui opera t_ID
-                unsigned short r_start, c_start, r_end, c_end;   //indici globali del primo ed ultimo elemento su cui opera il thread corrente
-                unsigned short start_r, start_c, end_r, end_c;   //cosè
+                short block_row, block_col; //identify the quadrant on whic t_ID operates
+                unsigned short r_start, c_start, r_end, c_end;  //global index of the first and last element on which the current thread operates
+                unsigned short start_r, start_c, end_r, end_c;   //quadrant index of the first and last element, but in global coordinates (spiega meglio)
 
                 short r, c;
 
@@ -153,8 +156,8 @@ int main(const int argc, const char **argv)
 
                     r_start = block_row * B_row;
                     c_start = block_col * B_col;
-                    r_end = (r_start + B_row < N)? r_start + B_row : N; // permette di non andare oltre la matrice
-                    c_end = (c_start + B_col < N)? c_start + B_col : N; // permette di non andare oltre la matrice
+                    r_end = (r_start + B_row < N)? r_start + B_row : N; //prevents segmentation fault
+                    c_end = (c_start + B_col < N)? c_start + B_col : N;
                     
                     start_r = (r_start == 0) ? 1 : r_start;
                     end_r = (r_end == N) ? N - 1 : r_end;
@@ -173,7 +176,7 @@ int main(const int argc, const char **argv)
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             
             //4. border actualization
-            #pragma omp parallel sections   //ragionaci su se conviene simd
+            #pragma omp parallel sections   //ragionaci su se conviene simd -> sono tutte simd, ma vedi se devi declare simd per gli operatori (non credo)
             {
                 #pragma omp section //first row
                 {
@@ -198,7 +201,7 @@ int main(const int argc, const char **argv)
             }
 
             //5. discard calculation
-            #pragma omp parallel for reduction(+:diff) //simd schedule(simd:static, 8) -> sembra non convenire
+            #pragma omp parallel for reduction(+:diff) //simd schedule(simd:static, 8) -> sembra non convenire --> buttaci un schedule
             for(int k = 0; k < N*N; ++k)
                 diff += mat[k] - temp[k];
                 

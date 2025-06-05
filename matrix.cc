@@ -44,7 +44,7 @@ void Matrix::copy_in_parallel(const Matrix& other)
 
     int i;
     #pragma omp parallel for simd linear(i : 1)
-    for(i = 0; i < this->N*this->N; ++i)
+    for(i = 0; i < this->N * this->N; ++i)
         this->el[i] = other.el[i];
 }
 
