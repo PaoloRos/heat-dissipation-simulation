@@ -133,10 +133,7 @@ int main(const int argc, const char **argv)
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
-            //temp.copy_in_parallel(mat);
-            #pragma omp parallel simd linear(i : 1)
-            for(i = 0; i < N * N; ++i)
-                temp[i] = mat[i];
+            temp.copy_in_parallel(mat); //faster than use the operator overload
 
             //2. Matrix body actualization
             #pragma omp parallel num_threads(THD)
@@ -176,7 +173,7 @@ int main(const int argc, const char **argv)
             mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
             
             //4. border actualization
-            #pragma omp parallel sections   //ragionaci su se conviene simd -> sono tutte simd, ma vedi se devi declare simd per gli operatori (non credo)
+            #pragma omp parallel sections
             {
                 #pragma omp section //first row
                 {
@@ -201,7 +198,7 @@ int main(const int argc, const char **argv)
             }
 
             //5. discard calculation
-            #pragma omp parallel for reduction(+:diff) //simd schedule(simd:static, 8) -> sembra non convenire --> buttaci un schedule
+            #pragma omp parallel for simd reduction(+:diff)
             for(int k = 0; k < N*N; ++k)
                 diff += mat[k] - temp[k];
                 
