@@ -178,27 +178,27 @@ int main(const int argc, const char **argv)
                 #pragma omp section //first row
                 {
                     for(int k = 1; k < N - 1; ++k)
-                        mat[0 * N + k] = mat[1 * N + k];//mat(0, k) = mat(1, k);
+                        mat[0 * N + k] = mat[1 * N + k];
                 }
                 #pragma omp section //last row
                 {
                     for(int k = 1; k < N - 1; ++k)
-                        mat[(N-1) * N + k] = mat[(N-2) * N + k];//mat(N - 1, k) = mat(N - 2, k);
+                        mat[(N-1) * N + k] = mat[(N-2) * N + k];
                 }
                 #pragma omp section //first column
                 {
                     for(int k = 1; k < N - 1; ++k)
-                        mat[k * N + 0] = mat[k * N + 1];//mat(k, 0) = mat(k, 1);
+                        mat[k * N + 0] = mat[k * N + 1];
                 }
                 #pragma omp section //last column
                 {
                     for(int k = 1; k < N - 1; ++k)
-                        mat[k * N + N-1] = mat[k * N + N-2];//mat(k, N - 1) = mat(k, N - 2);
+                        mat[k * N + N-1] = mat[k * N + N-2];
                 }
             }
 
             //5. discard calculation
-            #pragma omp parallel for simd schedule(static) reduction(+:diff)
+            #pragma omp parallel for simd schedule(static, chunk) reduction(+:diff)
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
                 
