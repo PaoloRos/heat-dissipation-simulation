@@ -44,7 +44,7 @@ void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
     }
 
     #pragma omp parallel for simd schedule(static, chunk_size)
-    for(i = 0; i < this->N * this->N; ++i)
+    for(int i = 0; i < this->N * this->N; ++i)
         this->el[i] = other.el[i];
 }
 
