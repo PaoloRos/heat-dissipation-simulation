@@ -1,6 +1,6 @@
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: execution repetitions; argv[3]: calculation steps
+// argv[1]: matrix size; argv[2]: calculation step; argv[3]: execution repetitions
 int main(const int argc, const char **argv)
 {
     // ==== I/O strem opening ====
@@ -13,6 +13,9 @@ int main(const int argc, const char **argv)
         cerr << "Error in opening file.\n";
         return -1;
     }
+   
+    fstream my_csv;
+    my_csv.open("par_time.csv", ios::out);
 
     // setting to format %3.2f
     my_start << setw(3) << fixed << setprecision(2);
@@ -34,7 +37,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parameters ==== 
 
-    const int RUN = 50 + WARMUP;//(argv[3] == nullptr || stoi(argv[3]) < 100)? 100 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = (argv[3] == nullptr || stoi(argv[3]) < 50)? 50 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
@@ -97,6 +100,7 @@ int main(const int argc, const char **argv)
         }
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
+        my_csv << end_t - start_t << '\n';
 
         if(exe_i == RUN - 1) { my_out << mat; }
 	    //my_out << mat;
@@ -111,7 +115,7 @@ int main(const int argc, const char **argv)
 
     print_stats(exe_result, RUN);
 
-    my_start.close(); my_out.close();
+    my_start.close(); my_out.close(); my_csv.close();
 
     delete[] exe_result;
 
