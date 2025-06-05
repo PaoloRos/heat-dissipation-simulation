@@ -198,9 +198,9 @@ int main(const int argc, const char **argv)
             }
 
             //5. discard calculation
-            #pragma omp parallel for simd reduction(+:diff)
-            for(int k = 0; k < N*N; ++k)
-                diff += mat[k] - temp[k];
+            #pragma omp parallel for simd schedule(static) reduction(+:diff)
+            for(i = 0; i < N*N; ++i)
+                diff += mat[i] - temp[i];
                 
             if(diff < epsilon)
                 stop = true;
