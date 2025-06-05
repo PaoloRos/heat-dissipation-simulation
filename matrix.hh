@@ -27,6 +27,8 @@ class Matrix
 
         void get_ID(const short r, const short c = -1);
 
+        void copy_in_parallel(const Matrix&);
+
         Matrix& operator=(const Matrix&);
 
         // Access to the element by coordinates (row,col).

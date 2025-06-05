@@ -35,6 +35,14 @@ void Matrix::get_ID(const short r, const short c)
     cout << ( (c < 0)? &(this->el[r]) : &(this->el[r*this->N + c]) ) << '\n';
 }
 
+void Matrix::copy_in_parallel(const Matrix& other)
+{
+    #pragma omp parallel simd aligned(this->el, other.el: 8)
+    for(int i = 0; i < this->N*this->N; ++i)
+        this->el[i] = other.el[i];
+}
+
+
 Matrix& Matrix::operator=(const Matrix& other)
 {
     if(this->N != other.N) {
