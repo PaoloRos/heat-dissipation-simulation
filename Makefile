@@ -15,7 +15,7 @@ seq: seq_main.o matrix.o std_libraries.o
 	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
 
 par: par_main.o matrix.o std_libraries.o
-	$(GCC) $(OMP) -o par par_block.o matrix.o std_libraries.o
+	$(GCC) $(OMP) -o par par_main.o matrix.o std_libraries.o
 
 dim: size.o matrix.o std_libraries.o
 	$(GCC) -o dim size.o matrix.o std_libraries.o

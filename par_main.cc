@@ -84,7 +84,7 @@ int main(const int argc, const char **argv)
 
     // ==== Parametri ==== 
 
-    const int RUN = (argv[4] == nullptr || stoi(argv[4]) < 50)? 50 + WARMUP : stoi(argv[4]) + WARMUP;
+    const int RUN = (argv[3] == nullptr || argv[4] == nullptr || stoi(argv[4]) < 50)? 50 + WARMUP : stoi(argv[4]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[3] == nullptr || stoi(argv[3]) < 1000)? 1000 : stoi(argv[3]);
@@ -98,7 +98,7 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
-    short MAX_SIZE = 64;
+    short MAX_SIZE = 128;
     short blocks_per_row, blocks_per_col;
     short B_row, B_col;
 
@@ -223,7 +223,7 @@ int main(const int argc, const char **argv)
 
         if(exe_i == RUN - 1){
             my_out << mat;
-            if(stop && ) { cout << "\t Time step: " << t << '\n'; }
+            if(stop) { cout << "\t Time step: " << t << '\n'; }
         }
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
