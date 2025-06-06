@@ -129,7 +129,209 @@ int main(const int argc, const char **argv)
     {
         start_t = omp_get_wtime();
 
+        while(true){
+            for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
+        {
+            //1. copy of the i matrix
+            temp.copy_in_parallel(mat, chunk_size); //faster than use the operator overload
+
+            //2. Matrix body actualization
+            #pragma omp parallel num_threads(THD)
+            {
+                const short t_ID = omp_get_thread_num();
+
+                short block_row, block_col; //identify the quadrant on whic t_ID operates
+                unsigned short r_start, c_start, r_end, c_end;  //global index of the first and last element on which the current thread operates
+                unsigned short start_r, start_c, end_r, end_c;   //quadrant index of the first and last element, but in global coordinates (spiega meglio)
+
+                short r, c;
+
+                for(short block_idx = t_ID; block_idx < total_blocks; block_idx += THD) 
+                {
+                    block_row = block_idx / blocks_per_col;
+                    block_col = block_idx % blocks_per_col;
+
+                    r_start = block_row * B_row;
+                    c_start = block_col * B_col;
+                    r_end = (r_start + B_row < N)? r_start + B_row : N; //prevents segmentation fault
+                    c_end = (c_start + B_col < N)? c_start + B_col : N;
+                    
+                    start_r = (r_start == 0) ? 1 : r_start;
+                    end_r = (r_end == N) ? N - 1 : r_end;
+                    start_c = (c_start == 0) ? 1 : c_start;
+                    end_c = (c_end == N) ? N - 1 : c_end;
+
+                    for(r = start_r; r < end_r; ++r)
+                        for(c = start_c; c < end_c; ++c)
+                            mat(r, c) = temp(r, c) + alpha * dt * ( temp(r + 1, c) + temp(r, c + 1) + temp(r - 1, c) + temp(r, c - 1) - 4 * temp(r, c) );
+                }
+            }
+
+            //3. heat sources restoring
+            mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+            mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+            
+            //4. border actualization
+            #pragma omp parallel sections
+            {
+                #pragma omp section //first row
+                {
+                    for(int k = 1; k < N - 1; ++k)
+                        mat[0 * N + k] = mat[1 * N + k];
+                }
+                #pragma omp section //last row
+                {
+                    for(int k = 1; k < N - 1; ++k)
+                        mat[(N-1) * N + k] = mat[(N-2) * N + k];
+                }
+                #pragma omp section //first column
+                {
+                    for(int k = 1; k < N - 1; ++k)
+                        mat[k * N + 0] = mat[k * N + 1];
+                }
+                #pragma omp section //last column
+                {
+                    for(int k = 1; k < N - 1; ++k)
+                        mat[k * N + N-1] = mat[k * N + N-2];
+                }
+            }
+
+            //5. discard calculation
+            #pragma omp parallel for simd schedule(static, chunk_size) reduction(+:diff)
+            for(i = 0; i < N*N; ++i)
+                diff += mat[i] - temp[i];
+                
+            if(diff < epsilon)
+                stop = true;
+            else
+                diff = 0;
+            
+        }
+        }
+
         for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
+        {
+            #pragma omp parallel num_threads(THD)
+            {
+                //1. copy of the i matrix
+                temp.copy_in_parallel(mat, chunk_size); //faster than use the operator overload
+
+                #pragma omp barrier
+
+                //2. Matrix body actualization
+                //#pragma omp parallel num_threads(THD)
+                {
+                    const short t_ID = omp_get_thread_num();
+
+                    short block_row, block_col; //identify the quadrant on whic t_ID operates
+                    unsigned short r_start, c_start, r_end, c_end;  //global index of the first and last element on which the current thread operates
+                    unsigned short start_r, start_c, end_r, end_c;   //quadrant index of the first and last element, but in global coordinates (spiega meglio)
+
+                    short r, c;
+
+                    for(short block_idx = t_ID; block_idx < total_blocks; block_idx += THD) 
+                    {
+                        block_row = block_idx / blocks_per_col;
+                        block_col = block_idx % blocks_per_col;
+
+                        r_start = block_row * B_row;
+                        c_start = block_col * B_col;
+                        r_end = (r_start + B_row < N)? r_start + B_row : N; //prevents segmentation fault
+                        c_end = (c_start + B_col < N)? c_start + B_col : N;
+
+                        start_r = (r_start == 0) ? 1 : r_start;
+                        end_r = (r_end == N) ? N - 1 : r_end;
+                        start_c = (c_start == 0) ? 1 : c_start;
+                        end_c = (c_end == N) ? N - 1 : c_end;
+
+                        for(r = start_r; r < end_r; ++r)
+                            for(c = start_c; c < end_c; ++c)
+                                mat(r, c) = temp(r, c) + alpha * dt * ( temp(r + 1, c) + temp(r, c + 1) + temp(r - 1, c) + temp(r, c - 1) - 4 * temp(r, c) );
+                    }
+                }
+
+                #pragma omp single
+                {
+                    //3. heat sources restoring
+                    mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+                    mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
+                }
+
+                //4. border actualization
+                #pragma omp /*parallel*/ sections
+                {
+                    #pragma omp section //first row
+                    {
+                        for(int k = 1; k < N - 1; ++k)
+                            mat[0 * N + k] = mat[1 * N + k];
+                    }
+                    #pragma omp section //last row
+                    {
+                        for(int k = 1; k < N - 1; ++k)
+                            mat[(N-1) * N + k] = mat[(N-2) * N + k];
+                    }
+                    #pragma omp section //first column
+                    {
+                        for(int k = 1; k < N - 1; ++k)
+                            mat[k * N + 0] = mat[k * N + 1];
+                    }
+                    #pragma omp section //last column
+                    {
+                        for(int k = 1; k < N - 1; ++k)
+                            mat[k * N + N-1] = mat[k * N + N-2];
+                    }
+                }
+
+                #pragma omp barrier
+
+                //5. discard calculation
+                #pragma omp /*parallel*/ for simd schedule(static, chunk_size) reduction(+:diff)
+                for(i = 0; i < N*N; ++i)
+                    diff += mat[i] - temp[i];
+
+                #pragma omp single
+                {
+                    if(diff < epsilon)
+                        stop = true;
+                    else
+                        diff = 0;
+                }
+
+            }
+
+        }
+
+        end_t = omp_get_wtime();
+        exe_result[exe_i] = end_t - start_t;
+        my_csv << end_t - start_t << '\n';
+
+        if(exe_i == RUN - 1) { my_out << mat; }
+
+        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
+        
+        //restore variables
+        mat = backup;
+        stop = false;
+        diff = 0;
+
+    }
+
+    print_stats(exe_result, RUN);
+
+    my_start.close(); my_out.close(); my_csv.close();
+
+    delete[] exe_result;
+
+    //*/
+
+    cerr << '\n';
+
+    return 0;
+}
+
+/*
+
+for(t = 0; t < STEP && !stop; ++t)   //cycle that flows through time
         {
             //1. copy of the i matrix
             temp.copy_in_parallel(mat, chunk_size); //faster than use the operator overload
@@ -207,30 +409,4 @@ int main(const int argc, const char **argv)
             
         }
 
-        end_t = omp_get_wtime();
-        exe_result[exe_i] = end_t - start_t;
-        my_csv << end_t - start_t << '\n';
-
-        if(exe_i == RUN - 1) { my_out << mat; }
-
-        cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
-        
-        //restore variables
-        mat = backup;
-        stop = false;
-        diff = 0;
-
-    }
-
-    print_stats(exe_result, RUN);
-
-    my_start.close(); my_out.close(); my_csv.close();
-
-    delete[] exe_result;
-
-    //*/
-
-    cerr << '\n';
-
-    return 0;
-}
+        */
