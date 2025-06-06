@@ -39,3 +39,6 @@ clean:
 
 clear:
 	> output.txt > starting_mat.txt > statistics.txt
+
+ctxt:
+	rm -f *.txt
