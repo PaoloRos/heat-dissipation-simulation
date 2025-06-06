@@ -135,11 +135,8 @@ int main(const int argc, const char **argv)
 
             for (int t = 0; t < STEP && !stop; ++t)
             {
-                // 1. copia parallela
-                //temp.copy_in_parallel(mat, chunk_size);
-                #pragma omp for simd schedule(static, chunk_size)
-                for(int i = 0; i < N * N; ++i)
-                    temp[i] = mat[i];
+                // 1. Parallel copy
+                temp.copy_in_parallel(mat, chunk_size);
 
                 #pragma omp barrier
 
@@ -182,8 +179,8 @@ int main(const int argc, const char **argv)
                 #pragma omp barrier
 
                 // 4. border actualization (sezioni parallele gestite con omp single+sections)
-                #pragma omp single
-                {
+                //#pragma omp single
+                //{
                     #pragma omp parallel sections
                     {
                         #pragma omp section
@@ -202,7 +199,7 @@ int main(const int argc, const char **argv)
                         for (int k = 1; k < N - 1; ++k)
                             mat[k * N + N - 1] = mat[k * N + N - 2];
                     }
-                }
+                //}
 
                 #pragma omp barrier
 
