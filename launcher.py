@@ -1,6 +1,8 @@
 import subprocess
 import sys
 import numpy as np
+import shutil
+import os
 
 # 1. Build the software
 compile_cmd = ["g++", "-fopenmp", 
@@ -29,38 +31,88 @@ args = [matrix_size, "1000", "50"]
 print("Execution:\n")
 #subprocess.run( ["./parallel"] + args)
 
-T = 6#int(sys.argv[1]) -> sempre 6 matrici
+T = 6 #int(sys.argv[1]) -> sempre 6 matrici
 
 for cycle in range(T):
 
     print(f"Execution {cycle+1} -> {args[0]}:")
     
-    #subprocess.run(["./parallel"] + args)
-    subprocess.run(["./sequel"] + args)
+    # 1. Esegui il programma
+    subprocess.run(["./sequel"] + args, check=True)
 
-    # 3. Read data
-    filename = f"SEQ_output_{cycle}.txt"
+    # 2. Copia da temp_out.txt in SEQ_output_<cycle>.txt
+    src = "temp_out.txt"
+    dst = f"SEQ_output_{cycle}.txt"
+
+    if not os.path.exists(src):
+        print(f"File temporaneo '{src}' non trovato.")
+        sys.exit(1)
+    
+    try:
+        shutil.copyfile(src, dst)
+    except Exception as e:
+        print(f"Errore durante la copia di {src} in {dst}: {e}")
+        sys.exit(1)
+
+    # 3. Lettura dati da time.csv
     time = []
-    with open(filename) as my_file:
-        for idx, line in enumerate(my_file):
-            if idx < WARMUP:
-                continue # Skip first values
-            try:
-                time.append(float(line.strip()))
-            except ValueError:
-                continue
+    try:
+        with open("time.csv") as my_file:
+            for idx, line in enumerate(my_file):
+                if idx < WARMUP:
+                    continue  # Salta warmup
+                try:
+                    time.append(float(line.strip()))
+                except ValueError:
+                    continue
+    except FileNotFoundError:
+        print("File 'time.csv' non trovato.")
+        sys.exit(1)
 
     if not time:
         print("No data founded.\n")
         sys.exit(1)
 
-    # 4. Statistics
+    # 4. Statistiche
     media = np.mean(time)
     dev_std = np.std(time)
 
-    print(f"Mean on {idx + 1 - WARMUP} elements: {media:.6f} (s)")
+    print(f"Mean on {len(time)} elements: {media:.6f} (s)")
     print(f"Standard deviation: {dev_std:.6f} (s)\n")
     print("\n--------\n")
 
-    args[0] = str( int(args[0]) * 2 )
+    # 5. Aggiorna argomento
+    args[0] = str(int(args[0]) * 2)
+
+#for cycle in range(T):
+#
+#    print(f"Execution {cycle+1} -> {args[0]}:")
+#    
+#    #subprocess.run(["./parallel"] + args)
+#    subprocess.run(["./sequel"] + args)
+#
+#    # 3. Read data
+#    time = []
+#    with open("time.csv") as my_file:
+#        for idx, line in enumerate(my_file):
+#            if idx < WARMUP:
+#                continue # Skip first values
+#            try:
+#                time.append(float(line.strip()))
+#            except ValueError:
+#                continue
+#
+#    if not time:
+#        print("No data founded.\n")
+#        sys.exit(1)
+#
+#    # 4. Statistics
+#    media = np.mean(time)
+#    dev_std = np.std(time)
+#
+#    print(f"Mean on {idx + 1 - WARMUP} elements: {media:.6f} (s)")
+#    print(f"Standard deviation: {dev_std:.6f} (s)\n")
+#    print("\n--------\n")
+#
+#    args[0] = str( int(args[0]) * 2 )
 

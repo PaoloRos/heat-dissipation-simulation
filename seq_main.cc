@@ -34,15 +34,21 @@ int main(const int argc, const char **argv)
 
     // ==== I/O strem opening ====
 
-    fstream my_out[MEASURE_MAT];
-    open_file(my_out);
+    //fstream my_out[MEASURE_MAT];
+    //open_file(my_out);
+    
+    fstream my_out;
+    my_out.open("temp_output.txt", ios::out);
+
     fstream my_csv;
     my_csv.open("time.csv", ios::out);
 
-    if(my_csv.fail()) {
+    if(my_csv.fail() || my_out.fail()) {
         cerr << "Error in opening file.\n";
         return -1;
     }
+
+    my_out << setw(3) << fixed << setprecision(2);
 
     // ==== Matrix generation ====
 
@@ -98,7 +104,7 @@ int main(const int argc, const char **argv)
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
 
-            if(abs(diff) < epsilon)
+            if(diff < epsilon)
                 stop = true;
             else
                 diff = 0;
@@ -109,8 +115,9 @@ int main(const int argc, const char **argv)
         my_csv << end_t - start_t << '\n';
 
         if(exe_i == RUN - 1){ 
-            my_out[mm] << mat;
-            ++mm;
+            my_out << mat;
+            //my_out[mm] << mat;
+            //++mm;
         }
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time: " << end_t - start_t <<" | diff: " <<diff <<'\n';
@@ -123,10 +130,10 @@ int main(const int argc, const char **argv)
 
     print_stats(exe_result, RUN);
 
-    my_csv.close();
+    my_csv.close(); my_out.close();
 
-    for(i = 0; i < MEASURE_MAT; ++i)
-        my_out[i].close();
+    //for(i = 0; i < MEASURE_MAT; ++i)
+    //    my_out[i].close();
 
     delete[] exe_result;
 
