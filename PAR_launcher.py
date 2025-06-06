@@ -23,13 +23,13 @@ else:
 # 2. Execute the software
 WARMUP = 3
 N = 50  # exe. repetitions
-THD = 16
+THD = 2
 
 T = int(sys.argv[1]) #-> sempre 6 matrici
 
 while THD <= 16:
 
-    print(f"==== {THD} THREADS ====\n")
+    print(f"\n==== {THD} THREADS ====\n")
 
     matrix_size = 32
     args = [str(matrix_size), str(THD), "1000", "50"]
