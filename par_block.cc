@@ -136,7 +136,7 @@ int main(const int argc, const char **argv)
             for (int t = 0; t < STEP && !stop; ++t)
             {
                 // 1. Parallel copy
-                temp.copy_in_parallel(mat, chunk_size);
+                temp.copy_in_parallel(mat, chunk_size); // faster than operator overload
 
                 #pragma omp barrier
 
@@ -181,25 +181,41 @@ int main(const int argc, const char **argv)
                 // 4. border actualization (sezioni parallele gestite con omp single+sections)
                 //#pragma omp single
                 //{
-                    #pragma omp parallel sections
-                    {
-                        #pragma omp section
-                        for (int k = 1; k < N - 1; ++k)
-                            mat[0 * N + k] = mat[1 * N + k];
-
-                        #pragma omp section
-                        for (int k = 1; k < N - 1; ++k)
-                            mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
-
-                        #pragma omp section
-                        for (int k = 1; k < N - 1; ++k)
-                            mat[k * N + 0] = mat[k * N + 1];
-
-                        #pragma omp section
-                        for (int k = 1; k < N - 1; ++k)
-                            mat[k * N + N - 1] = mat[k * N + N - 2];
-                    }
+                //    #pragma omp parallel sections
+                //    {
+                //        #pragma omp section
+                //        for (int k = 1; k < N - 1; ++k)
+                //            mat[0 * N + k] = mat[1 * N + k];
+//
+                //        #pragma omp section
+                //        for (int k = 1; k < N - 1; ++k)
+                //            mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
+//
+                //        #pragma omp section
+                //        for (int k = 1; k < N - 1; ++k)
+                //            mat[k * N + 0] = mat[k * N + 1];
+//
+                //        #pragma omp section
+                //        for (int k = 1; k < N - 1; ++k)
+                //            mat[k * N + N - 1] = mat[k * N + N - 2];
+                //    }
                 //}
+
+                #pragma omp for nowait
+                for (int k = 1; k < N - 1; ++k)
+                    mat[0 * N + k] = mat[1 * N + k];
+
+                #pragma omp nowait
+                for (int k = 1; k < N - 1; ++k)
+                    mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
+
+                #pragma omp nowait
+                for (int k = 1; k < N - 1; ++k)
+                    mat[k * N + 0] = mat[k * N + 1];
+
+                #pragma omp nowait
+                for (int k = 1; k < N - 1; ++k)
+                    mat[k * N + N - 1] = mat[k * N + N - 2];
 
                 #pragma omp barrier
 
