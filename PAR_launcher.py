@@ -27,6 +27,13 @@ THD = 2
 
 T = int(sys.argv[1]) #-> sempre 6 matrici
 
+output_csv = "PAR_timings.csv"
+
+    # 1. Inizializza file CSV
+with open(output_csv, "w", newline="") as f_csv:
+    writer = csv.writer(f_csv)
+    writer.writerow(["THD", "T", "Time"])
+
 while THD <= 16:
 
     print(f"\n==== {THD} THREADS ====\n")
@@ -35,14 +42,6 @@ while THD <= 16:
     args = [str(matrix_size), str(THD), "1000", "50"]
 
     print("Execution:\n")
-    #subprocess.run( ["./parallel"] + args)
-
-    output_csv = "PAR_timings.csv"
-
-    # 1. Inizializza file CSV
-    with open(output_csv, "w", newline="") as f_csv:
-        writer = csv.writer(f_csv)
-        writer.writerow(["THD", "T", "Time"])
 
     for cycle in range(T):
 
