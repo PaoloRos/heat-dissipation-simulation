@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import shutil
 import os
+import csv
 
 # 1. Build the software
 compile_cmd = ["g++", "-fopenmp", 
@@ -33,6 +34,13 @@ print("Execution:\n")
 
 T = 6 #int(sys.argv[1]) -> sempre 6 matrici
 
+output_csv = "SEQ_timings.csv"
+
+# 1. Inizializza file CSV
+with open(output_csv, "w", newline="") as f_csv:
+    writer = csv.writer(f_csv)
+    writer.writerow(["T", "Time"])
+
 for cycle in range(T):
 
     print(f"Execution {cycle+1} -> {args[0]}:")
@@ -41,7 +49,7 @@ for cycle in range(T):
     subprocess.run(["./sequel"] + args, check=True)
 
     # 2. Copia da temp_out.txt in SEQ_output_<cycle>.txt
-    src = "temp_out.txt"
+    src = "temp_output.txt"
     dst = f"SEQ_output_{cycle}.txt"
 
     if not os.path.exists(src):
@@ -54,21 +62,22 @@ for cycle in range(T):
         print(f"Errore durante la copia di {src} in {dst}: {e}")
         sys.exit(1)
 
-    # 3. Lettura dati da time.csv
+    # Lettura time.csv
     time = []
     try:
         with open("time.csv") as my_file:
             for idx, line in enumerate(my_file):
                 if idx < WARMUP:
-                    continue  # Salta warmup
+                    continue
                 try:
-                    time.append(float(line.strip()))
+                    t = float(line.strip())
+                    time.append(t)
+                    writer.writerow([cycle + 1, t])  # ⬅️ CSV long format
                 except ValueError:
                     continue
     except FileNotFoundError:
         print("File 'time.csv' non trovato.")
         sys.exit(1)
-
     if not time:
         print("No data founded.\n")
         sys.exit(1)
