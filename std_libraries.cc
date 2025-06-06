@@ -46,12 +46,12 @@ void open_file(fstream* my_file)
     int i;
     string name;
     for(i = 0; i < MEASURE_MAT; ++i) {
-        name = "SEQ_output_" + to_string(i) + ".txt";
+        name = "SEQ_" + to_string(i) + ".txt";
         my_file[i].open(name, ios::out);
 
-        if(my_file.fail()) {
+        if(my_file[i].fail()) {
             cerr << "Error in opening file.\n";
-            return -1;
+            exit(-1);
         }
 
         my_file[i] << setw(3) << fixed << setprecision(2);
