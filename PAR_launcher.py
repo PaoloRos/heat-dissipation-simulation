@@ -46,6 +46,8 @@ while THD <= 16:
 
     for cycle in range(T):
 
+        args[0] = str(matrix_size)
+
         print(f"Execution {cycle+1} -> {args[0]}:")
 
         # 1. Esegui il programma
