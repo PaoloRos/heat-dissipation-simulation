@@ -41,3 +41,21 @@ void print_stats(const double* arr, const int& size)
 bool is_Power_Two(const int n)
 { return (n > 0) && ( (n & (n-1)) == 0 ); }
 
+void open_file(fstream* my_file)
+{
+    int i;
+    string name;
+    for(i = 0; i < MEASURE_MAT; ++i) {
+        name = "SEQ_output_" + to_string(i) + ".txt";
+        my_file[i].open(name, ios::out);
+
+        if(my_file.fail()) {
+            cerr << "Error in opening file.\n";
+            return -1;
+        }
+
+        my_file[i] << setw(3) << fixed << setprecision(2);
+    }
+
+}
+

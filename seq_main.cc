@@ -3,37 +3,52 @@
 // argv[1]: matrix size; argv[2]: calculation step; argv[3]: execution repetitions
 int main(const int argc, const char **argv)
 {
+    cerr << '\n';
+
+    int i, j, m;
+
+    // ==== Read matrix size ====
+
+    try
+    {
+        if(argv[1] == nullptr)
+            throw invalid_argument("Error: matrix size not entered!\n\n");
+        if(stoi(argv[1]) < HS_POS_2 + 1)    // check whether the second heat source is included
+            throw 1;
+        if(stoi(argv[1]) > numeric_limits<short>::max())
+            throw out_of_range("Error: matrix size too big!");
+        
+        i = stoi(argv[1]);
+    }
+    catch(invalid_argument& e) { cerr << e.what(); exit(-1); }
+    catch(int e) {
+        cerr << "Warning: incorrect matrix size -> by default matrix set to " << HS_POS_2 + 1 << 'x' << HS_POS_2 + 1 << ".\n";
+        i = HS_POS_2 + 1;
+    }
+    catch(out_of_range& e) {
+        cerr << e.what() << " -> size must be lower than " << numeric_limits<short>::max() << ".\n";
+        exit(-1);
+}
+
+    const short N = short(i);
+
     // ==== I/O strem opening ====
 
-    fstream my_start, my_out;
-    my_start.open("starting_mat.txt", ios::out);
-    my_out.open("output.txt", ios::out);
+    fstream my_out[MEASURE_MAT];
+    open_file(my_out);
+    fstream my_csv;
+    my_csv.open("time.csv", ios::out);
 
-    if(my_start.fail() || my_out.fail()) {
+    if(my_csv.fail()) {
         cerr << "Error in opening file.\n";
         return -1;
     }
-   
-    fstream my_csv;
-    my_csv.open("par_time.csv", ios::out);
-
-    // setting to format %3.2f
-    my_start << setw(3) << fixed << setprecision(2);
-    my_out << setw(3) << fixed << setprecision(2);
-
-    int i, j, m;   // counters
 
     // ==== Matrix generation ====
 
-    // by default 24 -> considering I've 4 core
-    const int N = (argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)? 24 : stoi(argv[1]);
-
-    if(argv[1] == nullptr || stoi(argv[1]) < HS_POS_2 + 1)
-    { cerr << "\nWarning: incorrect matrix size -> by default matrix set to 24x24.\n"; }
-
     Matrix mat(N);
-
-    my_start << mat;
+    Matrix temp(N);
+    Matrix backup = mat;
 
     // ==== Parameters ==== 
 
@@ -41,8 +56,6 @@ int main(const int argc, const char **argv)
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
-    if(argv[2] == nullptr || stoi(argv[2]) < 1000)
-    { cerr << "\nWarning: incorrect calculation steps -> by default set to 1000.\n"; }
 
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
@@ -54,10 +67,7 @@ int main(const int argc, const char **argv)
 
     // ==== Actualization algorithm ====
 
-    Matrix temp(N);
-    Matrix backup = mat;
-
-    for(int exe_i = 0; exe_i < RUN; ++exe_i)
+    for(int exe_i = 0, mm = 0; exe_i < RUN; ++exe_i)
     {
         start_t = omp_get_wtime();
 
@@ -65,13 +75,10 @@ int main(const int argc, const char **argv)
         {
             temp = mat;
             for(i = 1; i < N - 1; ++i)
-            {
                 for(j = 1; j < N - 1; ++j) 
-                {
                     mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
-                }
-            }
-	        mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
+	        
+            mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
             // updates first and last rows
@@ -95,15 +102,16 @@ int main(const int argc, const char **argv)
                 stop = true;
             else
                 diff = 0;
-
-
         }
+
         end_t = omp_get_wtime();
         exe_result[exe_i] = end_t - start_t;
         my_csv << end_t - start_t << '\n';
 
-        if(exe_i == RUN - 1) { my_out << mat; }
-	    //my_out << mat;
+        if(exe_i == RUN - 1){ 
+            my_out[mm] << mat;
+            ++mm;
+        }
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time: " << end_t - start_t <<" | diff: " <<diff <<'\n';
 
@@ -115,7 +123,10 @@ int main(const int argc, const char **argv)
 
     print_stats(exe_result, RUN);
 
-    my_start.close(); my_out.close(); my_csv.close();
+    my_csv.close();
+
+    for(i = 0; i < MEASURE_MAT; ++i)
+        my_out[i].close();
 
     delete[] exe_result;
 

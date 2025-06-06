@@ -1,4 +1,5 @@
 #define WARMUP 3   //to discard the first executions due to warm up
+#define MEASURE_MAT 6   //numbero of measured matrices
 
 #include <omp.h>
 
@@ -18,4 +19,6 @@ double sd(const double*, const double&, const int&);
 void print_stats(const double*, const int&);
 
 bool is_Power_Two(const int);
+
+void open_file(fstream*);
 
