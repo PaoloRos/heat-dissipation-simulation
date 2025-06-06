@@ -1,5 +1,13 @@
-#define WARMUP 3   //to discard the first executions due to warm up
-#define MEASURE_MAT 6   //numbero of measured matrices
+//===----------------------------------------------------------------------===//
+//
+// Progetto Heat Dissipation
+// Corso di Tecniche di Programmazione Avanzata, Università di Trento
+// Autore: Paolo Rossi
+// Data: 06/06/2025
+//
+//===----------------------------------------------------------------------===//
+
+#define WARMUP 3    //per scartare le prime misure di tempo
 
 #include <omp.h>
 
@@ -19,6 +27,4 @@ double sd(const double*, const double&, const int&);
 void print_stats(const double*, const int&);
 
 bool is_Power_Two(const int);
-
-void open_file(fstream*);
 

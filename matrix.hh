@@ -1,3 +1,12 @@
+//===----------------------------------------------------------------------===//
+//
+// Progetto Heat Dissipation
+// Corso di Tecniche di Programmazione Avanzata, Università di Trento
+// Autore: Paolo Rossi
+// Data: 06/06/2025
+//
+//===----------------------------------------------------------------------===//
+
 #define HEAT_SOURCE_1 5
 #define HEAT_SOURCE_2 3
 #define HS_POS_1 5
@@ -5,18 +14,12 @@
 
 #include "std_libraries.hh"
 
-// Devo fare questo upgrade:
-// salvare i dati in un array allineato -> aggiornare classe
-// provare senza cambiare il codice parallelo
-// provare a inserire metodo di copia: #pragma nel metodo di modo tale che accedo al puntatore
-
-// Matrix of dimension N, but counting: 0...N-1.
+// Matrice quadrata con gli elementi disposti in un array monodimensionale
 class Matrix
 {
     public:
-        //Matrix();
     
-        //Initialize the matrix to a null matrix. In case 'null' == false -> elements in position (5,5) and (20,20) have default values.
+        // Inizializza una matrice di dimensione 'size' a valori nulli. Se 'null' == false, allora gli elementi in posizione (5,5) e (20,20) hanno valori di default
         Matrix(short size, bool zero = false);
 
         Matrix(const Matrix&);
@@ -27,21 +30,22 @@ class Matrix
 
         void get_ID(const short r, const short c = -1);
 
+        // Ottimizza la copia degli elementi di una matrice: l'accesso diretto al puntatore senza passare per l'overoading di '[]' diminuisce i tempi
         void copy_in_parallel(const Matrix&, const int chunk_size);
 
         Matrix& operator=(const Matrix&);
 
-        // Access to the element by coordinates (row,col).
+        // Accesso all'elemento per coordinate (riga, colonna)
         double& operator()(const int, const int) const;
 
-        // Access to the element by array position.
+        // Accesso all'elemento per indice lineare
         double& operator[](const int) const;
 
-        double operator-(const Matrix&) const;
+        //double operator-(const Matrix&) const; -> verifica che non serva
 
         friend ostream& operator<<(ostream&, const Matrix&);
 
-        private:
+    private:
         double* el;
         short N;
 };

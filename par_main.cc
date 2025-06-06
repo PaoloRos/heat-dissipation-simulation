@@ -1,3 +1,12 @@
+//===----------------------------------------------------------------------===//
+//
+// Progetto Heat Dissipation
+// Corso di Tecniche di Programmazione Avanzata, Università di Trento
+// Autore: Paolo Rossi
+// Data: 06/06/2025
+//
+//===----------------------------------------------------------------------===//
+
 #include "matrix.hh"
 
 // argv[1]: matrix size; argv[2]: used threads; argv[3]: calculation steps; argv[4]: execution repetitions
@@ -45,10 +54,8 @@ int main(const int argc, const char **argv)
     catch(out_of_range& e) { cerr << e.what(); exit(-1); }
     
     const short THD = short(i);
-    cout << "Threads used: " << THD << "\n\n";
+    cout << "Used threads: " << THD << "\n\n";
 
-    // Ho tolto il controllo se dimensione matrix è multipla di THD: non serve per come ho strutturaro il codice (credo)
-    // tanto le prove le effettuero sempre su numeri pari --> verifica se devo mettere il check
 
     // ==== I/O stream opening ====
 
@@ -66,12 +73,14 @@ int main(const int argc, const char **argv)
     // setting to format %3.2f
     my_out << setw(3) << fixed << setprecision(2);
 
+
     // ==== Matrix generation ====
 
     Matrix mat(N);
     Matrix backup = mat;
     Matrix temp(N, true);
     
+
     // ==== Parameters ==== 
 
     const int RUN = (argv[4] == nullptr || stoi(argv[4]) < 50)? 50 + WARMUP : stoi(argv[4]) + WARMUP;
@@ -92,16 +101,15 @@ int main(const int argc, const char **argv)
     short blocks_per_row, blocks_per_col;
     short B_row, B_col;
 
-    //così distribuisco il lavoro se sono entro i N=64
-    if(N*N / THD > MAX_SIZE*MAX_SIZE)
-    {
-        // Calcola il numero di blocchi per riga/colonna
+    // Calcolo del numero di blocchi con cui suddividere la matrice
+    if(N*N / THD > MAX_SIZE*MAX_SIZE){
+
         blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
         B_row = B_col = MAX_SIZE;
-    }
-    else
-    {
+    } 
+    else{
+
         blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
         blocks_per_col = THD / blocks_per_row;
         B_row = N / blocks_per_row, B_col = N / blocks_per_col;

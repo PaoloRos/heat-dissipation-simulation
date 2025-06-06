@@ -36,7 +36,7 @@ int main(const int argc, const char **argv)
 
     //fstream my_out[MEASURE_MAT];
     //open_file(my_out);
-    
+
     fstream my_out;
     my_out.open("temp_output.txt", ios::out);
 
@@ -80,6 +80,7 @@ int main(const int argc, const char **argv)
         for(m = 0; m < STEP && !stop; ++m)
         {
             temp = mat;
+            
             for(i = 1; i < N - 1; ++i)
                 for(j = 1; j < N - 1; ++j) 
                     mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );

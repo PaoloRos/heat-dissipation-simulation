@@ -1,3 +1,13 @@
+//===----------------------------------------------------------------------===//
+//
+// Progetto Heat Dissipation
+// Corso di Tecniche di Programmazione Avanzata, Università di Trento
+// Autore: Paolo Rossi
+// Data: 06/06/2025
+//
+//===----------------------------------------------------------------------===//
+
+
 #include "matrix.hh"
 
 //Matrix::Matrix() : el(nullptr), N(0) {}
@@ -43,11 +53,10 @@ void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
         exit(-1);
     }
 
-    #pragma omp /*parallel*/ for simd schedule(static, chunk_size)
+    #pragma omp for simd schedule(static, chunk_size)
     for(int i = 0; i < this->N * this->N; ++i)
         this->el[i] = other.el[i];
 }
-
 
 Matrix& Matrix::operator=(const Matrix& other)
 {
@@ -56,21 +65,20 @@ Matrix& Matrix::operator=(const Matrix& other)
         exit(-1);
     }
 
-    #pragma omp /*parallel*/ for simd schedule(static)
     for(int i=0; i < this->N*this->N; ++i)
         this->el[i] = other.el[i];
 
     return *this;
 }
 
-double Matrix::operator-(const Matrix& other) const
-{
-    double res = 0;
-    for(int i = 0; i < this->N*this->N; ++i)
-        res += this->el[i] - other.el[i];
-        
-    return res;
-}
+//double Matrix::operator-(const Matrix& other) const
+//{
+//    double res = 0;
+//    for(int i = 0; i < this->N*this->N; ++i)
+//        res += this->el[i] - other.el[i];
+//        
+//    return res;
+//}
 
 ostream& operator<<(ostream& os, const Matrix& other)
 {
