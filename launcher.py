@@ -32,7 +32,7 @@ args = [matrix_size, "1000", "50"]
 print("Execution:\n")
 #subprocess.run( ["./parallel"] + args)
 
-T = 6 #int(sys.argv[1]) -> sempre 6 matrici
+T = int(sys.argv[1]) #-> sempre 6 matrici
 
 output_csv = "SEQ_timings.csv"
 
@@ -72,7 +72,7 @@ for cycle in range(T):
                 try:
                     t = float(line.strip())
                     time.append(t)
-                    writer.writerow([cycle + 1, t])  # ⬅️ CSV long format
+                    writer.writerow([cycle + 1, t])  # CSV long format
                 except ValueError:
                     continue
     except FileNotFoundError:
