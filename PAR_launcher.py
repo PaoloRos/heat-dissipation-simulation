@@ -7,7 +7,7 @@ import csv
 
 # 1. Build the software
 compile_cmd = ["g++", "-fopenmp", 
-               "par_block.cc", 
+               "par_main.cc", 
                "matrix.cc",
                "std_libraries.cc",
                "-o", 

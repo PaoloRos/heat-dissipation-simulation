@@ -58,7 +58,7 @@ int main(const int argc, const char **argv)
     fstream my_csv;
     my_csv.open("time.csv", ios::out);
 
-    if(my_start.fail() || my_out.fail() || my_csv.fail()) {
+    if(my_out.fail() || my_csv.fail()) {
         cerr << "Error in opening files.\n";
         return -1;
     }
