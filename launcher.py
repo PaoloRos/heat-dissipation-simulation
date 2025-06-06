@@ -39,8 +39,9 @@ for cycle in range(T):
     subprocess.run(["./sequel"] + args)
 
     # 3. Read data
+    filename = f"SEQ_output_{cycle}.txt"
     time = []
-    with open("par_time.csv") as my_file:
+    with open(filename) as my_file:
         for idx, line in enumerate(my_file):
             if idx < WARMUP:
                 continue # Skip first values
