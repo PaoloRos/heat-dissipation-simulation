@@ -72,12 +72,13 @@ for cycle in range(T):
                 try:
                     t = float(line.strip())
                     time.append(t)
-                    writer.writerow([cycle + 1, t])  # CSV long format
+                    writer.writerow([cycle + 1, t])
                 except ValueError:
                     continue
     except FileNotFoundError:
         print("File 'time.csv' non trovato.")
         sys.exit(1)
+    
     if not time:
         print("No data founded.\n")
         sys.exit(1)
