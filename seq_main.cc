@@ -120,7 +120,10 @@ int main(const int argc, const char **argv)
         exe_result[exe_i] = end_t - start_t;
         my_csv << end_t - start_t << '\n';
 
-        if(exe_i == RUN - 1){ my_out << mat; }
+        if(exe_i == RUN - 1){
+            my_out << mat;
+            if(stop && ) { cout << "\t Time step: " << m << '\n'; }
+        }
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time: " << end_t - start_t <<" | diff: " <<diff <<'\n';
 

@@ -1,3 +1,13 @@
+#===----------------------------------------------------------------------===//
+#
+# Progetto Heat Dissipation
+# Corso di Tecniche di Programmazione Avanzata, Università di Trento
+# Autore: Paolo Rossi
+# Data: 06/06/2025
+#
+#===----------------------------------------------------------------------===//
+
+
 import subprocess
 import sys
 import numpy as np
@@ -5,7 +15,7 @@ import shutil
 import os
 import csv
 
-# 1. Build the software
+# 1. Compila il software
 compile_cmd = ["g++", "-fopenmp", 
                "par_main.cc", 
                "matrix.cc",
@@ -20,12 +30,12 @@ if compilation.returncode != 0:
 else:
     print("Build succeeded.")
 
-# 2. Execute the software
+# 2. Lancio del software
 WARMUP = 3
 N = 50  # exe. repetitions
 THD = 2
 
-T = int(sys.argv[1]) #-> sempre 6 matrici
+T = int(sys.argv[1])
 
 output_csv = "PAR_timings.csv"
 
@@ -39,7 +49,7 @@ while THD <= 16:
     print(f"\n==== {THD} THREADS ====\n")
 
     matrix_size = 32
-    args = [str(matrix_size), str(THD), "1000", "50"]
+    args = ["", str(THD), "1000", "50"]
 
     print("Execution:\n")
 
@@ -57,13 +67,13 @@ while THD <= 16:
         dst = f"PAR_output_{THD}_{cycle}.txt"
 
         if not os.path.exists(src):
-            print(f"File temporaneo '{src}' non trovato.")
+            print(f"Temporary file '{src}' not found.")
             sys.exit(1)
 
         try:
             shutil.copyfile(src, dst)
         except Exception as e:
-            print(f"Errore durante la copia di {src} in {dst}: {e}")
+            print(f"Error during the copy of {src} to {dst}: {e}")
             sys.exit(1)
 
         # Lettura time.csv
@@ -84,11 +94,11 @@ while THD <= 16:
                     except ValueError:
                         continue
         except FileNotFoundError:
-            print("File 'time.csv' non trovato.")
+            print("File 'time.csv' not found.")
             sys.exit(1)
 
         if not time:
-            print("No data founded.\n")
+            print("No data found.\n")
             sys.exit(1)
 
         # 4. Statistiche

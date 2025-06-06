@@ -1,3 +1,13 @@
+#===----------------------------------------------------------------------===//
+#
+# Progetto Heat Dissipation
+# Corso di Tecniche di Programmazione Avanzata, Università di Trento
+# Autore: Paolo Rossi
+# Data: 06/06/2025
+#
+#===----------------------------------------------------------------------===//
+
+
 GCC = g++
 OMP = -fopenmp
 
@@ -31,7 +41,6 @@ srun:
 
 fig:
 	python3 display_mxm.py $(f)
-# $(f) -> se ci aggiungo il file
 
 clean:
 	rm -f *.out *.o seq par parallel sequel dim
@@ -41,4 +50,4 @@ clear:
 	> output.txt > starting_mat.txt > statistics.txt
 
 ctxt:
-	rm -f *.txt
+	rm -f *.txt *.csv
