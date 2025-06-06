@@ -136,7 +136,10 @@ int main(const int argc, const char **argv)
             for (int t = 0; t < STEP && !stop; ++t)
             {
                 // 1. copia parallela
-                temp.copy_in_parallel(mat, chunk_size);
+                //temp.copy_in_parallel(mat, chunk_size);
+                #pragma omp for simd schedule(static, chunk_size)
+                for(int i = 0; i < N * N; ++i)
+                    temp[i] = mat[i];
 
                 #pragma omp barrier
 
