@@ -65,20 +65,24 @@ for cycle in range(T):
     # Lettura time.csv
     time = []
     try:
-        with open("time.csv") as my_file:
-            for idx, line in enumerate(my_file):
+        with open("time.csv") as f_in:
+            for idx, line in enumerate(f_in):
                 if idx < WARMUP:
                     continue
                 try:
                     t = float(line.strip())
                     time.append(t)
-                    writer.writerow([cycle + 1, t])
+
+                    # Scrivi subito su CSV (modalità append)
+                    with open(output_csv, "a", newline="") as f_out:
+                        writer = csv.writer(f_out)
+                        writer.writerow([cycle + 1, t])
                 except ValueError:
                     continue
     except FileNotFoundError:
         print("File 'time.csv' non trovato.")
         sys.exit(1)
-    
+
     if not time:
         print("No data founded.\n")
         sys.exit(1)
