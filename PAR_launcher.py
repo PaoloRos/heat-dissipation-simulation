@@ -23,11 +23,11 @@ else:
 # 2. Execute the software
 WARMUP = 3
 N = 50  # exe. repetitions
-THD = 2
+THD = 32
 
 T = int(sys.argv[1]) #-> sempre 6 matrici
 
-while THD <= 2:
+while THD <= 32:
 
     matrix_size = 32
     args = [str(matrix_size), str(THD), "1000", "50"]
@@ -96,7 +96,11 @@ while THD <= 2:
         print(f"Standard deviation: {dev_std:.6f} (s)\n")
         print("\n--------\n")
 
-        # 5. Aggiorna variabili
+        # 5. Aggiorna dimensione matrice
         matrix_size *= 2
-        THD *= 2
+    
+    # Incrementa i thread
+    THD *= 2
+
+    print("==== NEW EXECUTION SET ====\n")
 
