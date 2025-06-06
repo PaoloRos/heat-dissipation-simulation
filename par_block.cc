@@ -179,45 +179,29 @@ int main(const int argc, const char **argv)
                 #pragma omp barrier
 
                 // 4. border actualization (sezioni parallele gestite con omp single+sections)
-                //#pragma omp single
-                //{
-                //    #pragma omp parallel sections
-                //    {
-                //        #pragma omp section
-                //        for (int k = 1; k < N - 1; ++k)
-                //            mat[0 * N + k] = mat[1 * N + k];
-//
-                //        #pragma omp section
-                //        for (int k = 1; k < N - 1; ++k)
-                //            mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
-//
-                //        #pragma omp section
-                //        for (int k = 1; k < N - 1; ++k)
-                //            mat[k * N + 0] = mat[k * N + 1];
-//
-                //        #pragma omp section
-                //        for (int k = 1; k < N - 1; ++k)
-                //            mat[k * N + N - 1] = mat[k * N + N - 2];
-                //    }
-                //}
+                #pragma omp single
+                {
+                    #pragma omp parallel sections
+                    {
+                        #pragma omp section
+                        for (int k = 1; k < N - 1; ++k)
+                            mat[0 * N + k] = mat[1 * N + k];
 
-                #pragma omp for nowait
-                for (int k = 1; k < N - 1; ++k)
-                    mat[0 * N + k] = mat[1 * N + k];
+                        #pragma omp section
+                        for (int k = 1; k < N - 1; ++k)
+                            mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
 
-                #pragma omp nowait
-                for (int k = 1; k < N - 1; ++k)
-                    mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
+                        #pragma omp section
+                        for (int k = 1; k < N - 1; ++k)
+                            mat[k * N + 0] = mat[k * N + 1];
 
-                #pragma omp nowait
-                for (int k = 1; k < N - 1; ++k)
-                    mat[k * N + 0] = mat[k * N + 1];
+                        #pragma omp section
+                        for (int k = 1; k < N - 1; ++k)
+                            mat[k * N + N - 1] = mat[k * N + N - 2];
+                    }
+                }
 
-                #pragma omp nowait
-                for (int k = 1; k < N - 1; ++k)
-                    mat[k * N + N - 1] = mat[k * N + N - 2];
-
-                #pragma omp barrier
+                //#pragma omp barrier
 
                 // 5. discard calculation con riduzione parallela
                 #pragma omp for simd schedule(static, chunk_size) reduction(+:diff)
