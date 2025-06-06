@@ -16,7 +16,8 @@ int main(const int argc, const char **argv)
 
     int i, t;   //counters
 
-    // ==== Read matrix size & used threads ====
+
+    // ==== Lettura dimensione matrice e numero di thread ====
 
     try
     {
@@ -57,7 +58,7 @@ int main(const int argc, const char **argv)
     cout << "Used threads: " << THD << "\n\n";
 
 
-    // ==== I/O stream opening ====
+    // ==== Inizializzazione flusso I/O ====
 
     fstream my_out;
     my_out.open("temp_output.txt", ios::out);
@@ -74,23 +75,23 @@ int main(const int argc, const char **argv)
     my_out << setw(3) << fixed << setprecision(2);
 
 
-    // ==== Matrix generation ====
+    // ==== Generazione matrici ====
 
     Matrix mat(N);
     Matrix backup = mat;
     Matrix temp(N, true);
     
 
-    // ==== Parameters ==== 
+    // ==== Parametri ==== 
 
     const int RUN = (argv[4] == nullptr || stoi(argv[4]) < 50)? 50 + WARMUP : stoi(argv[4]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[3] == nullptr || stoi(argv[3]) < 1000)? 1000 : stoi(argv[3]);
 
-    const double alpha = 0.5;   // thermal coefficient
-    const double dt = 0.1;  // time step
-    const double epsilon = 0.0001;  // minimum discard
+    const double alpha = 0.5;   // coefficiente termico
+    const double dt = 0.1;  // passo temporale
+    const double epsilon = 0.0001;  // scarto minimo
     bool stop = false;
     double diff = 0;
     const int chunk_size = ( (N * N) / (THD * 4) < 1)? 1 : (N * N) / (THD * 4);
@@ -117,7 +118,8 @@ int main(const int argc, const char **argv)
 
     const short total_blocks = blocks_per_row * blocks_per_col;
 
-    // ==== Actualization algorithm ====
+
+    // ==== Algortimo di attualizzazione ====
 
     for(int exe_i = 0; exe_i < RUN; ++exe_i)
     {
@@ -129,12 +131,12 @@ int main(const int argc, const char **argv)
 
             for (int t = 0; t < STEP && !stop; ++t)
             {
-                // 1. Parallel copy
-                temp.copy_in_parallel(mat, chunk_size); // faster than operator overload
+                // 1. Copia parallela in una variabile temporanea
+                temp.copy_in_parallel(mat, chunk_size);
 
                 #pragma omp barrier
 
-                // 2. Matrix body actualization
+                // 2. Attualizzazione corpo della matrice
                 short block_row, block_col;
                 unsigned short r_start, c_start, r_end, c_end;
                 unsigned short start_r, start_c, end_r, end_c;
@@ -163,7 +165,7 @@ int main(const int argc, const char **argv)
 
                 #pragma omp barrier
 
-                // 3. heat sources restoring (solo thread master)
+                // 3. Reimpostazione delle sorgenti di calore
                 #pragma omp master
                 {
                     mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
@@ -172,39 +174,37 @@ int main(const int argc, const char **argv)
 
                 #pragma omp barrier
 
-                // 4. border actualization (sezioni parallele gestite con omp single+sections)
+                // 4. Attualizzazione dei bordi della matrice
                 #pragma omp single
                 {
-                    #pragma omp parallel sections
+                    #pragma omp parallel sections   // prima colonna
                     {
                         #pragma omp section
                         for (int k = 1; k < N - 1; ++k)
                             mat[0 * N + k] = mat[1 * N + k];
 
-                        #pragma omp section
+                        #pragma omp section // ultima colonna
                         for (int k = 1; k < N - 1; ++k)
                             mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
 
-                        #pragma omp section
+                        #pragma omp section //prima riga
                         for (int k = 1; k < N - 1; ++k)
                             mat[k * N + 0] = mat[k * N + 1];
 
-                        #pragma omp section
+                        #pragma omp section //ultima riga
                         for (int k = 1; k < N - 1; ++k)
                             mat[k * N + N - 1] = mat[k * N + N - 2];
                     }
                 }
 
-                //#pragma omp barrier
-
-                // 5. discard calculation con riduzione parallela
+                // 5. Scarto
                 #pragma omp for simd schedule(static, chunk_size) reduction(+:diff)
                 for (int i = 0; i < N * N; ++i)
                     diff += mat[i] - temp[i];
 
                 #pragma omp barrier
 
-                // 6. verifica della condizione di arresto (solo uno controlla e scrive su variabili condivise)
+                // 6. Check di terminazione: aggiorna le variabili condivise su tutti i thread
                 #pragma omp master
                 {
                     if (diff < epsilon)
@@ -213,7 +213,7 @@ int main(const int argc, const char **argv)
                         diff = 0;
                 }
 
-                #pragma omp barrier
+                #pragma omp barrier // sincronizzazione temporale prima del prossimo ciclo
             }
         }
 
@@ -225,7 +225,7 @@ int main(const int argc, const char **argv)
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time " << end_t - start_t <<" | diff: " <<diff <<'\n' ;
         
-        //restore variables
+        // Ripristino variabili
         mat = backup;
         stop = false;
         diff = 0;
@@ -236,8 +236,6 @@ int main(const int argc, const char **argv)
     my_out.close(); my_csv.close();
 
     delete[] exe_result;
-
-    //*/
 
     cerr << '\n';
 

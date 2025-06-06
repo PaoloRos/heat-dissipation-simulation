@@ -7,7 +7,8 @@ int main(const int argc, const char **argv)
 
     int i, j, m;
 
-    // ==== Read matrix size ====
+
+    // ==== Lettura dimensione matrice e numero di thread ====
 
     try
     {
@@ -32,10 +33,8 @@ int main(const int argc, const char **argv)
 
     const short N = short(i);
 
-    // ==== I/O strem opening ====
 
-    //fstream my_out[MEASURE_MAT];
-    //open_file(my_out);
+    // ==== Inizializzazione flusso I/O ====
 
     fstream my_out;
     my_out.open("temp_output.txt", ios::out);
@@ -50,13 +49,15 @@ int main(const int argc, const char **argv)
 
     my_out << setw(3) << fixed << setprecision(2);
 
-    // ==== Matrix generation ====
+
+    // ==== Generazione matrici ====
 
     Matrix mat(N);
     Matrix temp(N);
     Matrix backup = mat;
 
-    // ==== Parameters ==== 
+
+    // ==== Parametri ==== 
 
     const int RUN = (argv[3] == nullptr || stoi(argv[3]) < 50)? 50 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
@@ -71,7 +72,8 @@ int main(const int argc, const char **argv)
 
     double start_t, end_t;
 
-    // ==== Actualization algorithm ====
+
+    // ==== Algortimo di attualizzazione ====
 
     for(int exe_i = 0, mm = 0; exe_i < RUN; ++exe_i)
     {
@@ -79,32 +81,35 @@ int main(const int argc, const char **argv)
 
         for(m = 0; m < STEP && !stop; ++m)
         {
+            // 1. Copia in variabile temporanea
             temp = mat;
             
+            // 2. Aggiornamento corpo della matrice
             for(i = 1; i < N - 1; ++i)
                 for(j = 1; j < N - 1; ++j) 
                     mat(i, j) = temp(i, j) + alpha * dt * ( temp(i+1,j) + temp(i,j+1) + temp(i-1,j) + temp(i,j-1) - 4*temp(i,j) );
 	        
+            // 3. Sorgenti di calore
             mat(HS_POS_1, HS_POS_1) = HEAT_SOURCE_1;
 	        mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
 
-            // updates first and last rows
+            // 4. Aggiornamento bordi
             for(i = 1; i < N - 1; ++i)
             {
                 mat(0, i) = mat(1, i);
                 mat(N-1, i) = mat(N-2, i);
             }
-
-            //updates first and last columns
             for(i = 1; i < N - 1; ++i)
             {
                 mat(i, 0) = mat(i, 1);
                 mat(i, N-1) = mat(i, N-2);
             }
 
+            // 5. Calcolo dello scarto
             for(i = 0; i < N*N; ++i)
                 diff += mat[i] - temp[i];
 
+            // 6. Check di terminazione
             if(diff < epsilon)
                 stop = true;
             else
@@ -115,15 +120,11 @@ int main(const int argc, const char **argv)
         exe_result[exe_i] = end_t - start_t;
         my_csv << end_t - start_t << '\n';
 
-        if(exe_i == RUN - 1){ 
-            my_out << mat;
-            //my_out[mm] << mat;
-            //++mm;
-        }
+        if(exe_i == RUN - 1){ my_out << mat; }
 
         cerr << "exe_iteration: " << exe_i + 1 << " of " << RUN << " | time: " << end_t - start_t <<" | diff: " <<diff <<'\n';
 
-        //restore variables
+        // Ripristino variabili
         mat = backup;
         stop = false;
         diff = 0;
@@ -132,9 +133,6 @@ int main(const int argc, const char **argv)
     print_stats(exe_result, RUN);
 
     my_csv.close(); my_out.close();
-
-    //for(i = 0; i < MEASURE_MAT; ++i)
-    //    my_out[i].close();
 
     delete[] exe_result;
 

@@ -7,12 +7,10 @@ import csv
 
 # 1. Build the software
 compile_cmd = ["g++", "-fopenmp", 
-               #"par_block.cc", 
                "seq_main.cc",
                "matrix.cc",
                "std_libraries.cc",
                "-o", 
-               #"parallel"] 
                "sequel"]
 
 compilation = subprocess.run(compile_cmd, capture_output=True, text=True)
