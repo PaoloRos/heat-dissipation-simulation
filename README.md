@@ -1,37 +1,42 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/NNiiXw-q)
+# Progetto Heat Dissipation
 
-* non lavorare su sotto matrici locali -> avrebbe senso su una gpu ->
+**Corso di Programmazione Avanzata**, _Università di Trento_
 
-Idea:
-    * far fare l'attualizzazione e le operazioni sullo stesso thread (tutto già in cache) -> risolvere solo l'interfaccia tra i diversi thread
-    n.b. matrice temporanea -> la matrice t-1 è già in cache
+**Autore:** Paolo Rossi
 
+**Data:** 07/06/2025
 
-NON fare sotto cicli che controllino i 5,5 e 20,20: -> NON fare mettere if:
+## Istruzioni sull'uso
 
-cicle
-{
-    if(5,5)
-        ...
-    else
-}
+1. **Installazione:** compilare il progetto digitando da `riga di comando` uno dei eguenti _target_:
+    ```
+    make seq #per il codice sequenziale
+    make par #per il codice parallelo
+    ```
+    Questi produrranno il file eseguibile del programma.
 
--> sol: fai attualizzazione e poi imponi a valore costante
+2. **Test:** è possibile verificare il corretto funzionamento del software digitando da `riga di comando`:
+    ```
+    ./seq 32 #per il codice sequenziale
+    ./par 32 4 #per il codice parallelo
+    ```
+    Questo effettuerà un calcolo su di una matrice 32x32.
 
+4. **Raccolta dati:** digitare da riga di comando:
+    ```
+    python3 SEQ_launcher.py <num_matrici> #per il codice sequenziale
+    python3 PAR_launcher.py <num_matrici> #per il codice parallelo
+    ```
+    Dove <num_matrici> rappresenta il numero di matrici per le quali si vuole raccogliere le misure. Si noti che la dimensione delle matrici è sempre potenza di due a partire da 32.
 
-Test prestazioni:
+5. **Visualizzazione grafica**: digitare da riga di comando:
+    ```
+    make fig f=<nome_file>
+    ```
+    Sostituendo <nome_file> con il nome dell'output prodotto.
 
-- media (+ sd)
-
-- almeno con tre matrici di dimensioni diverse
-
-
-# Cosa aggiungere
-
-## matrix
-
-[] sovraccarica l'accesso [][]
-
-## display matrix
-
-[] scala di colori sulla mappa stampata
+5. **Disinstallazione:** è possibile disinstallare gli eseguibili e cancellare i file di testo digitando da `riga di comando`:
+    ```
+    make clean
+    make ctxt
+    ```
