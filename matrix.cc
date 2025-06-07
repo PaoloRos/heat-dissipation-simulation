@@ -1,40 +1,61 @@
+//===----------------------------------------------------------------------===//
+//
+// Progetto Heat Dissipation
+// Corso di Tecniche di Programmazione Avanzata, Università di Trento
+// Autore: Paolo Rossi
+// Data: 06/06/2025
+//
+//===----------------------------------------------------------------------===//
+
+
 #include "matrix.hh"
 
-Matrix::Matrix(int n)
+//Matrix::Matrix() : el(nullptr), N(0) {}
+
+Matrix::Matrix(short size, bool zero)
 {
-    this->N = n;
+    this->N = size;
 
-    this->el = new double *[N];
-    for(int i = 0; i < N; ++i)
-        el[i] = new double[N];
-
-    this->el[HS_POS_1][HS_POS_1] = HEAT_SOURCE_1;
-    this->el[HS_POS_2][HS_POS_2] = HEAT_SOURCE_2;
-
-    //cerr << "Matrix constructed.\n";
+    this->el = new double [this->N*this->N];
+    
+    if(!zero) {
+        el[HS_POS_1*N + HS_POS_1] = HEAT_SOURCE_1;
+        el[HS_POS_2*N + HS_POS_2] = HEAT_SOURCE_2;
+    }
 }
 
 Matrix::Matrix(const Matrix& other)
 {
     this->N = other.N;
 
-    this->el = new double *[N];
-    int i, j;
-    for(i = 0; i < N; ++i) 
-    {
-        el[i] = new double[N];
-        for(j = 0; j < N; ++j)
-            el[i][j] = other.el[i][j];
-    }
+    this->el = new double [this->N * this->N];
+
+    #pragma omp parallel for simd schedule(static)
+    for(int i = 0; i < this->N*this->N; ++i)
+        this->el[i] = other.el[i];
 }
 
 Matrix::~Matrix()
 {
-    for(int i = 0; i < N; ++i)
-        delete []el[i];
-    delete []el;
+    if(el != nullptr)
+        delete []this->el;
+}
 
-    //cerr << "Matrix destroyed.\n";
+void Matrix::get_ID(const short r, const short c)
+{
+    cout << ( (c < 0)? &(this->el[r]) : &(this->el[r*this->N + c]) ) << '\n';
+}
+
+void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
+{
+    if(this->N != other.N) {
+        cerr << "Error: size doesn't match.\n";
+        exit(-1);
+    }
+
+    #pragma omp for simd schedule(static, chunk_size)
+    for(int i = 0; i < this->N * this->N; ++i)
+        this->el[i] = other.el[i];
 }
 
 Matrix& Matrix::operator=(const Matrix& other)
@@ -43,29 +64,27 @@ Matrix& Matrix::operator=(const Matrix& other)
         cerr << "Error: size doesn't match.\n";
         exit(-1);
     }
-    int i, j;
-    for(i = 0; i < this->N; ++i)
-        for(j = 0; j < this->N; ++j)
-            this->el[i][j] = other.el[i][j];
-    
+
+    for(int i=0; i < this->N*this->N; ++i)
+        this->el[i] = other.el[i];
+
     return *this;
 }
+
+//double Matrix::operator-(const Matrix& other) const
+//{
+//    double res = 0;
+//    for(int i = 0; i < this->N*this->N; ++i)
+//        res += this->el[i] - other.el[i];
+//        
+//    return res;
+//}
 
 ostream& operator<<(ostream& os, const Matrix& other)
 {
     for(int i = 0; i < other.N; ++i)
         for(int j = 0; j < other.N; ++j)
-            os << other.el[i][j] << ( (j < other.N -1)? ' ' : '\n' );
+            os << other.el[i*other.N + j] << ( (j < other.N - 1)? ' ' : '\n' );
 
     return os;
 }
-
-double Matrix::operator-(const Matrix& other) const
-{
-    double res = 0;
-    for(int i = 0; i < this->N; ++i)
-        for(int j = 0; j < this->N; ++j)
-            res += this->el[i][j] - other.el[i][j];
-    return res;
-}
-
