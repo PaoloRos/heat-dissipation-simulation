@@ -100,18 +100,18 @@ int main(const int argc, const char **argv)
 
     short MAX_SIZE = 128;
     short blocks_per_row, blocks_per_col;
-    short B_row, B_col;
+    short B_row, B_col; // dimensione dei blocchi
 
     // Calcolo del numero di blocchi con cui suddividere la matrice
     if(N*N / THD > MAX_SIZE*MAX_SIZE){
-
+        // Suddivisione i blocchi quadrati a dimensione prefissata
         blocks_per_row = (N + MAX_SIZE - 1) / MAX_SIZE;
         blocks_per_col = (N + MAX_SIZE - 1) / MAX_SIZE;
         B_row = B_col = MAX_SIZE;
     } 
     else{
-
-        blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2))
+        // Suddivisione della matrice in blocchi rettangolari pari al numero di THD
+        blocks_per_row = 1 << (int)(log2(THD) / 2); // 2^(floor(log2(THD)/2)) -> chatGPT
         blocks_per_col = THD / blocks_per_row;
         B_row = N / blocks_per_row, B_col = N / blocks_per_col;
     }
@@ -136,13 +136,13 @@ int main(const int argc, const char **argv)
 
                 #pragma omp barrier
 
-                // 2. Attualizzazione corpo della matrice
-                short block_row, block_col;
-                unsigned short r_start, c_start, r_end, c_end;
-                unsigned short start_r, start_c, end_r, end_c;
-                short r, c;
+                // 2. Attualizzazione corpo della matrice: ogni thread opera su un blocco
+                short block_row, block_col; // indici del blocco
+                unsigned short r_start, c_start, r_end, c_end;  // posizione sulla matrice originale del primo e ultimo elemento del blocco
+                unsigned short start_r, start_c, end_r, end_c;  // posizione sulla matriche originale del primo e ultimo elemento su cui effettuare l'aggiornamento
+                short r, c; // contatori
 
-                for (short block_idx = t_ID; block_idx < total_blocks; block_idx += THD)
+                for (short block_idx = t_ID; block_idx < total_blocks; block_idx += THD)    // scorre i blocchi sulla matrice
                 {
                     block_row = block_idx / blocks_per_col;
                     block_col = block_idx % blocks_per_col;
@@ -152,6 +152,7 @@ int main(const int argc, const char **argv)
                     r_end = (r_start + B_row < N) ? r_start + B_row : N;
                     c_end = (c_start + B_col < N) ? c_start + B_col : N;
 
+                    // Queste condizionali permetto di non aggiornare i bordi
                     start_r = (r_start == 0) ? 1 : r_start;
                     end_r = (r_end == N) ? N - 1 : r_end;
                     start_c = (c_start == 0) ? 1 : c_start;
@@ -172,7 +173,7 @@ int main(const int argc, const char **argv)
                     mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
                 }
 
-                #pragma omp barrier
+                //#pragma omp barrier -> le misure sono state raccolte con questa barriera, ma eeffetivamente è inutile
 
                 // 4. Attualizzazione dei bordi della matrice
                 #pragma omp single
