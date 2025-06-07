@@ -173,8 +173,6 @@ int main(const int argc, const char **argv)
                     mat(HS_POS_2, HS_POS_2) = HEAT_SOURCE_2;
                 }
 
-                //#pragma omp barrier -> le misure sono state raccolte con questa barriera, ma eeffetivamente è inutile
-
                 // 4. Attualizzazione dei bordi della matrice
                 #pragma omp single
                 {
@@ -188,11 +186,11 @@ int main(const int argc, const char **argv)
                         for (int k = 1; k < N - 1; ++k)
                             mat[(N - 1) * N + k] = mat[(N - 2) * N + k];
 
-                        #pragma omp section //prima riga
+                        #pragma omp section // prima riga
                         for (int k = 1; k < N - 1; ++k)
                             mat[k * N + 0] = mat[k * N + 1];
 
-                        #pragma omp section //ultima riga
+                        #pragma omp section // ultima riga
                         for (int k = 1; k < N - 1; ++k)
                             mat[k * N + N - 1] = mat[k * N + N - 2];
                     }
@@ -214,7 +212,7 @@ int main(const int argc, const char **argv)
                         diff = 0;
                 }
 
-                #pragma omp barrier // sincronizzazione temporale prima del prossimo ciclo
+                #pragma omp barrier // sincronizzazione temporale prima della prossima iterazione
             }
         }
 
