@@ -53,7 +53,7 @@ for cycle in range(T):
     print(f"Execution {cycle+1} -> {args[0]}x{args[0]} && epsilon = {epsilon[cycle]}:")
     
     # 1. Esegue il programma
-    subprocess.run(["./sequel"] + args + epsilon[cycle], check=True)
+    subprocess.run(["./sequel"] + args + [epsilon[cycle]], check=True)
 
     # 2.Copia temp_out.txt in SEQ_output_<cycle>.txt
     src = "temp_output.txt"
