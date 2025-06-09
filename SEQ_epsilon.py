@@ -50,7 +50,7 @@ with open(output_csv, "w", newline="") as f_csv:
 
 for cycle in range(T):
 
-    print(f"Execution {cycle+1} -> {args[0]}x{args[0]} && epsilon = {epsilon[cycle]}:")
+    print(f"Execution {cycle+1} -> {args[0]}x{args[0]} & epsilon = {epsilon[cycle]}:")
     
     # 1. Esegue il programma
     subprocess.run(["./sequel"] + args + [epsilon[cycle]], check=True)

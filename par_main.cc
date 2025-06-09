@@ -91,7 +91,7 @@ int main(const int argc, const char **argv)
 
     const double alpha = 0.5;   // coefficiente termico
     const double dt = 0.1;  // passo temporale
-    const double epsilon = 0.0001;  // scarto minimo
+    const double epsilon = stod(argv[5]);  // scarto minimo
     bool stop = false;
     double diff = 0;
     const int chunk_size = ( (N * N) / (THD * 4) < 1)? 1 : (N * N) / (THD * 4);

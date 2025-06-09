@@ -44,12 +44,16 @@ with open(output_csv, "w", newline="") as f_csv:
     writer = csv.writer(f_csv)
     writer.writerow(["THD", "T", "Time"])
 
+args = ["", "", "1000", "50"]
+epsilon = ["0.0001", "0.001", "0.15", "0.2", "0.35", "0.5"]
+
+
 while THD <= 16:
 
     print(f"\n==== {THD} THREADS ====\n")
 
     matrix_size = 32
-    args = ["", str(THD), "1000", "50"]
+    args[1] = str(THD)
 
     print("Execution:\n")
 
@@ -57,10 +61,10 @@ while THD <= 16:
 
         args[0] = str(matrix_size)
 
-        print(f"Execution {cycle+1} -> {args[0]}:")
+        print(f"Execution {cycle+1} -> {args[0]}x{args[0]} & epsilon = {epsilon[cycle]}:")
 
         # 1. Esegui il programma
-        subprocess.run(["./parallel"] + args, check=True)
+        subprocess.run(["./parallel"] + args + [epsilon[cycle]], check=True)
 
         # 2. Copia da temp_out.txt in SEQ_output_<cycle>.txt
         src = "temp_output.txt"
