@@ -59,14 +59,14 @@ int main(const int argc, const char **argv)
 
     // ==== Parametri ==== 
 
-    const int RUN = 5;//(argv[2] == nullptr || argv[3] == nullptr || stoi(argv[3]) < 50)? 50 + WARMUP : stoi(argv[3]) + WARMUP;
+    const int RUN = (argv[2] == nullptr || argv[3] == nullptr || stoi(argv[3]) < 50)? 50 + WARMUP : stoi(argv[3]) + WARMUP;
     double* exe_result = new double[RUN];
 
     const int STEP = (argv[2] == nullptr || stoi(argv[2]) < 1000)? 1000 : stoi(argv[2]);
 
     const double alpha = 0.5;   // thermal coefficient
     const double dt = 0.1;  // time step
-    const double epsilon = 0.0001;  // minimum discard
+    const double epsilon = stod(argv[4]);  // minimum discard
     bool stop = false;
     double diff = 0;
 
