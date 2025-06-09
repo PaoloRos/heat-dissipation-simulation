@@ -42,9 +42,9 @@ output_csv = "PAR_timings.csv"
     # 1. Inizializza file CSV
 with open(output_csv, "w", newline="") as f_csv:
     writer = csv.writer(f_csv)
-    writer.writerow(["THD", "T", "Time"])
+    writer.writerow(["THD", "T", "Epsilon", "Time"])
 
-args = ["", "", "1000", "50"]
+args = ["", "", "10000000", "50"]
 epsilon = ["0.0001", "0.001", "0.15", "0.2", "0.35", "0.5"]
 
 
@@ -94,7 +94,7 @@ while THD <= 16:
                         # Scrivi subito su CSV (modalità append)
                         with open(output_csv, "a", newline="") as f_out:
                             writer = csv.writer(f_out)
-                            writer.writerow([THD,cycle + 1, t])
+                            writer.writerow([THD, 2 ** (cycle + 1 + 4), epsilon[cycle], t])
                     except ValueError:
                         continue
         except FileNotFoundError:
