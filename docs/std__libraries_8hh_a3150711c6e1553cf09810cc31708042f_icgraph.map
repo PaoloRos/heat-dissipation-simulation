@@ -1,0 +1,5 @@
+<map id="is_Power_Two" name="is_Power_Two">
+<area shape="rect" id="Node000001" title="Checks whether an integer is a power of two." alt="" coords="103,5,209,31"/>
+<area shape="rect" id="Node000002" href="$par__main_8cc.html#ac762d48b889bd832ec0d42abcbc50624" title="Runs the parallel benchmark and writes outputs/timings to disk." alt="" coords="5,5,55,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="85,19,55,21,55,16,90,17"/>
+</map>

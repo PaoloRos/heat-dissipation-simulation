@@ -1,0 +1,13 @@
+<map id="Matrix::Matrix" name="Matrix::Matrix">
+<area shape="rect" id="Node000001" title="Builds an size x size matrix." alt="" coords="309,80,410,106"/>
+<area shape="rect" id="Node000002" href="$class_matrix.html#a1f6a78ba678809111d241e7caba4e28d" title="Copies all elements from another matrix inside a parallel region." alt="" coords="103,5,261,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="320,73,260,45,231,34,231,29,262,40,325,72"/>
+<area shape="rect" id="Node000004" href="$class_matrix.html#a0b9cfa2302a0273afb1b26e501f93abc" title="Copy constructor." alt="" coords="131,55,232,80"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="291,84,233,77,233,72,296,83"/>
+<area shape="rect" id="Node000005" href="$class_matrix.html#a2dc940ea1c822a490cdc29d642c28e3a" title="Stream output of matrix values row by row." alt="" coords="118,104,246,130"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="291,102,247,111,246,106,296,101"/>
+<area shape="rect" id="Node000006" href="$class_matrix.html#ae3695797299c70849667c22a098db137" title="Assignment with size consistency check." alt="" coords="122,153,242,179"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="324,113,262,145,232,155,231,150,260,140,319,114"/>
+<area shape="rect" id="Node000003" href="$par__main_8cc.html#ac762d48b889bd832ec0d42abcbc50624" title="Runs the parallel benchmark and writes outputs/timings to disk." alt="" coords="5,5,55,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="85,20,56,21,54,16,89,16"/>
+</map>

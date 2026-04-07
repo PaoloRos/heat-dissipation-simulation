@@ -1,0 +1,15 @@
+<map id="std_libraries.hh" name="std_libraries.hh">
+<area shape="rect" id="Node000001" title="Shared includes and numeric/statistics helpers for benchmarking." alt="" coords="212,5,322,31"/>
+<area shape="rect" id="Node000002" href="$matrix_8hh.html" title="Matrix data structure and low&#45;level operations for the heat diffusion solver." alt="" coords="172,79,247,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="250,42,221,81,218,77,246,45"/>
+<area shape="rect" id="Node000007" href="$std__libraries_8cc.html" title="Implementation of statistics and validation helpers." alt="" coords="271,79,380,105"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="287,41,318,79,313,78,286,46"/>
+<area shape="rect" id="Node000003" href="$matrix_8cc.html" title="Implementation of Matrix methods used by sequential and OpenMP solvers." alt="" coords="5,153,81,178"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="169,114,72,155,70,150,166,109"/>
+<area shape="rect" id="Node000004" href="$par__main_8cc.html" title="OpenMP&#45;parallel finite&#45;difference solver for 2D heat dissipation." alt="" coords="105,153,197,178"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="193,116,163,154,159,150,188,118"/>
+<area shape="rect" id="Node000005" href="$seq__main_8cc.html" title="Sequential finite&#45;difference solver for 2D heat dissipation." alt="" coords="221,153,316,178"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="230,114,261,153,256,152,228,119"/>
+<area shape="rect" id="Node000006" href="$size_8cc.html" title=" " alt="" coords="341,153,404,178"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="252,109,347,152,342,152,251,114"/>
+</map>

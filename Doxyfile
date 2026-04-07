@@ -1,0 +1,32 @@
+PROJECT_NAME           = "Heat Dissipation"
+PROJECT_BRIEF          = "Sequential vs OpenMP parallel performance for 2D heat diffusion"
+OUTPUT_DIRECTORY       = docs
+CREATE_SUBDIRS         = NO
+OUTPUT_LANGUAGE        = English
+USE_MDFILE_AS_MAINPAGE =
+
+INPUT                  = matrix.hh matrix.cc std_libraries.hh std_libraries.cc seq_main.cc par_main.cc size.cc mainpage.dox README.md report_page.dox
+FILE_PATTERNS          = *.hh *.cc *.md *.dox
+RECURSIVE              = NO
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+JAVADOC_AUTOBRIEF      = YES
+OPTIMIZE_OUTPUT_FOR_C  = NO
+
+GENERATE_HTML          = YES
+HTML_OUTPUT            = .
+HTML_EXTRA_FILES       = README.md HD_PAOLO_ROSSI.pdf
+GENERATE_LATEX         = NO
+
+GENERATE_TREEVIEW      = YES
+HAVE_DOT               = YES
+DOT_IMAGE_FORMAT       = svg
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+DOT_GRAPH_MAX_NODES    = 100
+INTERACTIVE_SVG        = YES
+
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES

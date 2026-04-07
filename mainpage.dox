@@ -1,0 +1,70 @@
+/**
+ * @mainpage Heat Dissipation: Sequential vs Parallel Performance
+ *
+ * @section purpose Purpose of the Project
+ * This project evaluates the runtime advantage of parallel computing over
+ * sequential execution for a 2D heat dissipation simulation.
+ *
+ * The same numerical model is implemented in two versions:
+ * - a sequential solver (<code>seq_main.cc</code>)
+ * - an OpenMP-parallel solver (<code>par_main.cc</code>)
+ *
+ * Benchmark scripts collect timings over multiple matrix sizes and repetitions,
+ * then compare execution time and scalability.
+ *
+ * @section physics Physical Model
+ * The simulated system is a square plate with two fixed heat sources.
+ * Temperature is represented by a scalar field T(i,j) discretized on a 2D grid.
+ *
+ * At each time step, internal cells are updated with a 5-point finite-difference
+ * diffusion stencil (explicit time integration).
+ *
+ * Model parameters:
+ * - alpha is the thermal diffusion coefficient
+ * - dt is the time step
+ *
+ * For the full mathematical derivation and validation details, see the
+ * measurement report: <a href="HD_PAOLO_ROSSI.pdf">HD_PAOLO_ROSSI.pdf</a>
+ *
+ * Boundary cells are updated by mirroring adjacent internal values, approximating
+ * a zero normal gradient (insulated border). Two source cells are reset every
+ * iteration to fixed temperatures.
+ *
+ * @section architecture Module Dependencies
+ * @dot
+ * digraph dependencies {
+ *   rankdir=LR;
+ *   node [shape=box, style=rounded];
+ *
+ *   "seq_main.cc" -> "matrix.hh";
+ *   "par_main.cc" -> "matrix.hh";
+ *   "size.cc" -> "matrix.hh";
+ *   "matrix.cc" -> "matrix.hh";
+ *
+ *   "matrix.hh" -> "std_libraries.hh";
+ *   "std_libraries.cc" -> "std_libraries.hh";
+ *
+ *   "seq_main.cc" -> "std_libraries.hh" [style=dashed, label="via matrix.hh"];
+ *   "par_main.cc" -> "std_libraries.hh" [style=dashed, label="via matrix.hh"];
+ * }
+ * @enddot
+ *
+ * @section workflow Solver Workflow
+ * @dot
+ * digraph workflow {
+ *   rankdir=TB;
+ *   node [shape=box, style=rounded];
+ *
+ *   Start -> "Init matrix and params" -> "Copy to temp" -> "Update interior";
+ *   "Update interior" -> "Reset heat sources" -> "Update borders" -> "Compute diff";
+ *   "Compute diff" -> "Stop condition?";
+ *   "Stop condition?" -> "Write outputs/timings" [label="yes"];
+ *   "Stop condition?" -> "Copy to temp" [label="no"];
+ * }
+ * @enddot
+ *
+ * @section report Measurement Report
+ * Useful links:
+ * - Project README: <a href="README.md">README.md</a>
+ * - Full measurements report: <a href="HD_PAOLO_ROSSI.pdf">HD_PAOLO_ROSSI.pdf</a>
+ */

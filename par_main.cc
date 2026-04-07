@@ -7,9 +7,28 @@
 //
 //===----------------------------------------------------------------------===//
 
+/** @file par_main.cc
+ *  @brief OpenMP-parallel finite-difference solver for 2D heat dissipation.
+ *
+ * The matrix body update is partitioned in blocks assigned to threads to test
+ * strong runtime improvements versus the sequential implementation.
+ */
+
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: used threads; argv[3]: calculation steps; argv[4]: execution repetitions
+/**
+ * @brief Runs the parallel benchmark and writes outputs/timings to disk.
+ * @param argc Number of CLI arguments.
+ * @param argv CLI argument vector.
+ * @return 0 on success, non-zero on error.
+ *
+ * Arguments:
+ * - argv[1]: matrix size
+ * - argv[2]: number of OpenMP threads
+ * - argv[3]: maximum update steps
+ * - argv[4]: number of repetitions
+ * - argv[5]: convergence epsilon
+ */
 int main(const int argc, const char **argv)
 {
     cerr << '\n';

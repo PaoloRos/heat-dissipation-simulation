@@ -1,0 +1,12 @@
+<map id="mean" name="mean">
+<area shape="rect" id="Node000001" title="Arithmetic mean implementation." alt="" coords="319,29,373,55"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="360,13,356,10,346,8,337,10,332,14,331,20,334,30,329,28,326,21,328,12,335,5,346,3,358,5,365,15"/>
+<area shape="rect" id="Node000002" href="$std__libraries_8cc.html#a62e4d88bca9f9ce36e6b197368454d45" title="Writes benchmark statistics to statistics.txt." alt="" coords="103,29,185,55"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="302,35,271,33,227,33,186,37,185,32,227,28,272,28,307,34"/>
+<area shape="rect" id="Node000004" href="$std__libraries_8cc.html#a65cb5d525370b5795dd31644614e6fa0" title="Computes standard deviation of an array." alt="" coords="233,67,271,92"/>
+<area shape="poly" id="edge4_Node000001_Node000004" title=" " alt="" coords="307,58,273,75,271,69,302,59"/>
+<area shape="rect" id="Node000003" href="$par__main_8cc.html#ac762d48b889bd832ec0d42abcbc50624" title="Runs the parallel benchmark and writes outputs/timings to disk." alt="" coords="5,29,55,55"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="85,44,55,45,54,40,89,41"/>
+<area shape="poly" id="edge5_Node000004_Node000002" title=" " alt="" coords="216,68,183,58,183,53,221,68"/>
+<area shape="poly" id="edge6_Node000004_Node000004" title=" " alt="" coords="266,51,262,47,252,45,243,47,238,51,237,58,240,68,235,65,232,58,234,49,241,42,252,40,264,43,271,52"/>
+</map>

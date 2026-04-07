@@ -11,6 +11,8 @@
 GCC = g++
 OMP = -fopenmp
 
+.PHONY: seq par dim srun fig docs clean clear ctxt
+
 seq: seq_main.o matrix.o std_libraries.o
 	$(GCC) $(OMP) -o seq seq_main.o matrix.o std_libraries.o
 
@@ -41,6 +43,9 @@ srun:
 
 fig:
 	python3 display_mxm.py $(f)
+
+docs:
+	doxygen Doxyfile
 
 clean:
 	rm -f *.out *.o seq par parallel sequel dim

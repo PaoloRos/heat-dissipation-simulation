@@ -1,0 +1,11 @@
+<map id="matrix.hh" name="matrix.hh">
+<area shape="rect" id="Node000001" title="Matrix data structure and low&#45;level operations for the heat diffusion solver." alt="" coords="172,5,247,31"/>
+<area shape="rect" id="Node000002" href="$matrix_8cc.html" title="Implementation of Matrix methods used by sequential and OpenMP solvers." alt="" coords="5,79,81,105"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,40,72,81,70,76,166,35"/>
+<area shape="rect" id="Node000003" href="$par__main_8cc.html" title="OpenMP&#45;parallel finite&#45;difference solver for 2D heat dissipation." alt="" coords="105,79,197,105"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="193,42,163,81,159,76,188,44"/>
+<area shape="rect" id="Node000004" href="$seq__main_8cc.html" title="Sequential finite&#45;difference solver for 2D heat dissipation." alt="" coords="221,79,316,105"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="230,41,261,79,256,78,228,45"/>
+<area shape="rect" id="Node000005" href="$size_8cc.html" title=" " alt="" coords="341,79,404,105"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="252,35,347,78,342,79,251,40"/>
+</map>

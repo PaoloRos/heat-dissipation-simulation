@@ -7,8 +7,13 @@
 //
 //===----------------------------------------------------------------------===//
 
+/** @file std_libraries.cc
+ *  @brief Implementation of statistics and validation helpers.
+ */
+
 #include "std_libraries.hh"
 
+/** @brief Arithmetic mean implementation. */
 double mean(const double* arr, const int& size)
 {
     double mean = 0;
@@ -17,6 +22,7 @@ double mean(const double* arr, const int& size)
     return mean/size;
 }
 
+/** @brief Standard deviation implementation. */
 double sd(const double* arr, const double& mean, const int& size)
 {
     double sd = 0;
@@ -25,6 +31,7 @@ double sd(const double* arr, const double& mean, const int& size)
     return sqrt(sd/size);
 }
 
+/** @brief Statistics output implementation. */
 void print_stats(const double* arr, const int& size)
 {
     fstream my_out;
@@ -47,6 +54,7 @@ void print_stats(const double* arr, const int& size)
     my_out.close();
 }
 
+/** @brief Power-of-two predicate implementation. */
 bool is_Power_Two(const int n)
 { return (n > 0) && ( (n & (n-1)) == 0 ); }
 

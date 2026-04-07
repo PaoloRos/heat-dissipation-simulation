@@ -1,6 +1,24 @@
+/** @file seq_main.cc
+ *  @brief Sequential finite-difference solver for 2D heat dissipation.
+ *
+ * The code evolves a temperature field over a square plate with two fixed heat
+ * sources and reflective (zero-normal-gradient) boundary conditions.
+ */
+
 #include "matrix.hh"
 
-// argv[1]: matrix size; argv[2]: calculation step; argv[3]: execution repetitions
+/**
+ * @brief Runs the sequential benchmark and writes outputs/timings to disk.
+ * @param argc Number of CLI arguments.
+ * @param argv CLI argument vector.
+ * @return 0 on success, non-zero on error.
+ *
+ * Arguments:
+ * - argv[1]: matrix size
+ * - argv[2]: maximum update steps
+ * - argv[3]: number of repetitions
+ * - argv[4]: convergence epsilon
+ */
 int main(const int argc, const char **argv)
 {
     cerr << '\n';

@@ -6,12 +6,17 @@
 // Data: 06/06/2025
 //
 //===----------------------------------------------------------------------===//
-
+/** @file matrix.cc
+ *  @brief Implementation of Matrix methods used by sequential and OpenMP solvers.
+ */
 
 #include "matrix.hh"
 
 //Matrix::Matrix() : el(nullptr), N(0) {}
 
+/**
+ * @brief Creates a matrix and optionally places two fixed heat sources.
+ */
 Matrix::Matrix(short size, bool zero)
 {
     this->N = size;
@@ -24,6 +29,7 @@ Matrix::Matrix(short size, bool zero)
     }
 }
 
+/** @brief Deep-copy constructor implemented with OpenMP SIMD copy loop. */
 Matrix::Matrix(const Matrix& other)
 {
     this->N = other.N;
@@ -35,17 +41,24 @@ Matrix::Matrix(const Matrix& other)
         this->el[i] = other.el[i];
 }
 
+/** @brief Frees dynamically allocated matrix data. */
 Matrix::~Matrix()
 {
     if(el != nullptr)
         delete []this->el;
 }
 
+/**
+ * @brief Prints the address of one matrix element for debug purposes.
+ */
 void Matrix::get_ID(const short r, const short c)
 {
     cout << ( (c < 0)? &(this->el[r]) : &(this->el[r*this->N + c]) ) << '\n';
 }
 
+/**
+ * @brief Parallel copy helper meant to be called inside an OpenMP region.
+ */
 void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
 {
     if(this->N != other.N) {
@@ -58,6 +71,9 @@ void Matrix::copy_in_parallel(const Matrix& other, const int chunk_size)
         this->el[i] = other.el[i];
 }
 
+/**
+ * @brief Assignment operator with dimension check.
+ */
 Matrix& Matrix::operator=(const Matrix& other)
 {
     if(this->N != other.N) {
@@ -80,6 +96,9 @@ Matrix& Matrix::operator=(const Matrix& other)
 //    return res;
 //}
 
+/**
+ * @brief Writes matrix values to output stream in plain text table form.
+ */
 ostream& operator<<(ostream& os, const Matrix& other)
 {
     for(int i = 0; i < other.N; ++i)
