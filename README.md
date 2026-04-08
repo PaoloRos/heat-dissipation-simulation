@@ -68,3 +68,11 @@ The documentation includes:
 Full measurement report and analysis:
 
 - [HD_PAOLO_ROSSI.pdf](HD_PAOLO_ROSSI.pdf)
+
+## AI Assistance
+
+The overall architecture of the project was entirely designed by the author.
+
+AI-based tools were used to support the implementation of specific components, particularly for code generation and refinement. Examples include matrix element indexing strategies and parts of the Python scripts used for data handling and analysis.
+
+All AI-generated content was critically reviewed, adapted, and validated to ensure correctness and consistency with the project objectives.
